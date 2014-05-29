@@ -6,6 +6,7 @@
  */
 
 #include "Game.hpp"
+ 
 
 GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
 	GameDelta delta(*this);
@@ -68,7 +69,6 @@ GameDelta Game::loadMap(const Worldmap& world) const
 	for (int y = 0; y < 42; y++) {
 		for (int x = 0; x < 42; x++) {
             Block *block = world.getBlock(x, y);
-
             Entity new_entity = Entity::newEntity();
             delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
             delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
@@ -79,7 +79,6 @@ GameDelta Game::loadMap(const Worldmap& world) const
 
             for (int i = 0; i < count; i++) {
                 // create RenderObjects
-            }
 		}
 	}
 
@@ -101,8 +100,18 @@ void Game::setup()
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 
+int Game::getCurrentPlayer()
+{
+    return m_currentPlayer;
+}
+
+Entity Game::getPlayerByID(int id)
+{   
+   return m_players[id] ;
+}
+
 Game::Game() :
-	m_currentState(GameState())
+	m_currentState(GameState()), m_currentPlayer(0)
 {
 	// TODO Auto-generated constructor stub
 
