@@ -62,17 +62,23 @@ GameDelta::GameDelta(Entity entity, BoundingBox bb) :
 }
 
 
-GameDelta Game::loadMap(const Worldmap world) const
+GameDelta Game::loadMap(const Worldmap& world) const
 {
 	GameDelta delta;
 	for (int y = 0; y < 42; y++) {
 		for (int x = 0; x < 42; x++) {
-            const Block *block = world.getBlock(x, y);
-            if (block->getType() == Block::WALL)
-            {
-            	Entity new_entity = Entity::newEntity();
-            	delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+            Block *block = world.getBlock(x, y);
+
+            Entity new_entity = Entity::newEntity();
+            delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
+            delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+
+            std::vector<std::string> textures;
+
+            int count = block->getTextures(textures);
+
+            for (int i = 0; i < count; i++) {
+                // create RenderObjects
             }
 		}
 	}
@@ -83,9 +89,16 @@ GameDelta Game::loadMap(const Worldmap world) const
 void Game::setup()
 {
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 
 Game::Game() :
@@ -96,6 +109,7 @@ Game::Game() :
 }
 
 Game::~Game() {
-	// TODO Auto-generated destructor stub
+
+    // TODO Auto-generated destructor stub
 }
 

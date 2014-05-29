@@ -99,7 +99,7 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta loadMap(const Worldmap world) const;
+	GameDelta loadMap(const Worldmap& world) const;
 	void setup();
 
 	std::vector<RenderData> getRenderData() const;
@@ -125,6 +125,7 @@ private:
 //	std::map<EntityId, Entity> m_entities;
 
 	std::vector<Entity> m_players;
+	std::vector<Worldmap> m_player_map;
 };
 
 #endif /* GAME_HPP_ */
