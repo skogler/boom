@@ -16,7 +16,6 @@ class Worldmap {
 public:
     Worldmap(const int &seed, const int& size_x, const int& size_y, const int& center_area);
 
-    Block* getBlock(double x, double y);
     Block* getBlock(const int& x, const int& y);
     void saveImage();
 

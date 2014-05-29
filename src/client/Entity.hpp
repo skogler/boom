@@ -14,8 +14,17 @@ class Entity {
 public:
 	static Entity newEntity();
 	const EntityId entityId;
-	Entity(const Entity &entity);
+	Entity(const Entity &entity) : entityId(entity.entityId) {};
 	virtual ~Entity();
+
+	bool operator<(const Entity& rhs) const
+	{
+		if (entityId < rhs.entityId)
+		{
+			return true;
+		}
+		return false;
+	}
 
 private:
 	Entity();
