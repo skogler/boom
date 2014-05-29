@@ -10,7 +10,7 @@ class InputEvent
         int m_uid;
 
     public:
-        InputEvent(int uid) : m_uid(uid) {};
+        InputEvent(int uid);
         virtual ~InputEvent();
         int getUID();
 };

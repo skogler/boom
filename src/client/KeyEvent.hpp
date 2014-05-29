@@ -11,7 +11,8 @@ class KeyEvent : InputEvent
         SDL_Keycode m_type;                                              
    
     public:
-        KeyEvent(int uid, SDL_Keycode type) : InputEvent(uid), m_type(type) {} 
+        KeyEvent(int uid, SDL_Keycode type);
+        virtual ~KeyEvent();
         SDL_Keycode getType();
 
 };
