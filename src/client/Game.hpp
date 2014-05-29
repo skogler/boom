@@ -10,25 +10,25 @@
 
 #include <map>
 #include <vector>
-#include "PositionManager.h"
-#include "RenderObjectManager.h"
+#include "PositionManager.hpp"
+#include "RenderObjectManager.hpp"
 
 typedef int FrameEvents;
 
-class Behaviour {
-private:
-	Behaviour *stepBehaviour(float timeDelta);
-	double remainingTime;
-};
+//class Behaviour {
+//private:
+//	Behaviour *stepBehaviour(float timeDelta);
+//	double remainingTime;
+//};
 
 class GameState {
 private:
 	PositionManager *positionManager;
 	RenderObjectManager *renderManager;
 
-	std::map<Entity, Behaviour*> behaviours;
-
-	std::vector<FrameEvents> *frameEvents; // frame events
+//	std::map<Entity, Behaviour*> behaviours;
+//
+//	std::vector<FrameEvents> *frameEvents; // frame events
 };
 
 class GameDelta {
@@ -41,18 +41,18 @@ private:
 // UserActions and Events -> readOnly GameState -> GameDelta
 // GameDelta -> Systems -> modified GameDelta and Events
 
-void run(Game *g) {
-	delta = g.stepGame(user_input, 0.12);
-
-}
+//void run(Game *g) {
+//	delta = g.stepGame(user_input, 0.12);
+//
+//}
 
 class Game {
 public:
 	Game();
 	virtual ~Game();
-	GameDelta *stepGame(const UserActions *ua,
-						const double timeDelta) const;
-	pair<GameDelta, Events*> runSystems(const GameDelta *gd) const;
+//	GameDelta *stepGame(const UserActions *ua,
+//						const double timeDelta) const;
+//	pair<GameDelta, Events*> runSystems(const GameDelta *gd) const;
 
 //    GameDelta entitySetPosition(Entity entity, Position newPosition) const;
     GameDelta entityTranslate(Entity entity, Position delta) const;

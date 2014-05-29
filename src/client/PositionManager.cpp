@@ -7,7 +7,7 @@
 
 #include "PositionManager.hpp"
 
-PositionManager::PositionManager() {
+PositionManager::PositionManager() : m_positions(), m_boundingBox(), m_orientations() {
 	// TODO Auto-generated constructor stub
 
 }

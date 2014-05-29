@@ -5,17 +5,16 @@
  *      Author: Marco
  */
 
-#include "Entity.h"
+#include "Entity.hpp"
 
-int Entity::entityId = 1;
+int Entity::nextId = 1;
 
 Entity Entity::newEntity() {
-	Entity entity();
+	Entity entity;
 	return entity;
 }
 
-Entity::Entity() {
-	entityId = nextId;
+Entity::Entity() : entityId(nextId) {
 	nextId += 1;
 	// TODO Auto-generated constructor stub
 

@@ -9,7 +9,8 @@
 #define POSITIONMANAGER_HPP_
 
 #include <map>
-#include <Position.h>
+#include "Position.hpp"
+#include "Entity.hpp"
 
 typedef int BoundingBox;
 
@@ -19,7 +20,7 @@ public:
 	virtual ~PositionChangeset();
 
 private:
-	std::map<Entity, Position> m_positions;
+	std::map<EntityId, Position> m_positions;
 };
 
 class PositionManager {
@@ -28,9 +29,9 @@ public:
 	virtual ~PositionManager();
 
 private:
-	std::map<Entity, Position> m_positions;
-	std::map<Entity, BoundingBox> m_boundingBox;
-	std::map<Entity, Orientation> m_orientations;
+	std::map<EntityId, Position> m_positions;
+	std::map<EntityId, BoundingBox> m_boundingBox;
+	std::map<EntityId, Orientation> m_orientations;
 };
 
 #endif /* POSITIONMANAGER_HPP_ */
