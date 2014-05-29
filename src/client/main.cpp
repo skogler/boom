@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     Renderer renderer(&window);
     Input input;
     Game game;
+    renderer.setGame(&game);
 
     input.initialize(game);
     // receive server seeds

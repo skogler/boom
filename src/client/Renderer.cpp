@@ -1,6 +1,7 @@
 #include "Renderer.hpp"
 
 #include "Window.hpp" 
+#include "Game.hpp"
 #include <SDL2/SDL.h>
 #include <SDL_image.h>
 #include <boost/filesystem.hpp>
@@ -14,7 +15,8 @@ Renderer::Renderer(Window* window)
     : m_renderer(nullptr),
       m_window(window),
       m_textures(),
-      m_texture_dir(fs::path("resources")/"textures")
+      m_texture_dir(fs::path("resources")/"textures"),
+      m_game(nullptr)
 {
     m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_ACCELERATED);
     loadAllTextures();
@@ -79,5 +81,15 @@ void Renderer::renderScene()
     //viewport.w=900;
     //viewport.h=400;
     //SDL_RenderSetViewport(m_renderer, &viewport);
+    
+    for (auto& renderData : m_game->getRenderData()) 
+    {
+        
+    }
     SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
+}
+
+void Renderer::setGame(Game* game)
+{
+    m_game = game;
 }
