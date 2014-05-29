@@ -8,6 +8,8 @@ set(headers
     
     )
 add_executable(${SERVER_NAME} ${headers} ${src})
+include_directories(../shared)
+
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
