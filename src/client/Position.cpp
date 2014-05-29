@@ -7,7 +7,7 @@
 
 #include "Position.hpp"
 
-Position::Position() : realm(-1), coords(Coords{0,0}) {
+Position::Position() : m_realm(-1), m_coords(Coords{0,0}) {
 	// TODO Auto-generated constructor stub
 
 }
