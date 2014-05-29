@@ -8,10 +8,15 @@ endif()
 
 set(src 
     main.cpp
+    Input.cpp
+    InputEvent.cpp
+    KeyEvent.cpp
     )
 
 set(headers
-    
+    Input.hpp
+    InputEvent.hpp
+    KeyEvent.hpp
     )
 
 add_executable(${CLIENT_NAME} ${headers} ${src})
