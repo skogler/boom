@@ -77,6 +77,26 @@ void Input::handleConstantInput()
       
 }
 
+
+void Input::executeServerInput()
+{
+    while(!serverInput.empty())
+    {
+         InputEvent in = serverInput.front();
+         if(dynamic_cast<KeyEvent*>(&in))
+         {
+            KeyEvent *key = dynamic_cast<KeyEvent*>(&in);
+
+         }
+         else
+         {
+            MouseEvent *mouse = dynamic_cast<MouseEvent*>(&in);
+         }
+
+    }
+}
+
+
 void Input::sendKeyEvent(SDL_Keycode key_event) 
 {                      
     KeyEvent ke(1, key_event);

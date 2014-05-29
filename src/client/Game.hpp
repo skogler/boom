@@ -119,9 +119,12 @@ public:
 
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
+    int getCurrentPlayer();
+    Entity getPlayerByID(int i);
 
 private:
 	GameState m_currentState;
+    int m_currentPlayer;
 //	std::map<EntityId, Entity> m_entities;
 
 	std::vector<Entity> m_players;

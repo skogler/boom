@@ -88,6 +88,16 @@ void Game::setup()
 	m_players.push_back(Entity::newEntity());
 }
 
+int Game::getCurrentPlayer()
+{
+    return m_currentPlayer;
+}
+
+Entity Game::getPlayerByID(int id)
+{   
+   return m_players[id] ;
+}
+
 Game::Game() :
 	m_currentState(GameState())
 {
