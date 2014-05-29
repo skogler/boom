@@ -9,25 +9,27 @@
 
 class Input 
 {
-    private:
-        std::map<int, bool> current_keystate;
-        std::map<int, bool> last_keystate;
-        std::queue<InputEvent> m_serverInput;
-        bool q_state;
-        void sendInputEvent(UserActionType type);
-
-        void sendKeyEvent(SDL_Keycode key_event);
-        void sendMouseEvent();
-        int m_cur_player;
-
+    DISABLECOPY(Input);
     public:                                     
-        std::queue<InputEvent> getServerInput();
+        Input(Game& game);
+        
+        std::queue<InputEvent>& getServerInput();
         void executeServerInput();
         void handleInput();
-        void initialize(Game &game);
         void processEvent( SDL_Event event );
         void handleConstantInput();        
         bool quit();
+
+    private:
+        std::map<int, bool> m_current_keystate;
+        std::map<int, bool> m_last_keystate;
+        std::queue<InputEvent> m_serverInput;
+        bool m_q_state;
+        int m_cur_player;
+
+        void sendInputEvent(UserActionType type);
+        void sendKeyEvent(SDL_Keycode key_event);
+        void sendMouseEvent();
 };
 
 #endif /* end of include guard: INPUT_HPP_EYIAZASI */

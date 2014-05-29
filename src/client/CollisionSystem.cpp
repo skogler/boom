@@ -7,12 +7,12 @@
 
 #include "CollisionSystem.hpp"
 
-CollisionSystem::CollisionSystem() {
-	// TODO Auto-generated constructor stub
-
+CollisionSystem::CollisionSystem() :
+    m_quad_tree(nullptr),
+    m_bounding_boxes()
+{
 }
 
 CollisionSystem::~CollisionSystem() {
-	// TODO Auto-generated destructor stub
 }
 

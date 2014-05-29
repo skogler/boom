@@ -24,8 +24,8 @@ RenderObject::RenderObject(std::string filename) :
 
 RenderObject::RenderObject(std::string fileName, int zLevel, double alpha) :
 		m_fileName(fileName),
-		m_zLevel(0),
-		m_alpha(1)
+		m_zLevel(zLevel),
+		m_alpha(alpha)
 {
 
 }

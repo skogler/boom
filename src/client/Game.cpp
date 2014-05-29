@@ -28,7 +28,7 @@ GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
 	return delta;
 }
 
-GameDelta::GameDelta(const GameDelta &src)
+GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 {
 	deltaPositions = src.deltaPositions;
 	deltaOrientations = src.deltaOrientations;
@@ -36,40 +36,24 @@ GameDelta::GameDelta(const GameDelta &src)
 	deltaRenderObjects = src.deltaRenderObjects;
 }
 
-GameDelta::GameDelta(Entity entity, Position pos) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
+GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
 {
 	deltaPositions[entity] = pos;
 }
 
-GameDelta::GameDelta(Entity entity, Orientation orientation) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
+GameDelta::GameDelta(Entity entity, Orientation orientation) :  GameDelta()
 {
 	deltaOrientations[entity] = orientation;
 }
 
-GameDelta::GameDelta(Entity entity, BoundingBox bb) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
+GameDelta::GameDelta(Entity entity, BoundingBox bb) : GameDelta()
 {
 	deltaBoundingBoxes[entity] = bb;
 }
 
-GameDelta::GameDelta(Entity entity, RenderObject ro) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
+GameDelta::GameDelta(Entity entity, RenderObject ro) : GameDelta()
 {
-    deltaRenderObjects[entity] = {OBJECT_ADDED, ro};
+    deltaRenderObjects[entity] = {ObjectDelta::ADDED, ro};
 }
 
 GameState::GameState() :
@@ -186,11 +170,9 @@ void Game::applyGameDelta(GameDelta delta) {
 		m_currentState.getPositionManager()->updateOrientation(it->first, it->second);
 	}
 
-	for (std::map<Entity, RenderObjectDelta>::const_iterator it = delta.getRenderObjectsDelta().begin();
-			it != delta.getRenderObjectsDelta().end();
-			it++)
+    for (auto& entry : delta.getRenderObjectsDelta())
 	{
-		m_currentState.getRenderObjectManager()->updateRenderObject(it->first, it->second.updateType, it->second.renderObject);
+		m_currentState.getRenderObjectManager()->updateRenderObject(entry.first, entry.second.m_updateType, entry.second.m_renderObject);
 	}
 
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
@@ -223,14 +205,13 @@ Entity Game::getPlayerByID(int id) const
 }
 
 Game::Game() :
-	m_currentState(GameState()), m_currentPlayer(0)
+	m_currentState(GameState()), 
+    m_currentPlayer(0),
+    m_players(),
+    m_player_map()
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 Game::~Game() {
-
-    // TODO Auto-generated destructor stub
 }
 

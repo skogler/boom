@@ -11,12 +11,14 @@
 #include <vector>
 #include <map>
 
+#include "common.hpp"
 #include "Entity.hpp"
 #include "Position.hpp"
 
 class QuadTree;
 
 class CollisionSystem {
+    DISABLECOPY(CollisionSystem);
 public:
 	CollisionSystem();
 	virtual ~CollisionSystem();
@@ -24,8 +26,8 @@ public:
 	void checkCollisions(std::vector<Entity> entities);
 
 private:
-	QuadTree *qt;
-	std::map<Entity, BoundingBox> boundingBoxes;
+	QuadTree *m_quad_tree;
+	std::map<Entity, BoundingBox> m_bounding_boxes;
 };
 
 #endif /* COLLISIONSYSTEM_HPP_ */

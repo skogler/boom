@@ -18,7 +18,6 @@
 #include "RenderObject.hpp"
 #include "CollisionSystem.hpp"
 #include "PositionManager.hpp"
-#include "RenderObjectManager.hpp"
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
 #include "time.h"
@@ -41,15 +40,22 @@ private:
 	CollisionSystem *collisionSystem;
 };
 
-typedef enum {
-	OBJECT_ADDED,
-	OBJECT_REMOVED,
-	OBJECT_UPDATED
-} ObjectDelta;
+enum class ObjectDelta {
+	ADDED,
+	REMOVED,
+	UPDATED
+};
 
-struct RenderObjectDelta {
-	ObjectDelta updateType;
-	RenderObject renderObject;
+class RenderObjectDelta{
+public:
+    RenderObjectDelta() : m_updateType(), m_renderObject() {}
+    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) : 
+        m_updateType(updateType), 
+        m_renderObject(renderObject) 
+    {}
+
+	ObjectDelta m_updateType;
+	RenderObject m_renderObject;
 };
 
 class GameDelta {
@@ -81,7 +87,7 @@ public:
 		return deltaBoundingBoxes;
 		}
 
-	const std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta() const
+	std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta()
 		{
 		return deltaRenderObjects;
 		}

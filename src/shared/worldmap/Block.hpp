@@ -8,6 +8,8 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
+#include "../common.hpp"
+
 #include <vector>
 #include <string>
 
@@ -15,6 +17,7 @@ class BlockTexture;
 class Worldmap;
 
 class Block {
+    DISABLECOPY(Block);
 public:
 
     static const int NEIGHBOR_UP =      0x01;
