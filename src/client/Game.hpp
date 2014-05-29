@@ -15,6 +15,9 @@
 #include "RenderObjectManager.hpp"
 #include "RenderObject.hpp"
 
+#include "worldmap/Worldmap.hpp"
+#include "worldmap/Block.hpp"
+
 typedef int FrameEvents;
 
 //class Behaviour {
@@ -50,6 +53,21 @@ class RenderObjectDelta {
 };
 
 class GameDelta {
+public:
+	GameDelta() :
+		deltaPositions(),
+		deltaOrientations(),
+		deltaBoundingBoxes(),
+		deltaRenderObjects()
+	{}
+	GameDelta(const GameDelta &src);
+	GameDelta(Entity entity, Position pos);
+	GameDelta(Entity entity, Orientation orientation);
+	GameDelta(Entity entity, BoundingBox bb);
+//	GameDelta(Entity, RenderObject ro);
+
+	GameDelta mergeDelta(const GameDelta &oldDelta) const;
+
 private:
 	std::map<Entity, Position> deltaPositions;
 	std::map<Entity, Orientation> deltaOrientations;
@@ -72,6 +90,9 @@ class Game {
 public:
 	Game();
 	virtual ~Game();
+
+	GameDelta loadMap(const Worldmap world) const;
+
 	GameDelta stepGame(const UserActions *ua,
 						const double timeDelta) const;
 	GameDelta runSystems(const GameDelta gd) const;

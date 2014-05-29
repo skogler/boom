@@ -94,7 +94,7 @@ void Worldmap::_init(const int& size_x, const int& size_y)
     }
 }
 
-Block* Worldmap::getBlock(int x, int y)
+Block* Worldmap::getBlock(int x, int y) const
 {
     int index = x * _size_x + y;
     return _world[index];

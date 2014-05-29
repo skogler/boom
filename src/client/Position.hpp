@@ -17,29 +17,72 @@ typedef struct {
 
 class BoundingBox {
 private:
-	std::vector<Coords> polygon;
+	std::vector<Coords> m_polygon;
 
 public:
+	BoundingBox() : m_polygon() {}
 	BoundingBox(Coords topLeft, Coords bottomLeft);
 };
 
 class Position {
 public:
 	Position();
+	Position(int realm, double x, double y) :
+		m_realm(realm),
+		m_coords(Coords{x, y})
+		{
+		}
 	virtual ~Position();
 
+	Position operator=(const Position &other) const
+	{
+		return Position(m_realm,
+				other.getCoords().x,
+				other.getCoords().y);
+	}
+
+	Coords getCoords() const { return m_coords; }
+
+	Position operator+(const Position &other) const
+	{
+//		if (m_realm != other.m_realm)
+		return Position(m_realm,
+				getCoords().x + other.getCoords().x,
+				getCoords().y + other.getCoords().y);
+	}
+
+	Position operator+=(const Position &other) const
+    {
+		return Position(m_realm,
+				getCoords().x + other.getCoords().x,
+				getCoords().y + other.getCoords().y);
+    }
+
 private:
-	const int realm;
-	const Coords coords;
+	const int m_realm;
+	const Coords m_coords;
 };
 
 class Orientation {
 public:
 	Orientation();
+	Orientation(double angle) : m_angle(angle) {}
 	virtual ~Orientation();
 
+	Orientation operator=(const Orientation &other) const
+	{
+		return Orientation(other.getAngle());
+	}
+
+	double getAngle() const { return m_angle; }
+
+	Orientation operator+=(const Orientation &other) const
+    {
+		return Orientation(getAngle() + other.getAngle());
+    }
+
 private:
-	const double angle;
+	const double m_angle;
 };
 
 #endif /* POSITION_H_ */
