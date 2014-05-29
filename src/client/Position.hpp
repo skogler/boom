@@ -68,6 +68,13 @@ public:
 				getCoords().y + other.getCoords().y);
     }
 
+	Position operator+=(const Coords &other) const
+	{
+		return Position(m_realm,
+				getCoords().x + other.x,
+				getCoords().y + other.y);
+	}
+
 private:
 	const int m_realm;
 	const Coords m_coords;

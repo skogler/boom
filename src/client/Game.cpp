@@ -94,6 +94,35 @@ void Game::setup()
 	m_players.push_back(Entity::newEntity());
 	m_players.push_back(Entity::newEntity());
 	m_players.push_back(Entity::newEntity());
+
+	Entity p1_bottom = Entity::newEntity();
+	Entity p1_top = Entity::newEntity();
+	Entity p2 = Entity::newEntity();
+	Entity p3 = Entity::newEntity();
+	Entity p4 = Entity::newEntity();
+
+	GameDelta delta = GameDelta(p1_bottom, Position(1, 50, 50));
+	delta = delta.mergeDelta(GameDelta(p1_bottom, RenderObject("character/blue/blue_bottom", 1, 1)));
+	delta = delta.mergeDelta(GameDelta(p1_top, Position(1, 50, 50)));
+	delta = delta.mergeDelta(GameDelta(p1_top, RenderObject("character/blue/blue_bottom", 2, 1)));
+
+	applyGameDelta(delta);
+}
+
+void Game::applyGameDelta(GameDelta delta) {
+	for (std::map<Entity, Position>::const_iterator it = delta.getPositionsDelta().begin();
+			it != delta.getPositionsDelta().end();
+			it++)
+	{
+		m_currentState.getPositionManager()->updatePosition(it->first, it->second.getCoords());
+	}
+
+	for (std::map<Entity, Orientation>::const_iterator it = delta.getOrientationsDelta().begin();
+			it != delta.getOrientationsDelta().end();
+			it++)
+	{
+		m_currentState.getPositionManager()->updateOrientation(it->first, it->second);
+	}
 }
 
 Game::Game() :

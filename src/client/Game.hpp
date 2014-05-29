@@ -23,14 +23,19 @@ typedef int FrameEvents;
 
 class GameState {
 public:
-	GameState() : positionManager(PositionManager()),
-		renderManager(RenderObjectManager()) {
+	GameState() : positionManager(new PositionManager()),
+		renderManager(new RenderObjectManager()),
+		collisionSystem(new CollisionSystem())
+	{
 
 	}
+
+	PositionManager *getPositionManager() const { return positionManager; }
+
 private:
-	PositionManager positionManager;
-	RenderObjectManager renderManager;
-	CollisionSystem collisionSystem;
+	PositionManager *positionManager;
+	RenderObjectManager *renderManager;
+	CollisionSystem *collisionSystem;
 };
 
 typedef enum {
@@ -59,6 +64,24 @@ public:
 //	GameDelta(Entity, RenderObject ro);
 
 	GameDelta mergeDelta(const GameDelta &oldDelta) const;
+
+	std::map<Entity, Position> getPositionsDelta() const
+    {
+		return deltaPositions;
+    }
+	std::map<Entity, Orientation> getOrientationsDelta() const
+	{
+		return deltaOrientations;
+	}
+	std::map<Entity, BoundingBox> getBoundingBoxDelta() const
+		{
+		return deltaBoundingBoxes;
+		}
+
+	std::map<Entity, RenderObjectDelta> getRenderObjectsDelta() const
+		{
+		return deltaRenderObjects;
+		}
 
 private:
 	std::map<Entity, Position> deltaPositions;
