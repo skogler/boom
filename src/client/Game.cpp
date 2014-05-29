@@ -63,6 +63,15 @@ GameDelta::GameDelta(Entity entity, BoundingBox bb) :
 	deltaBoundingBoxes[entity] = bb;
 }
 
+GameDelta::GameDelta(Entity entity, RenderObject ro) :
+		deltaPositions(),
+		deltaOrientations(),
+		deltaBoundingBoxes(),
+		deltaRenderObjects()
+{
+    deltaRenderObjects[entity] = {OBJECT_ADDED, ro};
+}
+
 GameState::GameState() :
 		positionManager(new PositionManager()),
 		renderManager(new RenderObjectManager()),

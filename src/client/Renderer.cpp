@@ -7,8 +7,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <iostream>
+#include <vector>
 
 using std::unordered_map;
+using std::vector;
 namespace fs=boost::filesystem;
 
 Renderer::Renderer(Window* window)
@@ -81,11 +83,12 @@ void Renderer::renderScene()
     //viewport.w=900;
     //viewport.h=400;
     //SDL_RenderSetViewport(m_renderer, &viewport);
+    vector<SDL_Rect> viewports;
     
-    for (auto& renderData : m_game->getRenderData()) 
-    {
-        
-    }
+//    for (auto& renderData : m_game->getRenderData()) 
+//    {
+//        
+//    }
     SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
 }
 
