@@ -1,11 +1,12 @@
 #include "Renderer.hpp"
 
 #include "Window.hpp" 
-#include <SDL2/SDL.h>
-#include <SDL_image.h>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
+#include <SDL2/SDL.h>
+#include <SDL_image.h>
 #include <iostream>
+#include <unordered_map>
 
 using std::unordered_map;
 namespace fs=boost::filesystem;
@@ -48,7 +49,7 @@ void Renderer::loadAllTextures()
 
 void Renderer::loadTexture(const fs::path& path)
 {
-    SDL_Surface* surf = IMG_Load(path.c_str());
+    SDL_Surface* surf = IMG_Load(path.native().c_str());
     if (!surf) {
         std::cerr << "Error loading texture " << path << std::endl;
         return;
@@ -60,12 +61,12 @@ void Renderer::loadTexture(const fs::path& path)
         std::cerr << "Error loading texture " << path << std::endl;
         return;
     }
-    string basepath = m_texture_dir.c_str();
-    string name = path.parent_path().c_str();
+    string basepath = m_texture_dir.native();
+    string name = path.parent_path().native();
     name.erase(0, basepath.length());
     if (name[0] == '/')
         name.erase(0, 1);
-    name.append(path.stem().c_str());
+    name.append(path.stem().native());
     
     std::cout << "Loaded texture " << name << std::endl;
     m_textures[name] = tex;
