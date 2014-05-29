@@ -16,7 +16,7 @@ Position::~Position() {
 	// TODO Auto-generated destructor stub
 }
 
-Orientation::Orientation() : angle(0) {
+Orientation::Orientation() : m_angle(0) {
 	// TODO Auto-generated constructor stub
 
 }

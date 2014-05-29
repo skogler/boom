@@ -17,9 +17,10 @@ typedef struct {
 
 class BoundingBox {
 private:
-	std::vector<Coords> polygon;
+	std::vector<Coords> m_polygon;
 
 public:
+	BoundingBox() : m_polygon() {}
 	BoundingBox(Coords topLeft, Coords bottomLeft);
 };
 
@@ -65,10 +66,23 @@ private:
 class Orientation {
 public:
 	Orientation();
+	Orientation(double angle) : m_angle(angle) {}
 	virtual ~Orientation();
 
+	Orientation operator=(const Orientation &other) const
+	{
+		return Orientation(other.getAngle());
+	}
+
+	double getAngle() const { return m_angle; }
+
+	Orientation operator+=(const Orientation &other) const
+    {
+		return Orientation(getAngle() + other.getAngle());
+    }
+
 private:
-	const double angle;
+	const double m_angle;
 };
 
 #endif /* POSITION_H_ */

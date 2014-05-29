@@ -15,6 +15,9 @@
 #include "RenderObjectManager.hpp"
 #include "RenderObject.hpp"
 
+#include "worldmap/Worldmap.hpp"
+#include "worldmap/Block.hpp"
+
 typedef int FrameEvents;
 
 //class Behaviour {
@@ -87,6 +90,9 @@ class Game {
 public:
 	Game();
 	virtual ~Game();
+
+	GameDelta loadMap(const Worldmap world) const;
+
 	GameDelta stepGame(const UserActions *ua,
 						const double timeDelta) const;
 	GameDelta runSystems(const GameDelta gd) const;
