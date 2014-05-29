@@ -11,7 +11,8 @@
 #include <algorithm>
 #include <SDL2/SDL_image.h>
 
-Worldmap::Worldmap(const int &seed, const int& size_x, const int& size_y)
+Worldmap::Worldmap(const int &seed, const int& size_x, const int& size_y, const int& center_area = 5):
+    _size_x(size_x), _size_y(size_y), _center_area(center_area), _world()
 {
     _init(size_x, size_y);
     _generate(seed, size_x, size_y);
@@ -19,16 +20,28 @@ Worldmap::Worldmap(const int &seed, const int& size_x, const int& size_y)
 
 Worldmap::~Worldmap()
 {
-    // TODO Auto-generated destructor stub
+    std::vector<Block*>::iterator blocks = _world.begin();
+    for (; blocks != _world.end(); blocks++) {
+        delete *blocks;
+    }
+    _world.clear();
 }
 
-int perlin(int x, int y, int max)
+bool Worldmap::isCenter(const int& x, const int& y)
 {
-    float noise = SimplexNoise1234::noise(x, y);
-    return (noise * (float) max);
+    int center_x = _size_x / 2;
+    int center_y = _size_y / 2;
+
+    if ((x >= center_x - _center_area || x <= center_x + _center_area) &&
+        (y >= center_y - _center_area || y <= center_y + _center_area)) {
+        return true;
+    }
+
+    return false;
 }
-// return a 'random' color value interpolated with its neighbours
-int smoothPerlin(int x, int y, float max)
+
+// return a 'random' value interpolated with its neighbours
+int Worldmap::_smoothPerlin(int x, int y, float max)
 {
     float corners = ( SimplexNoise1234::noise(x-1, y-1)+SimplexNoise1234::noise(x+1, y-1)+SimplexNoise1234::noise(x-1, y+1)+SimplexNoise1234::noise(x+1, y+1) ) / 16.0f;
     float sides   = ( SimplexNoise1234::noise(x-1, y)  +SimplexNoise1234::noise(x+1, y)  +SimplexNoise1234::noise(x, y-1)  +SimplexNoise1234::noise(x, y+1) ) /  8.0f;
@@ -74,6 +87,9 @@ void Worldmap::_createWall(const int& start_x, const int& start_y, const int& wi
 
     for (int x_coord = start_x; x_coord < end_x; x_coord ++) {
         for (int y_coord = start_y; y_coord < end_y; y_coord ++) {
+            if (isCenter(x_coord, y_coord)) {
+                continue;
+            }
             getBlock(x_coord, y_coord)->setType(Block::WALL);
         }
     }
@@ -84,7 +100,7 @@ void Worldmap::_init(const int& size_x, const int& size_y)
     _size_x = size_x;
     _size_y = size_y;
     _world.clear();
-    _world.reserve(size_x);
+    _world.reserve(size_x * size_y);
 
     for (int x = 0; x < size_x; ++x) {
         for (int y = 0; y < size_y; ++y) {
@@ -94,9 +110,11 @@ void Worldmap::_init(const int& size_x, const int& size_y)
     }
 }
 
-Block* Worldmap::getBlock(int x, int y)
+Block* Worldmap::getBlock(const int& x, const int& y)
 {
-    int index = x * _size_x + y;
+    int x_coord = x % _size_x;
+    int y_coord = y % _size_y;
+    int index = x_coord * _size_x + y_coord;
     return _world[index];
 }
 
@@ -112,7 +130,7 @@ void Worldmap::_generate(const int &seed, const int& size_x, const int& size_y)
     // create starting points for the first layer of panels
     for(int x = 0; x < size_x / 2; x++) {
         for (int y = 0; y < size_y / 2; y++) {
-            float smooth = smoothPerlin(x + perlin_offset, y + perlin_offset, 255.0f);
+            float smooth = _smoothPerlin(x + perlin_offset, y + perlin_offset, 255.0f);
             if (smooth < 90.0f || smooth > 120.0f) {
                 continue;
             }

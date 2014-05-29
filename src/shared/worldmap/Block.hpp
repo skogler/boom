@@ -31,10 +31,11 @@ public:
         return _type;
     }
 
+    void checkSubType();
+
 private:
 
     BlockType       _type;
-    int             _hitPoints;
     Worldmap        *_worldmap;
 //    BlockTexture    *_texture;
     int             _x;
