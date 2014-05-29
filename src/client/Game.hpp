@@ -84,7 +84,20 @@ private:
 //
 //}
 
-struct UserActions;
+enum UserActionType 
+{
+       MOVE_RIGHT,
+       MOVE_LEFT,
+       MOVE_TOP,
+       MOVE_DOWN,
+       SHOOT,
+       TURN
+};
+
+struct UserActions
+{                 
+    
+};
 
 typedef struct
 {

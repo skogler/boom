@@ -99,7 +99,6 @@ void Input::executeServerInput()
 
 void Input::sendKeyEvent(SDL_Keycode key_event) 
 {                      
-    KeyEvent ke(1, key_event);
     //TODO: network stuff
 }
 
@@ -108,7 +107,6 @@ void Input::sendMouseEvent()
     int x,y;
     SDL_GetMouseState(&x,&y);     
     //TODO: player id instead of 1
-    MouseEvent me(1,x,y);
    //TODO: network stuff
 }
 
