@@ -8,8 +8,9 @@ endif()
 
 include_directories(.)
 FILE(GLOB_RECURSE SRCFILES *.cpp)
+FILE(GLOB_RECURSE HEADERS *.hpp)
 
-add_executable(${CLIENT_NAME} ${SRCFILES})
+add_executable(${CLIENT_NAME} ${HEADERS} ${SRCFILES})
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
