@@ -11,11 +11,13 @@ set(src
     Input.cpp
     InputEvent.cpp
     KeyEvent.cpp
+    MouseEvent.cpp
     )
 
 set(headers
     Input.hpp
-    InputEvent.hpp
+    InputEvent.hpp 
+    MouseEvent.hpp
     KeyEvent.hpp
     Action.cpp
     CollisionSystem.cpp

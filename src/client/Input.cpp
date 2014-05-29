@@ -22,11 +22,49 @@ void Input::processEvent(SDL_Event event)
    //Keyboard
    switch(event.type)
    {
-      case SDL_KEYDOWN: current_keystate[event.key.keysym.sym] = true;;
-      case SDL_KEYUP: current_keystate[event.key.keysym.sym] = false;
-   }         
+      case SDL_KEYDOWN:
+                current_keystate[event.key.keysym.sym] = true;  
+                sendKeyEvent(event.key.keysym.sym);
+                break;
+      case SDL_KEYUP:
+                current_keystate[event.key.keysym.sym] = false; 
+                break;
+      case SDL_MOUSEMOTION:
+
+                break;
+   }  
+
+   if(event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+   {
+        last_keystate[event.key.keysym.sym] = current_keystate[event.key.keysym.sym];
+   }
+   handleConstantInput();
+   
+
 
    //Mouse
     
 
+}        
+
+void Input::handleConstantInput()
+{ 
+      for(auto& ks:current_keystate)
+      {
+           if(ks.second == true && ks.second == last_keystate[ks.first])
+           {
+               sendKeyEvent(ks.first);
+           }
+      }
+      
+}
+
+void Input::sendKeyEvent(SDL_Keycode key_event) 
+{
+    //TODO: network stuff
+}
+
+void Input::sendMouseEvent()
+{
+   //TODO: network stuff
 }
