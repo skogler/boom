@@ -10,6 +10,14 @@ set(src
     Input.cpp
     InputEvent.cpp
     KeyEvent.cpp
+    MouseEvent.cpp
+    )
+
+set(headers
+    Input.hpp
+    InputEvent.hpp 
+    MouseEvent.hpp
+    KeyEvent.hpp
     Window.cpp
     main.cpp
     )
