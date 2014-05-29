@@ -6,7 +6,8 @@
  */
 
 #include "Game.hpp"
- 
+#include "RenderObjectManager.hpp"
+#include "PositionManager.hpp"
 
 GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
 	GameDelta delta(*this);
@@ -62,24 +63,34 @@ GameDelta::GameDelta(Entity entity, BoundingBox bb) :
 	deltaBoundingBoxes[entity] = bb;
 }
 
+GameState::GameState() :
+		positionManager(new PositionManager()),
+		renderManager(new RenderObjectManager()),
+		collisionSystem(new CollisionSystem())
+{
+
+}
 
 GameDelta Game::loadMap(const Worldmap& world) const
 {
 	GameDelta delta;
 	for (int y = 0; y < 42; y++) {
 		for (int x = 0; x < 42; x++) {
-            Block *block = world.getBlock(x, y);
-            Entity new_entity = Entity::newEntity();
-            delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
-            delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+            const Block *block = world.getBlock(x, y);
+            if (block->getType() == Block::WALL)
+            {
+            	Entity new_entity = Entity::newEntity();
+            	delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject("baseWall", 1, 1)));
 
-            std::vector<std::string> textures;
-
-            int count = block->getTextures(textures);
-
-            for (int i = 0; i < count; i++) {
-                // create RenderObjects
-		}
+            	for (int i = 0; i < 8; i++) {
+            		Entity overlay = Entity::newEntity();
+            		delta = delta.mergeDelta(GameDelta(overlay, Position(-1, x, y)));
+            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
+            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
+            	}
+            }
 		}
 	}
 
@@ -98,6 +109,43 @@ void Game::setup()
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
 	m_players.push_back(Entity::newEntity());
+
+	Entity p1_bottom = Entity::newEntity();
+	Entity p1_top = Entity::newEntity();
+	Entity p2 = Entity::newEntity();
+	Entity p3 = Entity::newEntity();
+	Entity p4 = Entity::newEntity();
+
+	GameDelta delta = GameDelta(p1_bottom, Position(1, 50, 50));
+	delta = delta.mergeDelta(GameDelta(p1_bottom, RenderObject("character/blue/blue_bottom", 1, 1)));
+	delta = delta.mergeDelta(GameDelta(p1_top, Position(1, 50, 50)));
+	delta = delta.mergeDelta(GameDelta(p1_top, RenderObject("character/blue/blue_bottom", 2, 1)));
+
+	applyGameDelta(delta);
+}
+
+void Game::applyGameDelta(GameDelta delta) {
+	for (std::map<Entity, Position>::const_iterator it = delta.getPositionsDelta().begin();
+			it != delta.getPositionsDelta().end();
+			it++)
+	{
+		m_currentState.getPositionManager()->updatePosition(it->first, it->second.getCoords());
+	}
+
+	for (std::map<Entity, Orientation>::const_iterator it = delta.getOrientationsDelta().begin();
+			it != delta.getOrientationsDelta().end();
+			it++)
+	{
+		m_currentState.getPositionManager()->updateOrientation(it->first, it->second);
+	}
+
+	for (std::map<Entity, RenderObjectDelta>::const_iterator it = delta.getRenderObjectsDelta().begin();
+			it != delta.getRenderObjectsDelta().end();
+			it++)
+	{
+		m_currentState.getRenderObjectManager()->updateRenderObject(it->first, it->second.updateType, it->second.renderObject);
+	}
+
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 

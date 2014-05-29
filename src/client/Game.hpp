@@ -11,34 +11,29 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "PositionManager.hpp"
-#include "RenderObjectManager.hpp"
 #include "RenderObject.hpp"
+#include "CollisionSystem.hpp"
 
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
+#include "time.h"
+
+class PositionManager;
+class RenderObjectManager;
 
 typedef int FrameEvents;
 
-//class Behaviour {
-//private:
-//	Behaviour *stepBehaviour(float timeDelta);
-//	double remainingTime;
-//};
-
 class GameState {
 public:
-	GameState() : positionManager(PositionManager()),
-		renderManager(RenderObjectManager()) {
+	GameState();
 
-	}
+	PositionManager *getPositionManager() const { return positionManager; }
+	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
+
 private:
-	PositionManager positionManager;
-	RenderObjectManager renderManager;
-
-//	std::map<Entity, Behaviour*> behaviours;
-//
-//	std::vector<FrameEvents> *frameEvents; // frame events
+	PositionManager *positionManager;
+	RenderObjectManager *renderManager;
+	CollisionSystem *collisionSystem;
 };
 
 typedef enum {
@@ -47,7 +42,7 @@ typedef enum {
 	OBJECT_UPDATED
 } ObjectDelta;
 
-class RenderObjectDelta {
+struct RenderObjectDelta {
 	ObjectDelta updateType;
 	RenderObject renderObject;
 };
@@ -64,9 +59,27 @@ public:
 	GameDelta(Entity entity, Position pos);
 	GameDelta(Entity entity, Orientation orientation);
 	GameDelta(Entity entity, BoundingBox bb);
-//	GameDelta(Entity, RenderObject ro);
+	GameDelta(Entity, RenderObject ro);
 
 	GameDelta mergeDelta(const GameDelta &oldDelta) const;
+
+	std::map<Entity, Position> getPositionsDelta() const
+    {
+		return deltaPositions;
+    }
+	std::map<Entity, Orientation> getOrientationsDelta() const
+	{
+		return deltaOrientations;
+	}
+	std::map<Entity, BoundingBox> getBoundingBoxDelta() const
+		{
+		return deltaBoundingBoxes;
+		}
+
+	std::map<Entity, RenderObjectDelta> getRenderObjectsDelta() const
+		{
+		return deltaRenderObjects;
+		}
 
 private:
 	std::map<Entity, Position> deltaPositions;
@@ -105,6 +118,12 @@ typedef struct
 	Position position;
 	Orientation orientation;
 	RenderObject renderObject;
+} RealmRenderData;
+
+typedef struct
+{
+	int realm;
+	RealmRenderData realmData;
 } RenderData;
 
 class Game {
@@ -134,6 +153,8 @@ public:
     Entity getEntityByName(std::string name) const;
     int getCurrentPlayer();
     Entity getPlayerByID(int i);
+
+    int getNumberOfPlayers() const;
 
 private:
 	GameState m_currentState;
