@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     Uint32 startTime = SDL_GetTicks();
 
     while(!input.quit())
-    {                 
+    {   
+        input.executeServerInput();
         input.handleInput();
     	Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;

@@ -100,7 +100,20 @@ private:
 //
 //}
 
-struct UserActions;
+enum UserActionType 
+{
+       MOVE_RIGHT,
+       MOVE_LEFT,
+       MOVE_TOP,
+       MOVE_DOWN,
+       SHOOT,
+       TURN
+};
+
+struct UserActions
+{                 
+    
+};
 
 typedef struct
 {
@@ -141,11 +154,14 @@ public:
 
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
+    int getCurrentPlayer();
+    Entity getPlayerByID(int i);
 
     int getNumberOfPlayers() const;
 
 private:
 	GameState m_currentState;
+    int m_currentPlayer;
 //	std::map<EntityId, Entity> m_entities;
 
 	std::vector<Entity> m_players;

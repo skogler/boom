@@ -9,8 +9,8 @@ endif()
 set(src 
     Input.cpp
     InputEvent.cpp
-    KeyEvent.cpp
-    MouseEvent.cpp
+    #KeyEvent.cpp
+    #MouseEvent.cpp
     main.cpp
     Window.cpp
 
@@ -29,7 +29,7 @@ set(headers
     HealthSystem.hpp
     Input.hpp
     InputEvent.hpp
-    KeyEvent.hpp
+    #KeyEvent.hpp
     Position.cpp
     Position.hpp
     PositionManager.cpp

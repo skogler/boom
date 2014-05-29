@@ -132,6 +132,16 @@ void Game::applyGameDelta(GameDelta delta) {
 	}
 }
 
+int Game::getCurrentPlayer()
+{
+    return m_currentPlayer;
+}
+
+Entity Game::getPlayerByID(int id)
+{   
+   return m_players[id] ;
+}
+
 Game::Game() :
 	m_currentState(GameState())
 {
