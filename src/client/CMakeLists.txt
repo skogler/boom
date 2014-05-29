@@ -7,32 +7,38 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 set(src 
-    main.cpp
+    Input.cpp
+    InputEvent.cpp
+    KeyEvent.cpp
     Window.cpp
-    Action.cpp
-    CollisionSystem.cpp
-    Entity.cpp
-    Game.cpp
-    HealthSystem.cpp
-    Position.cpp
-    PositionManager.cpp
-    RenderObject.cpp
-    RenderObjectManager.cpp
-    Renderer.cpp
+    main.cpp
     )
 
 set(headers
-    Window.hpp
+    Action.cpp
     Action.hpp
+    CollisionSystem.cpp
     CollisionSystem.hpp
+    Entity.cpp
     Entity.hpp
+    Game.cpp
     Game.hpp
+    HealthSystem.cpp
     HealthSystem.hpp
+    Input.hpp
+    InputEvent.hpp
+    KeyEvent.hpp
+    Position.cpp
     Position.hpp
+    PositionManager.cpp
     PositionManager.hpp
+    RenderObject.cpp
     RenderObject.hpp
+    RenderObjectManager.cpp
     RenderObjectManager.hpp  
+    Renderer.cpp
     Renderer.hpp
+    Window.hpp
     )
 
 add_executable(${CLIENT_NAME} ${headers} ${src})
