@@ -123,6 +123,13 @@ void Game::applyGameDelta(GameDelta delta) {
 	{
 		m_currentState.getPositionManager()->updateOrientation(it->first, it->second);
 	}
+
+	for (std::map<Entity, RenderObjectDelta>::const_iterator it = delta.getRenderObjectsDelta().begin();
+			it != delta.getRenderObjectsDelta().end();
+			it++)
+	{
+		m_currentState.getRenderObjectManager()->updateRenderObject(it->first, it->second.updateType, it->second.renderObject);
+	}
 }
 
 Game::Game() :

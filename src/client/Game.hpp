@@ -31,6 +31,7 @@ public:
 	}
 
 	PositionManager *getPositionManager() const { return positionManager; }
+	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
 
 private:
 	PositionManager *positionManager;
@@ -44,7 +45,7 @@ typedef enum {
 	OBJECT_UPDATED
 } ObjectDelta;
 
-class RenderObjectDelta {
+struct RenderObjectDelta {
 	ObjectDelta updateType;
 	RenderObject renderObject;
 };
