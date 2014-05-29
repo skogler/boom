@@ -4,6 +4,9 @@
 #include <string>
 using std::string;
 
+typedef unsigned int uint;
+
+
 const string GAME_NAME = "Boom!";
 
 #define DISABLECOPY(classname)  private: \

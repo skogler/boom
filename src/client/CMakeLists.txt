@@ -9,11 +9,30 @@ endif()
 set(src 
     main.cpp
     Window.cpp
+    Action.cpp
+    CollisionSystem.cpp
+    Entity.cpp
+    Game.cpp
+    HealthSystem.cpp
+    Position.cpp
+    PositionManager.cpp
+    RenderObject.cpp
+    RenderObjectManager.cpp
+    Renderer.cpp
     )
 
 set(headers
     Window.hpp
-    
+    Action.hpp
+    CollisionSystem.hpp
+    Entity.hpp
+    Game.hpp
+    HealthSystem.hpp
+    Position.hpp
+    PositionManager.hpp
+    RenderObject.hpp
+    RenderObjectManager.hpp  
+    Renderer.hpp
     )
 
 add_executable(${CLIENT_NAME} ${headers} ${src})
@@ -44,11 +63,6 @@ find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
     include_directories(${GLEW_INCLUDE_PATH})
     target_link_libraries(${CLIENT_NAME} ${GLEW_LIBRARY})
-endif()
-
-find_package(GLM REQUIRED)
-if (GLM_FOUND)
-    include_directories(${GLM_INCLUDE_DIRS})
 endif()
 
 target_link_libraries(${CLIENT_NAME}

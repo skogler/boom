@@ -1,19 +1,27 @@
 #include "Window.hpp"
 #include <SDL2/SDL.h>
-#include "common.hpp"
 
-Window::Window()
+Window::Window (uint width, uint height, bool fullscreen)
     : m_window(nullptr)
 {
     SDL_Init(SDL_INIT_VIDEO);
+    int flags = SDL_WINDOW_OPENGL;
+
+    if (fullscreen) {
+        width = 0;
+        height = 0;
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
+
     m_window = SDL_CreateWindow(GAME_NAME.c_str(),
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            640, 480,
-            SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
-
+            width, height,
+            SDL_WINDOW_OPENGL);
 }
 
 Window::~Window()
 {
+    SDL_DestroyWindow(m_window);
+    m_window = nullptr;
 }

@@ -9,7 +9,7 @@ class Window
 {
     DISABLECOPY(Window);
 public:
-    Window ();
+    Window (uint width, uint height, bool fullscreen);
     virtual ~Window ();
 
     SDL_Window* m_window;
