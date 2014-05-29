@@ -97,6 +97,43 @@ GameDelta Game::loadMap(const Worldmap& world) const
 	return delta;
 }
 
+std::vector<RenderData> Game::getRenderData() const
+{
+	std::vector<RenderData> data;
+
+	m_currentState.getPositionManager()->getNumRealms();
+	for (int i = 0; i < 4; i++) {
+        std::vector<Entity> realm_entities = m_currentState.getPositionManager()->getEntitiesOfRealm(i);
+        std::vector<RealmRenderData> realm_data;
+
+        for (std::vector<Entity>::iterator it = realm_entities.begin();
+        		it != realm_entities.end();
+        		it++)
+        {
+        	if (!m_currentState.getPositionManager()->hasPosition(*it)) {
+        		continue;
+        	}
+
+        	if (!m_currentState.getPositionManager()->hasOrientation(*it)) {
+        		continue;
+        	}
+
+        	if (!m_currentState.getRenderObjectManager()->hasRenderObject(*it)) {
+        		continue;
+        	}
+
+        	realm_data.push_back({
+        		*it,
+        		m_currentState.getPositionManager()->getPosition(*it),
+        		m_currentState.getPositionManager()->getOrientation(*it),
+        		m_currentState.getRenderObjectManager()->getRenderObject(*it)
+                });
+        }
+
+        data.push_back(RenderData{i, realm_data});
+	}
+}
+
 void Game::setup()
 {
 	m_players.push_back(Entity::newEntity());

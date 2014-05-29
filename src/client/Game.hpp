@@ -123,7 +123,7 @@ typedef struct
 typedef struct
 {
 	int realm;
-	RealmRenderData realmData;
+	std::vector<RealmRenderData> realmData;
 } RenderData;
 
 class Game {

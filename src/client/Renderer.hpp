@@ -2,9 +2,9 @@
 #define RENDERER_HPP_Y3A02IJX
 
 #include "common.hpp"
+#include <boost/filesystem.hpp>
 #include <SDL2/SDL.h>
 #include <unordered_map>
-#include <boost/filesystem.hpp>
 
 class Window;
 struct SDL_Renderer;

@@ -18,6 +18,14 @@ public:
 	RenderObjectManager();
 	virtual ~RenderObjectManager();
 
+	bool hasRenderObject(Entity entity) const {
+		return (m_renderObjects.find(entity) != m_renderObjects.end());
+	}
+
+	RenderObject getRenderObject(Entity entity) const {
+		return m_renderObjects.at(entity);
+	}
+
 	void updateRenderObject(Entity entity, ObjectDelta deltaType,
 			RenderObject ro);
 

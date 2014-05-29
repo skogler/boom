@@ -20,6 +20,10 @@ int main(int argc, char *argv[])
     // receive server seeds
 //    game.loadMap(seeds)
 
+    game.setup();
+
+    std::vector<RenderData> data = game.getRenderData();
+
     Uint32 startTime = SDL_GetTicks();
 
     while(!input.quit())
