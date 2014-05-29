@@ -6,6 +6,7 @@
 #include "KeyEvent.hpp"
 #include <map>
 #include <queue>
+#include "Game.hpp"
 
 class Input 
 {
@@ -14,14 +15,15 @@ class Input
         std::map<int, bool> last_keystate;
         std::queue<InputEvent> serverInput;
         bool q_state;
+        void sendInputEvent(UserActionType type);
         void sendKeyEvent(SDL_Keycode key_event);
         void sendMouseEvent();
-
+        int m_cur_player;
 
     public:
         void executeServerInput();
         void handleInput();
-        void initialize();
+        void initialize(Game &game);
         void processEvent( SDL_Event event );
         void handleConstantInput();        
         bool quit();

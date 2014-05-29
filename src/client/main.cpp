@@ -14,9 +14,9 @@ int main(int argc, char *argv[])
     IMG_Init(IMG_INIT_PNG);
     Renderer renderer(&window);
     Input input;
-    input.initialize();
     Game game;
 
+    input.initialize(game);
     // receive server seeds
 //    game.loadMap(seeds)
 

@@ -1,7 +1,8 @@
 #include "Input.hpp"
 
-void Input::initialize()
+void Input::initialize(Game &game)
 {
+    int m_cur_player = game.getCurrentPlayer();
     q_state = false;
     current_keystate[SDLK_w]  = false;
     current_keystate[SDLK_a]  = false;
@@ -96,6 +97,10 @@ void Input::executeServerInput()
     }
 }
 
+void Input::sendInputEvent(UserActionType type)
+{
+     InputEvent ie();
+}
 
 void Input::sendKeyEvent(SDL_Keycode key_event) 
 {                      
