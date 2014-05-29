@@ -9,21 +9,34 @@
 #define BLOCK_H_
 
 class BlockTexture;
-
-typedef enum BlockType_ {
-    WALL,
-    FLOOR,
-}BlockType;
+class Worldmap;
 
 class Block {
 public:
-    Block();
+
+    typedef enum BlockType_ {
+        WALL,
+        FLOOR,
+        NONE,
+    }BlockType;
+
+    Block(const BlockType& type, Worldmap* map, const int& x, const int& y);
     virtual ~Block();
+
+    void setType(const BlockType& type)
+    {
+        _type = type;
+    }
+    BlockType getType() const {
+        return _type;
+    }
+
 private:
 
     BlockType       _type;
     int             _hitPoints;
-    BlockTexture    *_texture;
+    Worldmap        *_worldmap;
+//    BlockTexture    *_texture;
     int             _x;
     int             _y;
 };
