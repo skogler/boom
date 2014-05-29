@@ -1,8 +1,13 @@
 cmake_minimum_required (VERSION 2.8)
 
-include_directories(.)
-FILE(GLOB_RECURSE SRCFILES *.cpp)
-add_executable(${SERVER_NAME} ${SRCFILES})
+set(src 
+    main.cpp
+    )
+
+set(headers
+    
+    )
+add_executable(${SERVER_NAME} ${headers} ${src})
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)

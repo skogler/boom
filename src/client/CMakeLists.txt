@@ -6,11 +6,15 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-include_directories(.)
-FILE(GLOB_RECURSE SRCFILES *.cpp)
-FILE(GLOB_RECURSE HEADERS *.hpp)
+set(src 
+    main.cpp
+    )
 
-add_executable(${CLIENT_NAME} ${HEADERS} ${SRCFILES})
+set(headers
+    
+    )
+
+add_executable(${CLIENT_NAME} ${headers} ${src})
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
