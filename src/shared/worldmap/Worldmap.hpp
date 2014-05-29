@@ -16,7 +16,7 @@ class Worldmap {
 public:
     Worldmap(const int &seed, const int& size_x, const int& size_y, const int& center_area);
 
-    Block* getBlock(const int& x, const int& y);
+    Block* getBlock(const int& x, const int& y) const;
     void saveImage();
 
     bool isCenter(const int& x, const int& y);
@@ -29,10 +29,10 @@ private:
     void _init(const int& size_x, const int& size_y);
     int  _smoothPerlin(int x, int y, float max);
 
-    std::vector<Block* > _world;
     int _size_x;
     int _size_y;
     int _center_area;
+    std::vector<Block* > _world;
 };
 
 #endif /* WORLDMAP_H_ */

@@ -67,7 +67,7 @@ GameDelta Game::loadMap(const Worldmap world) const
 	GameDelta delta;
 	for (int y = 0; y < 42; y++) {
 		for (int x = 0; x < 42; x++) {
-            Block *block = world.getBlock(x, y);
+            const Block *block = world.getBlock(x, y);
             if (block->getType() == Block::WALL)
             {
             	Entity new_entity = Entity::newEntity();
