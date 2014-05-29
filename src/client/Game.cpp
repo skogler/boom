@@ -80,9 +80,16 @@ GameDelta Game::loadMap(const Worldmap world) const
 	return delta;
 }
 
+void Game::setup()
+{
+	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Entity::newEntity());
+}
+
 Game::Game() :
-	m_currentState(GameState()),
-	m_entities()
+	m_currentState(GameState())
 {
 	// TODO Auto-generated constructor stub
 

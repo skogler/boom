@@ -17,10 +17,13 @@ public:
 	PositionManager();
 	virtual ~PositionManager();
 
+	std::vector<int> getRealms() const;
+	std::vector<Entity> getEntitiesOfRealm(int realm) const;
+
 private:
-	std::map<EntityId, Position> m_positions;
-	std::map<EntityId, BoundingBox> m_boundingBox;
-	std::map<EntityId, Orientation> m_orientations;
+	std::map<Entity, Position> m_positions;
+	std::map<Entity, BoundingBox> m_boundingBox;
+	std::map<Entity, Orientation> m_orientations;
 };
 
 #endif /* POSITIONMANAGER_HPP_ */

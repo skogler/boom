@@ -86,12 +86,23 @@ private:
 
 struct UserActions;
 
+typedef struct
+{
+	Entity entity;
+	Position position;
+	Orientation orientation;
+	RenderObject renderObject;
+} RenderData;
+
 class Game {
 public:
 	Game();
 	virtual ~Game();
 
 	GameDelta loadMap(const Worldmap world) const;
+	void setup();
+
+	std::vector<RenderData> getRenderData() const;
 
 	GameDelta stepGame(const UserActions *ua,
 						const double timeDelta) const;
@@ -111,7 +122,9 @@ public:
 
 private:
 	GameState m_currentState;
-	std::map<EntityId, Entity> m_entities;
+//	std::map<EntityId, Entity> m_entities;
+
+	std::vector<Entity> m_players;
 };
 
 #endif /* GAME_HPP_ */
