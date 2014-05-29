@@ -49,6 +49,7 @@ if (GLM_FOUND)
 endif()
 
 target_link_libraries(${CLIENT_NAME}
+    ${SHARED_NAME}
     ${SDL2_LIBRARIES}
     ${SDL2_IMAGE_LIBRARIES}
     ${SDL2_NET_LIBRARIES}

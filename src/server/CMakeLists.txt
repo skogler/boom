@@ -17,6 +17,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_NET_INCLUDE_DIRS})
 
 target_link_libraries(${SERVER_NAME}
+    ${SHARED_NAME}
     ${SDL2_LIBRARIES}
     ${SDL2_NET_LIBRARIES}
     )
