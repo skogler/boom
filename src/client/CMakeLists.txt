@@ -8,13 +8,16 @@ endif()
 
 set(src 
     main.cpp
+    Window.cpp
     )
 
 set(headers
+    Window.hpp
     
     )
 
 add_executable(${CLIENT_NAME} ${headers} ${src})
+include_directories(../shared)
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
