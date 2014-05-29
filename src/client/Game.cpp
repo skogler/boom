@@ -6,7 +6,8 @@
  */
 
 #include "Game.hpp"
- 
+#include "RenderObjectManager.hpp"
+#include "PositionManager.hpp"
 
 GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
 	GameDelta delta(*this);
@@ -62,6 +63,13 @@ GameDelta::GameDelta(Entity entity, BoundingBox bb) :
 	deltaBoundingBoxes[entity] = bb;
 }
 
+GameState::GameState() :
+		positionManager(new PositionManager()),
+		renderManager(new RenderObjectManager()),
+		collisionSystem(new CollisionSystem())
+{
+
+}
 
 GameDelta Game::loadMap(const Worldmap& world) const
 {

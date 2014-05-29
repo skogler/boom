@@ -8,6 +8,10 @@
 #ifndef RENDEROBJECTMANAGER_HPP_
 #define RENDEROBJECTMANAGER_HPP_
 
+#include <map>
+#include "RenderObject.hpp"
+#include "Entity.hpp"
+#include "Game.hpp"
 
 class RenderObjectManager {
 public:

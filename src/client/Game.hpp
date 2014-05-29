@@ -11,8 +11,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "PositionManager.hpp"
-#include "RenderObjectManager.hpp"
 #include "RenderObject.hpp"
 #include "CollisionSystem.hpp"
 
@@ -20,16 +18,14 @@
 #include "worldmap/Block.hpp"
 #include "time.h"
 
+class PositionManager;
+class RenderObjectManager;
+
 typedef int FrameEvents;
 
 class GameState {
 public:
-	GameState() : positionManager(new PositionManager()),
-		renderManager(new RenderObjectManager()),
-		collisionSystem(new CollisionSystem())
-	{
-
-	}
+	GameState();
 
 	PositionManager *getPositionManager() const { return positionManager; }
 	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
@@ -63,7 +59,7 @@ public:
 	GameDelta(Entity entity, Position pos);
 	GameDelta(Entity entity, Orientation orientation);
 	GameDelta(Entity entity, BoundingBox bb);
-//	GameDelta(Entity, RenderObject ro);
+	GameDelta(Entity, RenderObject ro);
 
 	GameDelta mergeDelta(const GameDelta &oldDelta) const;
 
