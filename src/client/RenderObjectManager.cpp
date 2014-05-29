@@ -6,6 +6,18 @@
  */
 
 #include "RenderObjectManager.hpp"
+#include "Game.hpp"
+
+void RenderObjectManager::updateRenderObject(Entity entity, ObjectDelta deltaType,
+		RenderObject ro)
+{
+	if (deltaType == OBJECT_REMOVED) {
+		delete m_renderObjects[entity];
+	} else
+	{
+		m_renderObjects[entity] = ro;
+	}
+}
 
 RenderObjectManager::RenderObjectManager() {
 	// TODO Auto-generated constructor stub

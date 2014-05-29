@@ -32,8 +32,8 @@ bool Worldmap::isCenter(const int& x, const int& y)
     int center_x = _size_x / 2;
     int center_y = _size_y / 2;
 
-    if ((x >= center_x - _center_area || x <= center_x + _center_area) &&
-        (y >= center_y - _center_area || y <= center_y + _center_area)) {
+    if ((x >= center_x - _center_area && x <= center_x + _center_area) &&
+        (y >= center_y - _center_area && y <= center_y + _center_area)) {
         return true;
     }
 

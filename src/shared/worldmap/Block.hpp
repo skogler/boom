@@ -8,6 +8,9 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
+#include <vector>
+#include <string>
+
 class BlockTexture;
 class Worldmap;
 
@@ -27,6 +30,7 @@ public:
     typedef enum BlockType_ {
         WALL,
         FLOOR,
+        BROKEN_WALL,
         NONE,
     }BlockType;
 
@@ -37,12 +41,13 @@ public:
     {
         _type = type;
     }
-    BlockType getType() const {
+    const BlockType getType() const {
         return _type;
     }
 
     int getNeighbors();
 
+    int getTextures(std::vector<std::string>&);
 
 private:
 

@@ -6,6 +6,7 @@
  */
 
 #include "Game.hpp"
+ 
 
 GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
 	GameDelta delta(*this);
@@ -62,7 +63,7 @@ GameDelta::GameDelta(Entity entity, BoundingBox bb) :
 }
 
 
-GameDelta Game::loadMap(const Worldmap world) const
+GameDelta Game::loadMap(const Worldmap& world) const
 {
 	GameDelta delta;
 	for (int y = 0; y < 42; y++) {
@@ -91,8 +92,14 @@ GameDelta Game::loadMap(const Worldmap world) const
 void Game::setup()
 {
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+
 	m_players.push_back(Entity::newEntity());
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+
 	m_players.push_back(Entity::newEntity());
 
 	Entity p1_bottom = Entity::newEntity();
@@ -130,16 +137,29 @@ void Game::applyGameDelta(GameDelta delta) {
 	{
 		m_currentState.getRenderObjectManager()->updateRenderObject(it->first, it->second.updateType, it->second.renderObject);
 	}
+
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+}
+
+int Game::getCurrentPlayer()
+{
+    return m_currentPlayer;
+}
+
+Entity Game::getPlayerByID(int id)
+{   
+   return m_players[id] ;
 }
 
 Game::Game() :
-	m_currentState(GameState())
+	m_currentState(GameState()), m_currentPlayer(0)
 {
 	// TODO Auto-generated constructor stub
 
 }
 
 Game::~Game() {
-	// TODO Auto-generated destructor stub
+
+    // TODO Auto-generated destructor stub
 }
 

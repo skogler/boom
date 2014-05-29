@@ -8,21 +8,14 @@
 #ifndef RENDEROBJECTMANAGER_HPP_
 #define RENDEROBJECTMANAGER_HPP_
 
+
 class RenderObjectManager {
 public:
 	RenderObjectManager();
 	virtual ~RenderObjectManager();
 
 	void updateRenderObject(Entity entity, ObjectDelta deltaType,
-			RenderObject ro)
-	{
-		if (deltaType == OBJECT_REMOVED) {
-			delete m_renderObjects[entity];
-		} else
-		{
-			m_renderObjects[entity] = ro;
-		}
-	}
+			RenderObject ro);
 
 	std::map<Entity, RenderObject> m_renderObjects;
 };

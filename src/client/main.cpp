@@ -14,16 +14,17 @@ int main(int argc, char *argv[])
     IMG_Init(IMG_INIT_PNG);
     Renderer renderer(&window);
     Input input;
-    input.initialize();
     Game game;
 
+    input.initialize(game);
     // receive server seeds
 //    game.loadMap(seeds)
 
     Uint32 startTime = SDL_GetTicks();
 
     while(!input.quit())
-    {                 
+    {   
+        input.executeServerInput();
         input.handleInput();
     	Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;

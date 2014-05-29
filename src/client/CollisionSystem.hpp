@@ -8,6 +8,9 @@
 #ifndef COLLISIONSYSTEM_HPP_
 #define COLLISIONSYSTEM_HPP_
 
+#include <vector>
+#include "Entity.hpp"
+
 class QuadTree;
 
 class CollisionSystem {

@@ -1,7 +1,8 @@
 #include "Input.hpp"
 
-void Input::initialize()
+void Input::initialize(Game &game)
 {
+    int m_cur_player = game.getCurrentPlayer();
     q_state = false;
     current_keystate[SDLK_w]  = false;
     current_keystate[SDLK_a]  = false;
@@ -77,9 +78,32 @@ void Input::handleConstantInput()
       
 }
 
+
+void Input::executeServerInput()
+{
+    while(!serverInput.empty())
+    {
+         InputEvent in = serverInput.front();
+         if(dynamic_cast<KeyEvent*>(&in))
+         {
+            KeyEvent *key = dynamic_cast<KeyEvent*>(&in);
+
+         }
+         else
+         {
+            MouseEvent *mouse = dynamic_cast<MouseEvent*>(&in);
+         }
+
+    }
+}
+
+void Input::sendInputEvent(UserActionType type)
+{
+     InputEvent ie();
+}
+
 void Input::sendKeyEvent(SDL_Keycode key_event) 
 {                      
-    KeyEvent ke(1, key_event);
     //TODO: network stuff
 }
 
@@ -88,7 +112,6 @@ void Input::sendMouseEvent()
     int x,y;
     SDL_GetMouseState(&x,&y);     
     //TODO: player id instead of 1
-    MouseEvent me(1,x,y);
    //TODO: network stuff
 }
 

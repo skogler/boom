@@ -18,6 +18,7 @@
 
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
+#include "time.h"
 
 typedef int FrameEvents;
 
@@ -100,7 +101,20 @@ private:
 //
 //}
 
-struct UserActions;
+enum UserActionType 
+{
+       MOVE_RIGHT,
+       MOVE_LEFT,
+       MOVE_TOP,
+       MOVE_DOWN,
+       SHOOT,
+       TURN
+};
+
+struct UserActions
+{                 
+    
+};
 
 typedef struct
 {
@@ -121,7 +135,7 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta loadMap(const Worldmap world) const;
+	GameDelta loadMap(const Worldmap& world) const;
 	void setup();
 
 	std::vector<RenderData> getRenderData() const;
@@ -141,14 +155,18 @@ public:
 
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
+    int getCurrentPlayer();
+    Entity getPlayerByID(int i);
 
     int getNumberOfPlayers() const;
 
 private:
 	GameState m_currentState;
+    int m_currentPlayer;
 //	std::map<EntityId, Entity> m_entities;
 
 	std::vector<Entity> m_players;
+	std::vector<Worldmap> m_player_map;
 };
 
 #endif /* GAME_HPP_ */
