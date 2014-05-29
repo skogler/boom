@@ -17,7 +17,7 @@ Window::Window (uint width, uint height, bool fullscreen)
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             width, height,
-            SDL_WINDOW_OPENGL);
+            flags);
 }
 
 Window::~Window()
