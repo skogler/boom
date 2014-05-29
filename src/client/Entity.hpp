@@ -14,10 +14,11 @@ class Entity {
 public:
 	static Entity newEntity();
 	const EntityId entityId;
+	Entity(const Entity &entity);
+	virtual ~Entity();
 
 private:
 	Entity();
-	virtual ~Entity();
 
 	static EntityId nextId;
 };

@@ -8,6 +8,21 @@
 #ifndef POSITION_H_
 #define POSITION_H_
 
+#include <vector>
+
+typedef struct {
+	double x;
+	double y;
+} Coords;
+
+class BoundingBox {
+private:
+	std::vector<Coords> polygon;
+
+public:
+	BoundingBox(Coords topLeft, Coords bottomLeft);
+};
+
 class Position {
 public:
 	Position();
@@ -15,7 +30,7 @@ public:
 
 private:
 	const int realm;
-	const double x, y, z;
+	const Coords coords;
 };
 
 class Orientation {

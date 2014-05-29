@@ -12,17 +12,6 @@
 #include "Position.hpp"
 #include "Entity.hpp"
 
-typedef int BoundingBox;
-
-class PositionChangeset {
-public:
-	PositionChangeset();
-	virtual ~PositionChangeset();
-
-private:
-	std::map<EntityId, Position> m_positions;
-};
-
 class PositionManager {
 public:
 	PositionManager();
