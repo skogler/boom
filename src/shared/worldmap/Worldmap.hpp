@@ -16,7 +16,7 @@ class Worldmap {
 public:
     Worldmap(const int &seed, const int& size_x, const int& size_y, const int& center_area);
 
-    const Block* getBlock(const int& x, const int& y) const;
+    Block* getBlock(const int& x, const int& y) const;
     void saveImage();
 
     bool isCenter(const int& x, const int& y);
