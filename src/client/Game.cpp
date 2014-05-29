@@ -80,6 +80,7 @@ GameDelta Game::loadMap(const Worldmap& world) const
             for (int i = 0; i < count; i++) {
                 // create RenderObjects
 		}
+		}
 	}
 
 	return delta;
