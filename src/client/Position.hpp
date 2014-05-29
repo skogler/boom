@@ -75,6 +75,12 @@ public:
 				getCoords().y + other.y);
 	}
 
+	Position operator=(const Coords &other) const
+	{
+		return Position(m_realm,
+				other.x, other.y);
+	}
+
 private:
 	const int m_realm;
 	const Coords m_coords;
@@ -97,6 +103,7 @@ public:
     {
 		return Orientation(getAngle() + other.getAngle());
     }
+
 
 private:
 	const double m_angle;

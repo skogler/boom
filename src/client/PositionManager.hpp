@@ -22,7 +22,7 @@ public:
 
 	void updatePosition(Entity entity, Coords coord)
 	{
-		if (m_positions.at(entity))
+		if (m_positions.find(entity) == m_positions.end())
 		{
 			m_positions[entity] += coord;
 		} else
@@ -33,7 +33,7 @@ public:
 
 	void updateOrientation(Entity entity, Orientation orientation)
 	{
-		if (m_orientations.at(entity))
+		if (m_orientations.find(entity) == m_orientations.end())
 		{
 			m_orientations[entity] += orientation;
 		} else

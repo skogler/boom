@@ -7,6 +7,13 @@
 
 #include "RenderObject.hpp"
 
+RenderObject::RenderObject() :
+	m_fileName(""),
+	m_zLevel(0),
+	m_alpha(1)
+{
+}
+
 RenderObject::RenderObject(std::string filename) :
 	m_fileName(filename),
 	m_zLevel(0),

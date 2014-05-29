@@ -12,6 +12,7 @@
 
 class RenderObject {
 public:
+	RenderObject();
 	RenderObject(std::string filename);
     RenderObject(std::string fileName, int zLevel, double alpha);
 	virtual ~RenderObject();
