@@ -24,7 +24,44 @@ Block::~Block()
     // TODO Auto-generated destructor stub
 }
 
+int Block::getTextures(std::vector<std::string>& textures)
+{
+    int count = textures.size();;
+    if (getType() == FLOOR || getType() == BROKEN_WALL) {
+        textures.push_back("resources/textures/floor/floor_steel.png");
+    }
+    else if (getType() == WALL) {
+        textures.push_back("resources/textures/wall/32_wall_basic.png");
 
+        if (getNeighbors() && NEIGHBOR_DOWN) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_S.png");
+        }
+        if (getNeighbors() && NEIGHBOR_UP) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_N.png");
+        }
+        if (getNeighbors() && NEIGHBOR_LEFT) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_W.png");
+        }
+        if (getNeighbors() && NEIGHBOR_RIGHT) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_E.png");
+        }
+        if (getNeighbors() && NEIGHBOR_DOWN_LEFT) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_SW.png");
+        }
+        if (getNeighbors() && NEIGHBOR_DOWN_RIGHT) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_SE.png");
+        }
+        if (getNeighbors() && NEIGHBOR_UP_RIGHT) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_NE.png");
+        }
+        if (getNeighbors() && NEIGHBOR_UP_LEFT) {
+            textures.push_back("resources/textures/wall/wall_easy/wall_NW.png");
+        }
+    }
+
+    return textures.size() - count;
+
+}
 
 
 int Block::getNeighbors()
