@@ -2,6 +2,8 @@
 #define INPUT_HPP_EYIAZASI
 
 #include <SDL2/SDL.h>
+#include "MouseEvent.hpp"
+#include "KeyEvent.hpp"
 #include <map>
 class Input 
 {

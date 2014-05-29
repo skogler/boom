@@ -42,11 +42,9 @@ void Input::processEvent(SDL_Event event)
       case SDL_KEYUP:
                 current_keystate[event.key.keysym.sym] = false; 
                 break;
-      case SDL_MOUSEMOTION:
-                
-                break;
-      case SDL_MOUSEBUTTONDOWN:
-                sendKeyEvent(SDLK_SPACE);
+      case SDL_MOUSEBUTTONDOWN:     
+                if(event.button.button == SDL_BUTTON_LEFT)
+                   sendMouseEvent();
                 break;
       case SDL_QUIT:
                 q_state = true;
@@ -58,11 +56,12 @@ void Input::processEvent(SDL_Event event)
         last_keystate[event.key.keysym.sym] = current_keystate[event.key.keysym.sym];
    }
    handleConstantInput();
-   
-
 
    //Mouse
-    
+   if(event.type == SDL_MOUSEMOTION)
+   {
+      //TODO: maybe transmit  mouse pos without shoot action? 
+   }
 
 }        
 
@@ -79,13 +78,17 @@ void Input::handleConstantInput()
 }
 
 void Input::sendKeyEvent(SDL_Keycode key_event) 
-{
-    key_event = 0;
+{                      
+    KeyEvent ke(1, key_event);
     //TODO: network stuff
 }
 
 void Input::sendMouseEvent()
 {
+    int x,y;
+    SDL_GetMouseState(&x,&y);     
+    //TODO: player id instead of 1
+    MouseEvent me(1,x,y);
    //TODO: network stuff
 }
 

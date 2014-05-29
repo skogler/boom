@@ -6,10 +6,13 @@
 class MouseEvent : InputEvent 
 {
     private:
-   
+        int m_x;
+        int m_y;
     public:
-        KeyEvent(int uid) : InputEvent(uid) {} 
-
+        MouseEvent(int uid, int x, int y ); 
+        virtual ~MouseEvent();
+        int getX();
+        int getY();
 };
 
 
