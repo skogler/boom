@@ -11,12 +11,15 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <queue>
 #include "PositionManager.hpp"
 #include "RenderObjectManager.hpp"
 #include "RenderObject.hpp"
-
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
+//class Input;
+//class InputEvent;
+
 
 typedef int FrameEvents;
 
@@ -84,7 +87,7 @@ private:
 //
 //}
 
-enum UserActionType 
+typedef enum 
 {
        MOVE_RIGHT,
        MOVE_LEFT,
@@ -92,7 +95,7 @@ enum UserActionType
        MOVE_DOWN,
        SHOOT,
        TURN
-};
+}UserActionType;
 
 struct UserActions
 {                 
@@ -117,8 +120,8 @@ public:
 
 	std::vector<RenderData> getRenderData() const;
 
-	GameDelta stepGame(const UserActions *ua,
-						const double timeDelta) const;
+ //   GameDelta stepGame(const std::queue<InputEvent> *ie,
+ //   					const double timeDelta) const;
 	GameDelta runSystems(const GameDelta gd) const;
 
 //    GameDelta entitySetPosition(Entity entity, Position newPosition) const;
@@ -133,7 +136,7 @@ public:
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
     int getCurrentPlayer();
-    Entity getPlayerByID(int i);
+    Entity getPlayerByID(int i) const;
 
 private:
 	GameState m_currentState;

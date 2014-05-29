@@ -2,25 +2,26 @@
 #define INPUT_HPP_EYIAZASI
 
 #include <SDL2/SDL.h>
-#include "MouseEvent.hpp"
-#include "KeyEvent.hpp"
 #include <map>
 #include <queue>
 #include "Game.hpp"
+#include "InputEvent.hpp"
 
 class Input 
 {
     private:
         std::map<int, bool> current_keystate;
         std::map<int, bool> last_keystate;
-        std::queue<InputEvent> serverInput;
+        std::queue<InputEvent> m_serverInput;
         bool q_state;
         void sendInputEvent(UserActionType type);
+
         void sendKeyEvent(SDL_Keycode key_event);
         void sendMouseEvent();
         int m_cur_player;
 
-    public:
+    public:                                     
+        std::queue<InputEvent> getServerInput();
         void executeServerInput();
         void handleInput();
         void initialize(Game &game);
