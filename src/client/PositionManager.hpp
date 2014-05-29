@@ -17,12 +17,54 @@ public:
 	PositionManager();
 	virtual ~PositionManager();
 
-	std::vector<int> getRealms() const;
-	std::vector<Entity> getEntitiesOfRealm(int realm) const;
+	int getNumRealms() const
+    {
+        return 4;
+    }
+	std::vector<Entity> getEntitiesOfRealm(int realm) const
+    {
+        std::vector<Entity> results;
+        for (auto& entry : m_positions) 
+        {
+            if (entry.second.getRealm() == realm) {
+                results.push_back(entry.first);
+            }
+        }
+        return results;
+    }
+
+	bool hasPosition(Entity entity) const
+	{
+		if (m_positions.find(entity) == m_positions.end())
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	bool hasOrientation(Entity entity) const
+	{
+		if (m_orientations.find(entity) == m_orientations.end())
+		{
+			return true;
+		}
+		return false;
+	}
+
+	Position getPosition(Entity entity) const
+	{
+		return m_positions.at(entity);
+	}
+
+	Orientation getOrientation(Entity entity) const
+	{
+		return m_orientations.at(entity);
+	}
 
 	void updatePosition(Entity entity, Coords coord)
 	{
-		if (m_positions.find(entity) == m_positions.end())
+		if (m_positions.find(entity) != m_positions.end())
 		{
 			m_positions[entity] += coord;
 		} else
@@ -33,7 +75,7 @@ public:
 
 	void updateOrientation(Entity entity, Orientation orientation)
 	{
-		if (m_orientations.find(entity) == m_orientations.end())
+		if (m_orientations.find(entity) != m_orientations.end())
 		{
 			m_orientations[entity] += orientation;
 		} else

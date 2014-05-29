@@ -10,7 +10,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 set(WARNINGS "-fcheck-new -Wnarrowing -Woverloaded-virtual -Wshadow -Wunused-parameter -Weffc++")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_CONSTANT_MACROS -Wall -std=c++11 ${WARNINGS} -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUNICODE -D__STDC_CONSTANT_MACROS -Wall -std=c++11 ${WARNINGS} -pthread")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -g3")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 

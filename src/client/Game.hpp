@@ -63,20 +63,20 @@ public:
 
 	GameDelta mergeDelta(const GameDelta &oldDelta) const;
 
-	std::map<Entity, Position> getPositionsDelta() const
+	const std::map<Entity, Position>& getPositionsDelta() const
     {
 		return deltaPositions;
     }
-	std::map<Entity, Orientation> getOrientationsDelta() const
+	const std::map<Entity, Orientation>& getOrientationsDelta() const
 	{
 		return deltaOrientations;
 	}
-	std::map<Entity, BoundingBox> getBoundingBoxDelta() const
+	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
 		{
 		return deltaBoundingBoxes;
 		}
 
-	std::map<Entity, RenderObjectDelta> getRenderObjectsDelta() const
+	const std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta() const
 		{
 		return deltaRenderObjects;
 		}
@@ -123,7 +123,7 @@ typedef struct
 typedef struct
 {
 	int realm;
-	RealmRenderData realmData;
+	std::vector<RealmRenderData> realmData;
 } RenderData;
 
 class Game {

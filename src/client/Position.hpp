@@ -81,6 +81,11 @@ public:
 				other.x, other.y);
 	}
 
+    int getRealm() const
+    {
+        return m_realm;
+    }
+
 private:
 	const int m_realm;
 	const Coords m_coords;
