@@ -40,7 +40,7 @@ void Renderer::loadAllTextures()
     }
     for (auto iter = fs::recursive_directory_iterator(m_texture_dir); 
             iter != fs::recursive_directory_iterator(); iter++) {
-        if (fs::is_regular_file(iter->path())) {
+        if (!fs::is_directory(iter->path())) {
             loadTexture(iter->path());
         }
     }
@@ -60,8 +60,15 @@ void Renderer::loadTexture(const fs::path& path)
         std::cerr << "Error loading texture " << path << std::endl;
         return;
     }
-    std::cout << "Loaded texture " << path.relative_path().c_str() << std::endl;
-    m_textures[path.relative_path().c_str()] = tex;
+    string basepath = m_texture_dir.c_str();
+    string name = path.parent_path().c_str();
+    name.erase(0, basepath.length());
+    if (name[0] == '/')
+        name.erase(0, 1);
+    name.append(path.stem().c_str());
+    
+    std::cout << "Loaded texture " << name << std::endl;
+    m_textures[name] = tex;
 }
 
 void Renderer::renderScene()
@@ -72,5 +79,5 @@ void Renderer::renderScene()
     //viewport.w=900;
     //viewport.h=400;
     //SDL_RenderSetViewport(m_renderer, &viewport);
-    //SDL_RenderCopy(m_renderer, m_textures["foo.png"], nullptr, nullptr);
+    SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
 }
