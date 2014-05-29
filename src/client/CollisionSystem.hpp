@@ -8,10 +8,17 @@
 #ifndef COLLISIONSYSTEM_HPP_
 #define COLLISIONSYSTEM_HPP_
 
+class QuadTree;
+
 class CollisionSystem {
 public:
 	CollisionSystem();
 	virtual ~CollisionSystem();
+
+	void checkCollisions(std::vector<Entity> entities);
+
+private:
+	QuadTree *qt;
 };
 
 #endif /* COLLISIONSYSTEM_HPP_ */

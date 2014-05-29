@@ -9,6 +9,7 @@
 #define POSITION_H_
 
 #include <vector>
+#include <cmath>
 
 typedef struct {
 	double x;
@@ -21,7 +22,16 @@ private:
 
 public:
 	BoundingBox() : m_polygon() {}
-	BoundingBox(Coords topLeft, Coords bottomLeft);
+	BoundingBox(Coords topLeft, Coords bottomRight) :
+		m_polygon()
+	{
+		m_polygon.push_back(Coords{topLeft.x, topLeft.y});
+		m_polygon.push_back(Coords{bottomRight.x, topLeft.y});
+		m_polygon.push_back(Coords{bottomRight.x, bottomRight.y});
+		m_polygon.push_back(Coords{topLeft.x, bottomRight.y});
+	}
+
+	BoundingBox rotate(Coords origin, double angle);
 };
 
 class Position {

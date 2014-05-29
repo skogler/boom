@@ -73,6 +73,14 @@ GameDelta Game::loadMap(const Worldmap world) const
             	Entity new_entity = Entity::newEntity();
             	delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject("baseWall", 1, 1)));
+
+            	for (int i = 0; i < 8; i++) {
+            		Entity overlay = Entity::newEntity();
+            		delta = delta.mergeDelta(GameDelta(overlay, Position(-1, x, y)));
+            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
+            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
+            	}
             }
 		}
 	}

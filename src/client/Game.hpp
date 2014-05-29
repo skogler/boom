@@ -14,17 +14,12 @@
 #include "PositionManager.hpp"
 #include "RenderObjectManager.hpp"
 #include "RenderObject.hpp"
+#include "CollisionSystem.hpp"
 
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
 
 typedef int FrameEvents;
-
-//class Behaviour {
-//private:
-//	Behaviour *stepBehaviour(float timeDelta);
-//	double remainingTime;
-//};
 
 class GameState {
 public:
@@ -35,10 +30,7 @@ public:
 private:
 	PositionManager positionManager;
 	RenderObjectManager renderManager;
-
-//	std::map<Entity, Behaviour*> behaviours;
-//
-//	std::vector<FrameEvents> *frameEvents; // frame events
+	CollisionSystem collisionSystem;
 };
 
 typedef enum {
@@ -92,6 +84,12 @@ typedef struct
 	Position position;
 	Orientation orientation;
 	RenderObject renderObject;
+} RealmRenderData;
+
+typedef struct
+{
+	int realm;
+	RealmRenderData realmData;
 } RenderData;
 
 class Game {
@@ -119,6 +117,8 @@ public:
 
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
+
+    int getNumberOfPlayers() const;
 
 private:
 	GameState m_currentState;
