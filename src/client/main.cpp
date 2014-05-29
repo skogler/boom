@@ -1,4 +1,8 @@
 #include <SDL2/SDL.h>
+#include <SDL_image.h>
+
+#include <assert.h>
+
 #include "Window.hpp"
 #include "Renderer.hpp"
 #include "Game.hpp"
@@ -6,7 +10,8 @@
 
 int main(int argc, char *argv[])
 {
-    Window window(640, 480, false);
+    Window window(640, 480, true);
+    IMG_Init(IMG_INIT_PNG);
     Renderer renderer(&window);
     Input input;
     input.initialize();
@@ -31,6 +36,7 @@ int main(int argc, char *argv[])
     	startTime = newTime;
     	// receive server actions
         renderer.startFrame();
+        renderer.renderScene();
         renderer.endFrame();
     }
 

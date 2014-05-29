@@ -73,6 +73,12 @@ if (GLEW_FOUND)
     target_link_libraries(${CLIENT_NAME} ${GLEW_LIBRARY})
 endif()
 
+find_package(Boost 1.49.0 COMPONENTS system filesystem REQUIRED)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    target_link_libraries(${CLIENT_NAME} ${Boost_LIBRARIES})
+endif()
+
 target_link_libraries(${CLIENT_NAME}
     ${SHARED_NAME}
     ${SDL2_LIBRARIES}

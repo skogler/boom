@@ -3,6 +3,8 @@
 
 #include "common.hpp"
 #include <SDL2/SDL.h>
+#include <unordered_map>
+#include <boost/filesystem.hpp>
 
 class Window;
 struct SDL_Renderer;
@@ -16,12 +18,18 @@ public:
     virtual ~Renderer ();
 
     inline void startFrame();
+    void renderScene();
     inline void endFrame();
 
-private:
-    Window* m_window;
     SDL_Renderer* m_renderer;
-    
+
+private:
+    void loadAllTextures();
+    void loadTexture(const string& name);
+
+    Window* m_window;
+    std::unordered_map<string, SDL_Texture*> m_textures;
+    boost::filesystem::path m_texture_dir;
 };
 
 void Renderer::startFrame()
