@@ -14,6 +14,16 @@ void Input::initialize()
     last_keystate[SDLK_s] = false;
 }     
 
+void Input::handleInput()
+{
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+    {
+        processEvent(event);
+        handleConstantInput();
+    }               
+
+}
 
 
 void Input::processEvent(SDL_Event event)
@@ -70,6 +80,7 @@ void Input::handleConstantInput()
 
 void Input::sendKeyEvent(SDL_Keycode key_event) 
 {
+    key_event = 0;
     //TODO: network stuff
 }
 

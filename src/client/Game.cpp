@@ -7,7 +7,10 @@
 
 #include "Game.hpp"
 
-Game::Game() {
+Game::Game() :
+	m_currentState(GameState()),
+	m_entities()
+{
 	// TODO Auto-generated constructor stub
 
 }

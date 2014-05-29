@@ -10,8 +10,10 @@
 
 #include <map>
 #include <vector>
+#include <string>
 #include "PositionManager.hpp"
 #include "RenderObjectManager.hpp"
+#include "RenderObject.hpp"
 
 typedef int FrameEvents;
 
@@ -22,19 +24,37 @@ typedef int FrameEvents;
 //};
 
 class GameState {
+public:
+	GameState() : positionManager(PositionManager()),
+		renderManager(RenderObjectManager()) {
+
+	}
 private:
-	PositionManager *positionManager;
-	RenderObjectManager *renderManager;
+	PositionManager positionManager;
+	RenderObjectManager renderManager;
 
 //	std::map<Entity, Behaviour*> behaviours;
 //
 //	std::vector<FrameEvents> *frameEvents; // frame events
 };
 
+typedef enum {
+	OBJECT_ADDED,
+	OBJECT_REMOVED,
+	OBJECT_UPDATED
+} ObjectDelta;
+
+class RenderObjectDelta {
+	ObjectDelta updateType;
+	RenderObject renderObject;
+};
+
 class GameDelta {
 private:
 	std::map<Entity, Position> deltaPositions;
 	std::map<Entity, Orientation> deltaOrientations;
+	std::map<Entity, BoundingBox> deltaBoundingBoxes;
+	std::map<Entity, RenderObjectDelta> deltaRenderObjects;
 };
 
 
@@ -46,20 +66,31 @@ private:
 //
 //}
 
+struct UserActions;
+
 class Game {
 public:
 	Game();
 	virtual ~Game();
-//	GameDelta *stepGame(const UserActions *ua,
-//						const double timeDelta) const;
-//	pair<GameDelta, Events*> runSystems(const GameDelta *gd) const;
+	GameDelta stepGame(const UserActions *ua,
+						const double timeDelta) const;
+	GameDelta runSystems(const GameDelta gd) const;
 
 //    GameDelta entitySetPosition(Entity entity, Position newPosition) const;
     GameDelta entityTranslate(Entity entity, Position delta) const;
     GameDelta entityRotate(Entity entity, Orientation orientation) const;
+    GameDelta entitySetBoundingBox(Entity entity, BoundingBox bb) const;
+    GameDelta entitySetRenderObject(Entity entity, RenderObject ro) const;
+
+    // update game state
+    void applyGameDelta(GameDelta gd);
+
+    Entity getEntityById(EntityId id) const;
+    Entity getEntityByName(std::string name) const;
 
 private:
-	GameState currentState;
+	GameState m_currentState;
+	std::map<EntityId, Entity> m_entities;
 };
 
 #endif /* GAME_HPP_ */

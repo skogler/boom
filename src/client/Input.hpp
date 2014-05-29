@@ -13,6 +13,7 @@ class Input
         void sendMouseEvent();
 
     public:
+        void handleInput();
         void initialize();
         void processEvent( SDL_Event event );
         void handleConstantInput();        
