@@ -54,5 +54,6 @@ if (GLEW_FOUND)
 endif()
 
 target_link_libraries(${CLIENT_NAME}
+    ${SHARED_NAME}
     ${SDL2_LIBRARIES}
 )
