@@ -195,13 +195,29 @@ void Game::applyGameDelta(GameDelta delta) {
 
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
-
+/*
+GameDelta Game::stepGame(const std::queue<InputEvent> *ie, const double timeDelta) const 
+{               
+    GameDelta delta;
+    while(!ie->empty())
+    {                     
+        InputEvent input = ie->front();
+        switch(input.getType())
+        {
+            case MOVE_RIGHT:
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, 34, 0))); //TODO: get position
+                break;
+        }
+    }
+    return delta;
+}
+*/
 int Game::getCurrentPlayer()
 {
     return m_currentPlayer;
 }
 
-Entity Game::getPlayerByID(int id)
+Entity Game::getPlayerByID(int id) const
 {   
    return m_players[id] ;
 }

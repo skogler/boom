@@ -29,17 +29,20 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-        input.executeServerInput();
-        input.handleInput();
     	Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;
-    	while (frameTime > 16) {
-//    		GameDelta delta = game.stepGame(nullptr, 16);
+    	while (frameTime > 16)
+        {
+      //  	GameDelta delta = game.stepGame( input.getServerInput(), 16.f);
     		frameTime -= 16;
 //    		game.applyGameDelta(delta);
     	}
     	startTime = newTime;
     	// receive server actions
+        
+        input.handleInput();
+        
+
         renderer.startFrame();
         renderer.renderScene();
         renderer.endFrame();

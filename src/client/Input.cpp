@@ -1,4 +1,5 @@
 #include "Input.hpp"
+#include "InputEvent.hpp"
 
 void Input::initialize(Game &game)
 {
@@ -81,25 +82,12 @@ void Input::handleConstantInput()
 
 void Input::executeServerInput()
 {
-    while(!serverInput.empty())
-    {
-         InputEvent in = serverInput.front();
-         if(dynamic_cast<KeyEvent*>(&in))
-         {
-            KeyEvent *key = dynamic_cast<KeyEvent*>(&in);
-
-         }
-         else
-         {
-            MouseEvent *mouse = dynamic_cast<MouseEvent*>(&in);
-         }
-
-    }
 }
 
 void Input::sendInputEvent(UserActionType type)
 {
-     InputEvent ie();
+     // InputEvent ie(m_cur_player, type);
+     //TODO: send it
 }
 
 void Input::sendKeyEvent(SDL_Keycode key_event) 
@@ -111,10 +99,14 @@ void Input::sendMouseEvent()
 {
     int x,y;
     SDL_GetMouseState(&x,&y);     
-    //TODO: player id instead of 1
    //TODO: network stuff
 }
 
+std::queue<InputEvent> Input::getServerInput()
+{
+    return m_serverInput;
+
+}
 
 bool Input::quit()
 { 
