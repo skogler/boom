@@ -110,7 +110,7 @@ void Worldmap::_init(const int& size_x, const int& size_y)
     }
 }
 
-const Block* Worldmap::getBlock(const int& x, const int& y) const
+Block* Worldmap::getBlock(const int& x, const int& y) const
 {
     int x_coord = x % _size_x;
     int y_coord = y % _size_y;

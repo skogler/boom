@@ -25,7 +25,7 @@ public:
 
 private:
     void loadAllTextures();
-    void loadTexture(const string& name);
+    void loadTexture(const boost::filesystem::path& path);
 
     Window* m_window;
     std::unordered_map<string, SDL_Texture*> m_textures;
