@@ -69,12 +69,12 @@ void Renderer::loadTexture(const fs::path& path)
 void Renderer::updateViewports() 
 {
     int players = m_game->getNumberOfPlayers();
-    std::pair<uint, uint> w_size = m_window->getSize();
+    auto w_size = m_window->getSize();
 
     m_viewports.clear();
     m_viewports.reserve(players);
-    int w = static_cast<int>(w_size.second / 2);
-    int h = static_cast<int>(players <= 2 ? w_size.first : w_size.first / 2);
+    int w = w_size.first / 2;
+    int h = players <= 2 ? w_size.second : w_size.second / 2;
     
     m_viewports.push_back(SDL_Rect{0,0,w,h});
     m_viewports.push_back(SDL_Rect{w,0,w,h});
@@ -97,7 +97,6 @@ void Renderer::renderScene()
             auto& tex = m_textures.at(renderObject.m_fileName);
             auto pos = state.getPositionManager().getPosition(renderObject.m_entity);
             int realm = pos.getRealm();
-            std::cout << realm << std::endl;
             if (realm >= 0)
                 SDL_RenderSetViewport(m_renderer, &m_viewports[realm]);
             else

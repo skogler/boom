@@ -82,6 +82,7 @@ public:
 	void updatePosition(Entity entity, int realm, Coords coords);
 	void updateOrientation(Entity entity, Orientation orientation);
     void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro);
+    void updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo);
 
     void addBehaviour(Entity entity, const Behaviour *behaviour)
     {
@@ -175,7 +176,7 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta loadMap(int realm, const Worldmap& world) const;
+	GameDelta& loadMap(int realm, const Worldmap& world, GameDelta& delta) const;
 	void setup();
 
 	std::vector<RenderData> getRenderData() const;

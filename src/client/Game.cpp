@@ -13,6 +13,7 @@
 #include "PositionManager.hpp"
 #include "InputEvent.hpp"    
 #include "CollisionSystem.hpp"
+#include "Position.hpp"
 
 GameState::GameState() :
 		positionManager(new PositionManager()),
@@ -35,6 +36,11 @@ void GameState::updateOrientation(Entity entity, Orientation orientation)
 void GameState::updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro)
 {
 	renderManager->updateRenderObject(deltaType, ro);
+}
+
+void GameState::updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo)
+{
+	positionManager->updateBoundingBox(entity, bo);
 }
 
 bool GameState::isBullet(Entity entity) const
@@ -82,17 +88,22 @@ GameDelta Game::runSystems(const GameDelta gd) const
 	return afterCollision;
 }
 
-GameDelta Game::loadMap(int realm, const Worldmap& world) const
+GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
 {
-	GameDelta delta;
+    const double BLOCK_SIZE = 0.05;
 	for (int y = 0; y < 42; y++) {
 		for (int x = 0; x < 42; x++) {
             const Block *block = world.getBlock(x, y);
+            Coords topLeft = {x * BLOCK_SIZE, y * BLOCK_SIZE};
+            Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
+            Entity new_entity = Entity::newEntity();
+
+            delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
+            delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+            delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
+
             if (block->getType() == Block::WALL)
             {
-            	Entity new_entity = Entity::newEntity();
-            	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
             	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
 
 //            	for (int i = 0; i < 8; i++) {
@@ -104,9 +115,6 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             }
             else
             {
-            	Entity new_entity = Entity::newEntity();
-            	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
             	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "floor/floor_steel", 1, 1)));
             }
 		}
@@ -134,7 +142,7 @@ void Game::setup()
 	GameDelta delta;
 	for (int i = 0; i < m_currentState.getPositionManager().getNumRealms(); i++)
 	{
-		loadMap(i, m_player_map[i]);
+		delta = loadMap(i, m_player_map[i], delta);
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
