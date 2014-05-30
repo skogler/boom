@@ -214,6 +214,7 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
 
 GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) const 
 {               
+    printf("-gamestep-\n");
     GameDelta delta;
     while(!ie->empty())
     {                     
