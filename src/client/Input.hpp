@@ -28,6 +28,7 @@ class Input
 
         UserActionType mapKeyToAction(SDL_Keycode kc);
         void sendInputEvent(UserActionType type);
+        void sendInputEvent(UserActionType type, int x, int y);
 };
 
 #endif /* end of include guard: INPUT_HPP_EYIAZASI */

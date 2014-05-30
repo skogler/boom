@@ -113,6 +113,11 @@ void Input::sendInputEvent(UserActionType type)
      //TODO: send it
 }
 
+void Input::sendInputEvent(UserActionType, int x, int y)
+{
+
+}
+
 std::queue<InputEvent>& Input::getServerInput()
 {
     return m_serverInput;
