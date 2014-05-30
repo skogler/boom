@@ -186,6 +186,7 @@ public:
     Player getPlayerByID(int i) const;
 
     int getNumberOfPlayers() const;
+    inline const GameState& getCurrentGameState() const;
 
 private:
 	GameState m_currentState;
@@ -196,4 +197,8 @@ private:
 	std::vector<Worldmap> m_player_map;
 };
 
+const GameState& getCurrentGameState() const
+{
+    return m_currentState;
+}
 #endif /* GAME_HPP_ */
