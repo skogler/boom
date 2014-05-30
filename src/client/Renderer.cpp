@@ -104,7 +104,6 @@ void Renderer::updateCameras()
 void Renderer::renderScene()
 {
     SDL_RenderSetViewport(m_renderer, nullptr);
-    SDL_RenderCopy(m_renderer, m_textures.at("foo")->m_texture, nullptr, nullptr);
 
     const GameState& state = m_game->getCurrentGameState();
     for(auto& renderObject : state.getRenderObjectManager().m_zSortedRenderObjects)
