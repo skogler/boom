@@ -60,18 +60,19 @@ public:
 				getCoords().y + other.getCoords().y);
 	}
 
-	Position operator+=(const Position &other) const
+	const Position &operator+=(const Position &other)
     {
-		return Position(m_realm,
-				getCoords().x + other.getCoords().x,
-				getCoords().y + other.getCoords().y);
+		m_coords.x += other.getCoords().x;
+		m_coords.y += other.getCoords().y;
+		return *this;
     }
 
-	Position operator+=(const Coords &other) const
+	const Position &operator+=(const Coords &other)
 	{
-		return Position(m_realm,
-				getCoords().x + other.x,
-				getCoords().y + other.y);
+		m_coords.x += other.x;
+		m_coords.y += other.y;
+
+		return *this;
 	}
 
 	Position& operator=(const Coords &other)
@@ -93,9 +94,10 @@ public:
 
 	double getAngle() const { return m_angle; }
 
-	Orientation operator+=(const Orientation &other) const
+	const Orientation &operator+=(const Orientation &other)
     {
-		return Orientation(getAngle() + other.getAngle());
+		m_angle += other.getAngle();
+		return *this;
     }
 
 

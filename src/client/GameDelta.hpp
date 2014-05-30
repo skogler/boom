@@ -14,6 +14,8 @@
 #include "Entity.hpp"
 #include "Health.hpp"
 
+class Behaviour;
+
 #include <map>
 #include <vector>
 #include <memory>
@@ -28,7 +30,8 @@ public:
 		deltaOrientations(),
 		deltaBoundingBoxes(),
 		deltaRenderObjects(),
-		deltaHealth()
+		deltaHealth(),
+		deltaBehaviours()
 	{}
 
 	GameDelta(const GameDelta &src);
@@ -38,6 +41,10 @@ public:
 	GameDelta(Entity entity, BoundingBox bb);
 	GameDelta(Entity entity, Health health);
 	GameDelta(Entity, RenderObject ro);
+	GameDelta(Entity entity, const Behaviour *behaviour) : GameDelta()
+	{
+		deltaBehaviours[entity].push_back(behaviour);
+	}
 
 	void purgePosition(Entity entity)
 	{
@@ -74,6 +81,7 @@ private:
 	std::map<Entity, Orientation> deltaOrientations;
 	std::map<Entity, BoundingBox> deltaBoundingBoxes;
 	std::map<Entity, Health> deltaHealth;
+	std::map<Entity, std::vector<const Behaviour *> > deltaBehaviours;
 	std::map<Entity, shared_ptr<RenderObjectDelta>> deltaRenderObjects;
 };
 
