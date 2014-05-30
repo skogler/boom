@@ -83,7 +83,11 @@ public:
         if (_error) {
             return false;
         }
-        int numready = SDLNet_CheckSockets(_set, 100);
+        if (_messages.getNumMessages() > 0) {
+            return true;
+        }
+
+        int numready = SDLNet_CheckSockets(_set, 1);
         if (numready == -1) {
             printf("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
             _error = true;
@@ -99,6 +103,7 @@ public:
     {
         return _error;
     }
+
 
 private:
     BoomSession(const BoomSession& other);
