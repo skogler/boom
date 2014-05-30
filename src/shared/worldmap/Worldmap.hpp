@@ -21,6 +21,9 @@ public:
 
     bool isCenter(const int& x, const int& y);
 
+    bool generated() {
+        return _generated;
+    }
     virtual ~Worldmap();
 
     int _size_x;
@@ -34,6 +37,7 @@ private:
 
     int _center_area;
     std::vector<Block* > _world;
+    bool _generated;
 };
 
 #endif /* WORLDMAP_H_ */

@@ -10,11 +10,12 @@
 
 Block::Block(const BlockType& type, Worldmap* map, const int& x, const int& y) :
 _type(type),
-_worldmap(map),
 _x(x),
 _y(y),
 _neighbors(-1)
 {
+    _worldmap = map;
+    _neighbors = 0; // TODO
     // TODO Auto-generated constructor stub
 
 }
@@ -26,36 +27,39 @@ Block::~Block()
 
 int Block::getTextures(std::vector<std::string>& textures)
 {
+    if (_worldmap == NULL || _worldmap->generated() == false) {
+        return 0;
+    }
     int count = textures.size();;
     if (getType() == FLOOR || getType() == BROKEN_WALL) {
-        textures.push_back("resources/textures/floor/floor_steel.png");
+        textures.push_back("floor/floor_steel");
     }
     else if (getType() == WALL) {
-        textures.push_back("resources/textures/wall/32_wall_basic.png");
+        textures.push_back("wall/wall_simple/wall_basic");
 
         if (getNeighbors() && NEIGHBOR_DOWN) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_S.png");
+            textures.push_back("wall/wall_simple/wall_S");
         }
         if (getNeighbors() && NEIGHBOR_UP) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_N.png");
+            textures.push_back("wall/wall_simple/wall_N");
         }
         if (getNeighbors() && NEIGHBOR_LEFT) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_W.png");
+            textures.push_back("wall/wall_simple/wall_W");
         }
         if (getNeighbors() && NEIGHBOR_RIGHT) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_E.png");
+            textures.push_back("wall/wall_simple/wall_E");
         }
         if (getNeighbors() && NEIGHBOR_DOWN_LEFT) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_SW.png");
+            textures.push_back("wall/wall_simple/wall_SW");
         }
         if (getNeighbors() && NEIGHBOR_DOWN_RIGHT) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_SE.png");
+            textures.push_back("wall/wall_simple/wall_SE");
         }
         if (getNeighbors() && NEIGHBOR_UP_RIGHT) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_NE.png");
+            textures.push_back("wall/wall_simple/wall_NE");
         }
         if (getNeighbors() && NEIGHBOR_UP_LEFT) {
-            textures.push_back("resources/textures/wall/wall_easy/wall_NW.png");
+            textures.push_back("wall/wall_simple/wall_NW");
         }
     }
 
