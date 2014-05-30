@@ -174,7 +174,7 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta& loadMap(int realm, const Worldmap& world, GameDelta& delta);
+	GameDelta& loadMap(int realm, const Worldmap* world, GameDelta& delta);
 	void setup();
 
     GameDelta stepGame(std::queue<InputEvent> *ie,
@@ -248,7 +248,7 @@ private:
 //	std::map<EntityId, Entity> m_entities;
 
 	std::vector<Player> m_players;
-	std::vector<Worldmap> m_player_map;
+	std::vector<Worldmap*> m_player_map;
     Renderer* m_renderer;
 };
 

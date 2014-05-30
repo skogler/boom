@@ -15,7 +15,7 @@ _y(y),
 _neighbors(-1)
 {
     _worldmap = map;
-    _neighbors = 0; // TODO
+    _neighbors = -1; // TODO
     // TODO Auto-generated constructor stub
 
 }

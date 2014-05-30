@@ -83,15 +83,15 @@ GameDelta Game::runSystems(const GameDelta gd) const
 	return afterCollision;
 }
 
-GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
+GameDelta& Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 {
     const double BLOCK_SIZE = Wall::size();
 
-    double x_off = -world._size_x * Wall::size() * 0.5 - Wall::size() *0.5;
-    double y_off = -world._size_y * Wall::size() * 0.5 - Wall::size() *0.5;
-	for (int y = 0; y < world._size_y; y++) {
-		for (int x = 0; x < world._size_x; x++) {
-            Block *block = world.getBlock(x, y);
+    double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
+    double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+	for (int y = 0; y < world->_size_y; y++) {
+		for (int x = 0; x < world->_size_x; x++) {
+            Block *block = world->getBlock(x, y);
             Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = Entity::newEntity();
@@ -99,15 +99,13 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
 
             if (block != NULL) {
                 std::vector<std::string> textures;
-				block->getTextures(textures);
-				if (block->getType() == Block::WALL){
-					modifyCurrentGameState().addWall(new_entity);
-                    delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
-                    delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-                    for (int i = 0; i < textures.size(); i++) {
-                        delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[i].c_str(), 1, 1)));
-                    }
-				}
+                block->getTextures(textures);
+                modifyCurrentGameState().addWall(new_entity);
+                delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
+                delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+                delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[0].c_str(), 1, 1)));
+                for (int i = 0; i < textures.size(); i++) {
+                }
             }
 		}
 	}
@@ -119,16 +117,16 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
 void Game::setup()
 {
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(1, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(1, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(2, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(2, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(3, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(3, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(4, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(4, 60, 60, 5));
 
 
 	GameDelta delta;
