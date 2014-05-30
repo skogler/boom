@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-        
         input.handleInput();   //TODO: move down 
         Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;
@@ -64,6 +63,7 @@ int main(int argc, char *argv[])
        // network.sendTextMessge("heartbeat");
 
         renderer.startFrame();
+        renderer.updateCameras();
         renderer.renderScene();
         renderer.endFrame();
     }

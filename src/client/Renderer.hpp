@@ -2,6 +2,7 @@
 #define RENDERER_HPP_Y3A02IJX
 
 #include "common.hpp"
+#include "Position.hpp"
 #include <boost/filesystem.hpp>
 #include <SDL2/SDL.h>
 #include <unordered_map>
@@ -24,9 +25,12 @@ public:
 
     inline void startFrame();
     void renderScene();
+    void updateCameras();
     inline void endFrame();
     void setGame(Game* game);
     void updateViewports();
+
+    static const int SCALE = 32;
 
 private:
     void loadAllTextures();
@@ -38,6 +42,7 @@ private:
     boost::filesystem::path m_texture_dir;
     Game* m_game;
     std::vector<SDL_Rect> m_viewports;
+    std::vector<std::pair<Coords, Coords>> m_cameras;
 };
 
 void Renderer::startFrame()

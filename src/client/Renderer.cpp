@@ -83,6 +83,23 @@ void Renderer::updateViewports()
         m_viewports.push_back(SDL_Rect{0,h,w,h});
         m_viewports.push_back(SDL_Rect{w,h,w,h});
     }
+    m_cameras.clear();
+    m_cameras.resize(players + 1);
+    m_cameras[0] = std::make_pair<Coords,Coords>(Coords{0,0},Coords{0,0});
+    for (int i = 1; i < players; ++i) {
+        const auto& player = m_game->getPlayerByID(i);
+        m_cameras[i] = std::make_pair<Coords, Coords>(m_game->getPlayerPosition(player), Coords{w/32., h/32.});
+    }
+}
+
+void Renderer::updateCameras()
+{
+    for (int i = 0; i < m_cameras.size(); ++i) {
+        const auto& player = m_game->getPlayerByID(i);
+        m_cameras[i].first = m_game->getPlayerPosition(player);
+        m_cameras[i].first.x -= m_cameras[i].second.x/2;
+        m_cameras[i].first.y -= m_cameras[i].second.y/2;
+    }
 }
 
 void Renderer::renderScene()
@@ -101,12 +118,14 @@ void Renderer::renderScene()
             const SDL_Rect& viewport = m_viewports[realm + 1];
 
             SDL_RenderSetViewport(m_renderer, &viewport);
+            auto& cam = m_cameras[realm + 1];
 
             SDL_Rect target;
-            target.x = 32 * (pos.getCoords().x + renderObject->m_offset.x);
-            target.y = 32 * (pos.getCoords().y + renderObject->m_offset.y);
-            target.w = 32 * (renderObject->m_size.x);
-            target.h = 32 * (renderObject->m_size.y);
+            target.w = SCALE * ( renderObject->m_size.x);
+            target.h = SCALE * ( renderObject->m_size.y);
+            target.x = SCALE * (-cam.first.x + pos.getCoords().x + renderObject->m_offset.x - (renderObject->m_size.x / 2)); 
+            target.y = SCALE * (-cam.first.y + pos.getCoords().y + renderObject->m_offset.y - (renderObject->m_size.y / 2));
+
             SDL_RenderCopy(m_renderer, tex->m_texture, nullptr, &target);
         }
         catch (const std::runtime_error& ex)
