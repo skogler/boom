@@ -155,7 +155,7 @@ private:
 	std::vector<Worldmap> m_player_map;
 };
 
-const GameState& getCurrentGameState() const
+const GameState& Game::getCurrentGameState() const
 {
     return m_currentState;
 }

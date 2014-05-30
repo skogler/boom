@@ -203,3 +203,7 @@ Game::Game() :
 Game::~Game() {
 }
 
+int Game::getNumberOfPlayers() const
+{
+    return m_players.size();
+}
