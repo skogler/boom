@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     input.setBoomClient(&network);
 
     renderer.setGame(&game);
+    game.setRenderer(&renderer);
 
     // receive server seeds
 //    game.loadMap(seeds)
@@ -55,7 +56,6 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-        input.handleInput();   //TODO: move down 
         Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime + remaining;
         std::cout << frameTime << std::endl;
@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
             heartBeat = newTime;
         }
 
+        input.handleInput();   //TODO: move down 
         renderer.startFrame();
         renderer.updateCameras();
         renderer.renderScene();
