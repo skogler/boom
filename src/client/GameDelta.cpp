@@ -8,23 +8,34 @@
 #include "GameDelta.hpp"
 #include "Entity.hpp"
 
-GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
-	GameDelta delta(*this);
+GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
 	for (std::map<Entity, Position>::const_iterator it = newDelta.deltaPositions.begin();
 			it != newDelta.deltaPositions.end();
 			it++)
 	{
 		// add position updates
-		delta.deltaPositions[it->first] += (it->second);
+		deltaPositions[it->first] += (it->second);
 	}
 
 	for (std::map<Entity, Orientation>::const_iterator it = newDelta.deltaOrientations.begin();
 			it != newDelta.deltaOrientations.end();
             it++)
     {
-		delta.deltaOrientations[it->first] += (it->second);
+		deltaOrientations[it->first] += (it->second);
     }
-	return delta;
+
+	for (auto &health : newDelta.deltaHealth)
+	{
+		deltaHealth[health.first] += health.second;
+	}
+
+	for (auto &renderObject : newDelta.deltaRenderObjects)
+	{
+//		if (r)
+		deltaRenderObjects[renderObject.first] = renderObject.second;
+	}
+//			std::map<Entity, Health>::const_iterator it = newDelta)
+	return *this;
 }
 
 GameDelta::GameDelta(const GameDelta &src) : GameDelta()
@@ -33,6 +44,7 @@ GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 	deltaOrientations = src.deltaOrientations;
 	deltaBoundingBoxes = src.deltaBoundingBoxes;
 	deltaRenderObjects = src.deltaRenderObjects;
+	deltaHealth = src.deltaHealth;
 }
 
 GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
@@ -40,22 +52,18 @@ GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
 	deltaPositions[entity] = pos;
 }
 
-GameDelta::GameDelta(Entity entity, Coords coords) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
+GameDelta::GameDelta(Entity entity, Coords coords) : GameDelta()
 {
 	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y);
 }
 
-GameDelta::GameDelta(Entity entity, Orientation orientation) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
-{
+GameDelta::GameDelta(Entity entity, Orientation orientation) : GameDelta() {
 	deltaOrientations[entity] = orientation;
+}
+
+GameDelta::GameDelta(Entity entity, Health health) : GameDelta()
+{
+	deltaHealth[entity] = health;
 }
 
 GameDelta::GameDelta(Entity entity, BoundingBox bb) : GameDelta()

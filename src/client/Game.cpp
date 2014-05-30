@@ -49,9 +49,22 @@ bool GameState::isWall(Entity entity) const
 GameDelta Game::runSystems(const GameDelta gd) const
 {
 	const CollisionSystem &system = m_currentState.getCollisionSystem();
-	system.checkCollisions(*this, gd);
+	std::vector<Collision> collisions = system.checkCollisions(*this, gd);
 
-	return gd;
+	GameDelta afterCollision = gd;
+
+	for (auto &collision : collisions) {
+		if (m_currentState.isBullet(collision.active) && isPlayer(collision.passive))
+		{
+			afterCollision = afterCollision.mergeDelta(GameDelta(collision.passive, Health(-10)));
+		}
+		else
+		{
+			afterCollision.purgePosition(collision.active);
+		}
+	}
+
+	return afterCollision;
 }
 
 GameDelta Game::loadMap(int realm, const Worldmap& world) const
@@ -140,6 +153,11 @@ void Game::applyGameDelta(GameDelta delta) {
 			it++)
 	{
 		m_currentState.getPositionManager()->updateOrientation(it->first, it->second);
+	}
+
+	for (auto &entry : delta.getHealthDelta())
+	{
+		m_currentState.updateHealth(entry.first, entry.second);
 	}
 
     for (auto& entry : delta.getRenderObjectsDelta())
