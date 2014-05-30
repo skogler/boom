@@ -27,6 +27,8 @@ class RenderObjectManager;
 
 typedef int FrameEvents;
 
+typedef std::vector<Entity> EntityGroup;
+
 class GameState {
 public:
 	GameState();
@@ -38,6 +40,9 @@ private:
 	PositionManager *positionManager;
 	RenderObjectManager *renderManager;
 	CollisionSystem *collisionSystem;
+
+	std::vector<EntityGroup> m_bullets;
+	std::vector<EntityGroup> m_walls;
 };
 
 enum class ObjectDelta {
@@ -138,6 +143,12 @@ typedef struct
 	std::vector<RealmRenderData> realmData;
 } RenderData;
 
+typedef struct
+{
+	Entity entity_main_body;
+	Entity entity_cannon;
+} Player;
+
 class Game {
 public:
 	Game();
@@ -164,7 +175,7 @@ public:
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
     int getCurrentPlayer();
-    Entity getPlayerByID(int i) const;
+    Player getPlayerByID(int i) const;
 
     int getNumberOfPlayers() const;
 
@@ -173,7 +184,7 @@ private:
     int m_currentPlayer;
 //	std::map<EntityId, Entity> m_entities;
 
-	std::vector<Entity> m_players;
+	std::vector<Player> m_players;
 	std::vector<Worldmap> m_player_map;
 };
 
