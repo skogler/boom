@@ -1,6 +1,7 @@
 #include "Input.hpp"
 #include "InputEvent.hpp"        
 #include <stdio.h>
+#include "BoomClient.hpp"
 
 Input::Input(Game& game) : 
     m_current_keystate(),
@@ -29,6 +30,11 @@ void Input::handleInput()
         handleConstantInput();
     }               
 
+}
+
+void Input::setBoomClient(BoomClient* client)
+{
+    this->m_network = client;
 }
 
 
@@ -118,15 +124,29 @@ UserActionType Input::mapKeyToAction(SDL_Keycode kc )
 
 void Input::sendInputEvent(UserActionType type)
 {
-     InputEvent ie(m_cur_player, type);
-     //TODO: send it    
-     m_serverInput.push(ie);
+    InputEvent ie(m_cur_player, type);
+    if (m_network != NULL && m_network->connected()) {
+        m_network->sendInputEvent(ie);
+    }
+    else {
+        m_serverInput.push(ie);
+    }
 }
 
 void Input::sendInputEvent(UserActionType type, double x, double y)
 {
-   InputEvent event(m_cur_player, type, x, y );
-   m_serverInput.push(event);
+    InputEvent event(m_cur_player, type, x, y );
+    if (m_network != NULL && m_network->connected()) {
+        m_network->sendInputEvent(event);
+    }
+    else {
+        m_serverInput.push(event);
+    }
+}
+
+void Input::receiveInputEvent(InputEvent& event)
+{
+    m_serverInput.push(event);
 }
 
 std::queue<InputEvent>& Input::getServerInput()
