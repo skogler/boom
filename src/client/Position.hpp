@@ -100,6 +100,12 @@ public:
 	const Orientation &operator+=(const Orientation &other)
     {
 		m_angle += other.getAngle();
+        if (m_angle > 2*M_PI) {
+            m_angle -= 2*M_PI;
+        }
+        else if (m_angle < -2*M_PI) {
+            m_angle += 2*M_PI;
+        }
 		return *this;
     }
 

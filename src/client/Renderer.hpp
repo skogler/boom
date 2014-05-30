@@ -29,6 +29,7 @@ public:
     inline void endFrame();
     void setGame(Game* game);
     void updateViewports();
+    Coords screenToRealm(int x, int y, int realm) const;
 
     static const int SCALE = 32;
 
