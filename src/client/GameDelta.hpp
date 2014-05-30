@@ -1,0 +1,98 @@
+/*
+ * GameDelta.h
+ *
+ *  Created on: 30 May 2014
+ *      Author: Marco
+ */
+
+
+#ifndef GAMEDELTA_H_
+#define GAMEDELTA_H_
+
+#include "RenderObject.hpp"
+#include "Position.hpp"
+#include "Entity.hpp"
+#include "Health.hpp"
+
+#include <map>
+#include <vector>
+#include <memory>
+using std::shared_ptr;
+
+class RenderObjectDelta;
+
+class GameDelta {
+public:
+	GameDelta() :
+		deltaPositions(),
+		deltaOrientations(),
+		deltaBoundingBoxes(),
+		deltaRenderObjects(),
+		deltaHealth()
+	{}
+
+	GameDelta(const GameDelta &src);
+	GameDelta(Entity entity, Position pos);
+	GameDelta(Entity entity, Coords coords);
+	GameDelta(Entity entity, Orientation orientation);
+	GameDelta(Entity entity, BoundingBox bb);
+	GameDelta(Entity entity, Health health);
+	GameDelta(Entity, RenderObject ro);
+
+	void purgePosition(Entity entity)
+	{
+		deltaPositions.erase(entity);
+	}
+
+	GameDelta &mergeDelta(const GameDelta &oldDelta);
+
+	const std::map<Entity, Position>& getPositionsDelta() const
+    {
+		return deltaPositions;
+    }
+	const std::map<Entity, Orientation>& getOrientationsDelta() const
+	{
+		return deltaOrientations;
+	}
+	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
+    {
+        return deltaBoundingBoxes;
+    }
+
+    std::map<Entity, shared_ptr<RenderObjectDelta>>& getRenderObjectsDelta()
+    {
+		return deltaRenderObjects;
+    }
+
+	const std::map<Entity, Health>& getHealthDelta() const
+	{
+		return deltaHealth;
+	}
+
+private:
+	std::map<Entity, Position> deltaPositions;
+	std::map<Entity, Orientation> deltaOrientations;
+	std::map<Entity, BoundingBox> deltaBoundingBoxes;
+	std::map<Entity, Health> deltaHealth;
+	std::map<Entity, shared_ptr<RenderObjectDelta>> deltaRenderObjects;
+};
+
+
+enum class ObjectDelta {
+	ADDED,
+	REMOVED,
+	UPDATED
+};
+
+class RenderObjectDelta{
+public:
+    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) :
+        m_updateType(updateType),
+        m_renderObject(renderObject)
+    {}
+
+	ObjectDelta m_updateType;
+	RenderObject m_renderObject;
+};
+
+#endif /* GAMEDELTA_H_ */

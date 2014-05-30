@@ -6,6 +6,7 @@
  */
 
 #include "CollisionSystem.hpp"
+#include "PositionManager.hpp"
 
 CollisionSystem::CollisionSystem() :
     m_quad_tree(nullptr),
@@ -16,3 +17,51 @@ CollisionSystem::CollisionSystem() :
 CollisionSystem::~CollisionSystem() {
 }
 
+std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const GameDelta delta) const
+{
+	const GameState &state = game.getCurrentGameState();
+	const PositionManager *pm = state.getPositionManager();
+
+	std::vector<Collision> collisions;
+
+	for (auto &posDelta : delta.getPositionsDelta())
+	{
+        Position oldPos = pm->getPosition(posDelta.first);
+        Position newPos = oldPos + posDelta.second;
+
+        std::vector<Entity> entities = pm->getEntitiesOfRealm(posDelta.second.getRealm());
+        for (auto &entity : entities)
+        {
+        	// skip self
+        	if (entity == posDelta.first) {
+        		continue;
+        	}
+        	else if (state.isBullet(posDelta.first) && state.isBullet(entity))
+        	{
+        		continue;
+        	}
+        	else
+        	{
+        		Position entityPos = pm->getPosition(entity);
+
+        		if (state.isBullet(entity))
+        		{
+        			const double bullet_size = Bullet::size();
+        			if (entityPos.distance(newPos) < bullet_size) {
+        				collisions.push_back(Collision{posDelta.first, entity});
+        			}
+        		}
+        		else if (state.isWall(entity))
+        		{
+        			const double wall_size = Wall::size();
+        			if (entityPos.distance(newPos) < wall_size) {
+        				collisions.push_back(Collision{posDelta.first, entity});
+        			}
+        		}
+
+        	}
+        }
+	}
+
+	return collisions;
+}

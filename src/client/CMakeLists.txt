@@ -19,6 +19,8 @@ set(src
 set(headers
     Action.cpp
     Action.hpp
+    Health.hpp
+    Health.cpp
     CollisionSystem.cpp
     CollisionSystem.hpp
     Entity.cpp
@@ -29,6 +31,8 @@ set(headers
     HealthSystem.hpp
     Input.hpp
     InputEvent.hpp
+    GameDelta.cpp
+    GameDelta.hpp
     #KeyEvent.hpp
     Position.cpp
     Position.hpp

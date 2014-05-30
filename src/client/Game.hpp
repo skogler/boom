@@ -15,16 +15,18 @@
 #include <string>
 #include <queue>
 
-#include "CollisionSystem.hpp"
-#include "PositionManager.hpp"
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
 #include "time.h"
 #include "RenderObject.hpp"
+#include "GameDelta.hpp"
+#include "Health.hpp"
 
+class CollisionSystem;
 class PositionManager;
 class RenderObjectManager;
 class InputEvent;
+class HealthSystem;
 
 typedef int FrameEvents;   
 
@@ -33,80 +35,77 @@ static const double MOVE_STEP = 30;
 
 typedef std::vector<Entity> EntityGroup;
 
+class Game;
+
+class Wall
+{
+public:
+	static const double size() { return 5; }
+	const Entity m_baseWall;
+	const Entity m_decoration;
+};
+
+class Bullet
+{
+public:
+	static const double size() { return 0.5; }
+	const Entity m_body;
+	const Entity m_smoke;
+};
+
+class Behaviour
+{
+public:
+	virtual bool isFinished() const = 0;
+	virtual GameDelta stepBehaviour(const Game &game, double dt) = 0;
+};
+
+class Pushback : Behaviour
+{
+	Pushback(Entity entity, double time) : m_entity(entity), m_timeLeft(time) {}
+	bool isFinished() const { if (m_timeLeft < 0) { return true; } else { return false; } }
+	GameDelta stepBehaviour(const Game &game, double dt)
+	{
+		if (m_timeLeft < dt) {
+			GameDelta delta = GameDelta(m_entity, Coords{-10*m_timeLeft, -10*m_timeLeft});
+			m_timeLeft = 0;
+			return delta;
+		} else {
+			m_timeLeft -= dt;
+			return GameDelta(m_entity, Coords{-10*dt, 10*dt});
+		}
+	}
+
+private:
+	double m_timeLeft;
+	Entity m_entity;
+};
+
 class GameState {
 public:
 	GameState();
 
 	PositionManager *getPositionManager() const { return positionManager; }
 	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
+	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
+	const HealthSystem &getHealthSystem() const { return *healthSystem; }
+
+	Health getHealth(Entity entity) const { return m_health.at(entity); }
+	void updateHealth(Entity entity, Health health) { m_health.at(entity) += health; }
+
+	bool isBullet(Entity entity) const;
+	bool isWall(Entity entity) const;
 
 private:
 	PositionManager *positionManager;
 	RenderObjectManager *renderManager;
 	CollisionSystem *collisionSystem;
+	HealthSystem *healthSystem;
 
-	std::vector<EntityGroup> m_bullets;
-	std::vector<EntityGroup> m_walls;
-};
+	std::vector<Bullet> m_bullets;
+	std::vector<Wall> m_walls;
 
-enum class ObjectDelta {
-	ADDED,
-	REMOVED,
-	UPDATED
-};
-
-class RenderObjectDelta{
-public:
-    RenderObjectDelta() : m_updateType(), m_renderObject() {}
-    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) : 
-        m_updateType(updateType), 
-        m_renderObject(renderObject) 
-    {}
-
-	ObjectDelta m_updateType;
-	RenderObject m_renderObject;
-};
-
-class GameDelta {
-public:
-	GameDelta() :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
-	{}
-	GameDelta(const GameDelta &src);
-	GameDelta(Entity entity, Position pos);
-	GameDelta(Entity entity, Coords coords);
-	GameDelta(Entity entity, Orientation orientation);
-	GameDelta(Entity entity, BoundingBox bb);
-	GameDelta(Entity, RenderObject ro);
-
-	GameDelta mergeDelta(const GameDelta &oldDelta) const;
-
-	const std::map<Entity, Position>& getPositionsDelta() const
-    {
-		return deltaPositions;
-    }
-	const std::map<Entity, Orientation>& getOrientationsDelta() const
-	{
-		return deltaOrientations;
-	}
-	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
-		{
-		return deltaBoundingBoxes;
-		}
-
-	std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta()
-		{
-		return deltaRenderObjects;
-		}
-
-private:
-	std::map<Entity, Position> deltaPositions;
-	std::map<Entity, Orientation> deltaOrientations;
-	std::map<Entity, BoundingBox> deltaBoundingBoxes;
-	std::map<Entity, RenderObjectDelta> deltaRenderObjects;
+	std::map<Entity, Health> m_health;
 };
 
 
@@ -151,6 +150,10 @@ typedef struct
 class Player
 {
 public:
+	GameDelta movePlayer(Coords direction) const;
+	GameDelta rotateTopBodyAndCannon(Orientation orientation) const;
+    GameDelta lookAt(Coords cor, const Game &game, Player &player) const;
+
 	Entity entity_main_body;
 	Entity entity_top_body;
 	Entity entity_cannon;
@@ -166,7 +169,7 @@ public:
 
 	std::vector<RenderData> getRenderData() const;
 
-    GameDelta stepGame(const std::queue<InputEvent> *ie,
+    GameDelta stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;
 
 	GameDelta runSystems(const GameDelta gd) const;
@@ -186,6 +189,23 @@ public:
     Player getPlayerByID(int i) const;
 
     int getNumberOfPlayers() const;
+    inline const GameState& getCurrentGameState() const;
+
+    bool isPlayer(Entity entity) const
+    {
+    	for (auto &player : m_players) {
+    		if (player.entity_cannon == entity
+    				|| player.entity_main_body == entity
+    				|| player.entity_top_body == entity)
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+
+    Coords getPlayerPosition(Player player) const;
+    Orientation getPlayerPartOrientation(Entity part) const;
 
 private:
 	GameState m_currentState;
@@ -196,4 +216,8 @@ private:
 	std::vector<Worldmap> m_player_map;
 };
 
+const GameState& Game::getCurrentGameState() const
+{
+    return m_currentState;
+}
 #endif /* GAME_HPP_ */

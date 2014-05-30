@@ -19,17 +19,11 @@ public:
 	RenderObjectManager();
 	virtual ~RenderObjectManager();
 
-	bool hasRenderObject(Entity entity) const {
-		return (m_renderObjects.find(entity) != m_renderObjects.end());
-	}
+//    std::vector<RenderObject*> getRenderObjectsFor(const Entity& entity)
 
-	RenderObject getRenderObject(Entity entity) const {
-		return m_renderObjects.at(entity);
-	}
+	void updateRenderObject(const ObjectDelta& deltaType, RenderObject& ro);
 
-	void updateRenderObject(const Entity& entity, const ObjectDelta& deltaType, RenderObject& ro);
-
-	std::map<Entity, RenderObject> m_renderObjects;
+    std::vector<RenderObject> m_zSortedRenderObjects;
 };
 
 #endif /* RENDEROBJECTMANAGER_HPP_ */

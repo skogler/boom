@@ -1,6 +1,9 @@
 #include "Renderer.hpp"
 
 #include "Window.hpp" 
+#include "Game.hpp"
+#include "RenderObjectManager.hpp"
+#include "PositionManager.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <SDL2/SDL.h>
@@ -9,6 +12,7 @@
 #include <unordered_map>
 
 using std::unordered_map;
+using std::vector;
 namespace fs=boost::filesystem;
 
 Renderer::Renderer(Window* window)
@@ -20,8 +24,6 @@ Renderer::Renderer(Window* window)
     m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_ACCELERATED);
     loadAllTextures();
 }
-
-
 
 Renderer::~Renderer()
 {
@@ -74,13 +76,46 @@ void Renderer::loadTexture(const fs::path& path)
     m_textures[name] = tex;
 }
 
+void Renderer::updateViewports() 
+{
+    int players = m_game->getNumberOfPlayers();
+    std::pair<uint, uint> w_size = m_window->getSize();
+
+    m_viewports.clear();
+    m_viewports.resize(players);
+    int w = static_cast<int>(w_size.second / 2);
+    int h = static_cast<int>(players <= 2 ? w_size.first : w_size.first / 2);
+    
+    m_viewports.push_back(SDL_Rect{0,0,w,h});
+    m_viewports.push_back(SDL_Rect{w,0,w,h});
+    if (players > 2) {
+        m_viewports.push_back(SDL_Rect{0,h,w,h});
+        m_viewports.push_back(SDL_Rect{w,h,w,h});
+    }
+}
+
 void Renderer::renderScene()
 {
-    //SDL_Rect viewport;
-    //viewport.x=200;
-    //viewport.y=200;
-    //viewport.w=900;
-    //viewport.h=400;
-    //SDL_RenderSetViewport(m_renderer, &viewport);
+    const GameState& state = m_game->getCurrentGameState();
+    for(auto& renderObject : state.getRenderObjectManager()->m_zSortedRenderObjects)
+    {
+        auto pos = state.getPositionManager()->getPosition(renderObject.m_entity);
+        SDL_RenderSetViewport(m_renderer, &m_viewports[pos.getRealm()]);
+        SDL_Rect target;
+        target.x = pos.getCoords().x;
+        target.y = pos.getCoords().y;
+        target.w = 32;
+        target.h = 32;
+        SDL_RenderCopy(m_renderer, m_textures[renderObject.m_fileName], nullptr, &target);
+    }
+
+    SDL_RenderSetViewport(m_renderer, nullptr);
+
     SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
 }
+
+void Renderer::setGame(Game* game)
+{
+    m_game = game;
+}
+
