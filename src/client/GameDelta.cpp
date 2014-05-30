@@ -65,5 +65,5 @@ GameDelta::GameDelta(Entity entity, BoundingBox bb) : GameDelta()
 
 GameDelta::GameDelta(Entity entity, RenderObject ro) : GameDelta()
 {
-    deltaRenderObjects[entity] = {ObjectDelta::ADDED, ro};
+    deltaRenderObjects[entity] = std::make_shared<RenderObjectDelta>(ObjectDelta::ADDED, ro);
 }
