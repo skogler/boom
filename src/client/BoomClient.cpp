@@ -8,15 +8,17 @@
 #include "BoomClient.hpp"
 #include "Messages.hpp"
 #include "InputEvent.hpp"
+#include "Game.hpp"
 
 
-BoomClient::BoomClient(const std::string& hostname, const int port, const std::string& name, Input* input):
+BoomClient::BoomClient(const std::string& hostname, const int port, const std::string& name, Input* input, Game* game):
 _session(NULL),
 _hostname(hostname),
 _port(port),
 _name(name),
 _uid(-1),
-_input(input)
+_input(input),
+_game(game)
 {
     _connect();
 }
@@ -29,10 +31,8 @@ BoomClient::~BoomClient()
 void BoomClient::checkMessages()
 {
     for (int i = 0; i < 50; i++) {
-
         Message *msg = _recv();
         if (msg != NULL) {
-            printf("Got message!\n");
             switch (msg->getType()) {
             case MSG_TYPE_HANDSHAKE_ACCEPT:
             {
@@ -44,8 +44,6 @@ void BoomClient::checkMessages()
             case MSG_TYPE_INPUT_EVENT:
             {
                 InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
-                printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
-                        ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
                 InputEvent ie(ie_msg->m_uid, ie_msg->m_type, ie_msg->m_x, ie_msg->m_y);
                 if (_input != NULL) {
                     _input->receiveInputEvent(ie);
@@ -55,7 +53,6 @@ void BoomClient::checkMessages()
             case MSG_TYPE_TEXT:
             {
                 printf("\tText Message: %s\n", msg->getRecvData());
-                // TODO: hanlde text message?
                 break;
             }
             default:
@@ -73,7 +70,7 @@ void BoomClient::sendInputEvent(InputEvent& event)
 {
     InputEventMessage ie_msg;
 
-    ie_msg.m_uid = event.getUID();
+    ie_msg.m_uid = _game->getCurrentPlayer();
     ie_msg.m_type = event.getType();
     ie_msg.m_x = event.getX();
     ie_msg.m_y = event.getY();
@@ -82,6 +79,7 @@ void BoomClient::sendInputEvent(InputEvent& event)
 
     // TODO: check return value?
     _send(&msg);
+    printf("Sent input Event\n");
 }
 
 void BoomClient::sendTextMessge(const std::string& text)
@@ -118,6 +116,7 @@ bool BoomClient::_end_handshake(HandshakeAcceptMessage* ha_msg)
 {
     if (_uid < 0) {
         _uid = ha_msg->uid;
+        _game->setCurrentPlayer(_uid);
         return true;
     }
     return false;

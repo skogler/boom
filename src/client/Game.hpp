@@ -237,6 +237,10 @@ public:
     {
         m_renderer = renderer;
     }
+    void setCurrentPlayer(int currentPlayer)
+    {
+        m_currentPlayer = currentPlayer;
+    }
 
 private:
 	GameState m_currentState;

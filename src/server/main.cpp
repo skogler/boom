@@ -24,8 +24,13 @@ int main(int argc, char *argv[])
 
     BoomServer server(BOOM_PORT);
 
+    int loop_count = 0;
     do {
-        server.accept_connections();
+        if (loop_count > 100) {
+            loop_count = 0;
+            server.accept_connections();
+        }
+        loop_count ++;
         server.listen_messages();
     }while(1);
 

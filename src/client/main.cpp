@@ -31,11 +31,9 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-    BoomClient network("localhost", BOOM_PORT, "super duper client", &input);
+    BoomClient network("localhost", BOOM_PORT, "super duper client", &input, &game);
 
     network.start_handshake();
-
-    network.getUId();
 
     input.setBoomClient(&network);
 
@@ -51,17 +49,22 @@ int main(int argc, char *argv[])
     Uint32 startTime = SDL_GetTicks();
     Uint32 heartBeat = startTime;
 
+	Uint32 remaining = 0;
+
     while(!input.quit())
     {   
         Uint32 newTime = SDL_GetTicks();
-    	Uint32 frameTime = newTime - startTime;
-    	while (frameTime > 16)
+    	Uint32 frameTime = newTime - startTime + remaining;
+        std::cout << frameTime << std::endl;
+    	while (frameTime > 8)
         {
-            GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
-    		frameTime -= 16;
+            GameDelta delta = game.stepGame( &input.getServerInput(), 8.0);
+    		frameTime -= 8;
     		GameDelta newDelta = game.runSystems(delta);
     		game.applyGameDelta(newDelta);
     	}
+
+		remaining = frameTime;
     	startTime = newTime;
     	// receive server actions
         
