@@ -230,6 +230,8 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
    Orientation plo = game.getPlayerPartOrientation(player.entity_top_body );
    double m2h = atan2(cor.x - pl.x, cor.y - pl.y ); // * 180 / M_PI;
    double diff = m2h - plo.getAngle();
+   if(diff < 0.05) 
+       diff = 0;
    delta = player.rotateTopBodyAndCannon(Orientation(diff));
    return delta;
 }
@@ -250,10 +252,10 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
             	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP * timeDelta/1000, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP * timeDelta/1000}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP * timeDelta/1000}));
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP * timeDelta/1000}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,MOVE_STEP * timeDelta/1000}));
                 break;
             case SHOOT:
                 //TODO: shoot logic
