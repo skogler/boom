@@ -7,6 +7,7 @@
 
 #include <math.h>
 #include <cmath>
+#include <stdio.h>
 
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
@@ -166,6 +167,7 @@ void Game::applyGameDelta(GameDelta delta) {
 			it != delta.getPositionsDelta().end();
 			it++)
 	{
+        printf("pos delta %f %f  \n ",  it->second.getCoords().x, it->second.getCoords().y);
 		m_currentState.updatePosition(
 				it->first, it->second.getRealm(), it->second.getCoords()
 			);
@@ -214,7 +216,7 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
    GameDelta delta;
    Coords pl = game.getPlayerPosition(player );
    Orientation plo = game.getPlayerPartOrientation(player.entity_top_body );
-   double m2h = atan2(cor.x - pl.x, cor.y - pl.y )  * 180 / M_PI;
+   double m2h = atan2(cor.x - pl.x, cor.y - pl.y ); // * 180 / M_PI;
    double diff = m2h - plo.getAngle();
    delta = player.rotateTopBodyAndCannon(Orientation(diff));
    return delta;
@@ -230,16 +232,16 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{ MOVE_STEP, 0}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{ MOVE_STEP * timeDelta/1000, 0}));
                 break;
             case MOVE_LEFT:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP, 0}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP * timeDelta/1000, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP * timeDelta/1000}));
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP * timeDelta/1000}));
                 break;
             case SHOOT:
                 //TODO: shoot logic

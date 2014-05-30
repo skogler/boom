@@ -32,7 +32,7 @@ class HealthSystem;
 typedef int FrameEvents;   
 
 
-static const double MOVE_STEP = 30;
+static const double MOVE_STEP = 2.0;
 
 typedef std::vector<Entity> EntityGroup;
 

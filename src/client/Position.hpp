@@ -72,6 +72,7 @@ public:
 	{
 		m_coords.x += other.x;
 		m_coords.y += other.y;
+        
 
 		return *this;
 	}
