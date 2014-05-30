@@ -11,6 +11,7 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <unordered_map>
+#include <worldmap/Block.hpp>
 
 using std::unordered_map;
 using std::vector;
@@ -24,6 +25,7 @@ Renderer::Renderer(Window* window)
 {
     m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     loadAllTextures();
+    createWallTextures();
 }
 
 Renderer::~Renderer()
@@ -43,6 +45,32 @@ void Renderer::loadAllTextures()
         if (!fs::is_directory(iter->path())) {
             loadTexture(iter->path());
         }
+    }
+}
+
+void Renderer::createWallTextures()
+{
+    for (int i = 0; i <= 0xFF; i++) {
+        std::vector<string> textures;
+        textures.clear();
+        Block::getTextureNames(textures, i);
+        auto& tex = m_textures[textures[0]];
+        SDL_Surface *surf = SDL_CreateRGBSurface(0,
+                                                tex->m_surface->w,
+                                                tex->m_surface->h,
+                                                32,
+                                                0, 0, 0, 0);
+        SDL_BlitSurface(tex->m_surface, NULL, surf, NULL);
+        for (int j = 1; j < textures.size(); j++) {
+            auto& texture = m_textures[textures[j]];
+            SDL_BlitSurface(texture->m_surface, NULL, surf, NULL);
+        }
+        char name[20];
+        memset(name, 0, sizeof(name));
+        sprintf(name, "wall/%04d", i);
+
+        Texture *new_tex = new Texture(m_renderer, surf);
+        m_textures[name] = std::unique_ptr<Texture>(new_tex);
     }
 }
 

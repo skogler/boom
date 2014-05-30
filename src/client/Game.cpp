@@ -102,7 +102,7 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
             Entity new_entity = newEntity();
 
 
-            if (block != NULL) {
+            if (block != NULL && block->getType() == Block::WALL) {
                 std::vector<std::string> textures;
                 block->getTextures(textures);
 				if (block->getType() == Block::WALL) {
@@ -110,9 +110,7 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 				}
                 delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
                 delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-                delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[0].c_str(), 1, 1)));
-                for (int i = 0; i < textures.size(); i++) {
-                }
+                delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[0].c_str(), 0, 1)));
             }
 		}
 	}
