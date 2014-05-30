@@ -33,12 +33,17 @@ void Input::handleInput()
 
 void Input::processEvent(SDL_Event event)
 {
+   UserActionType uat;
    //Keyboard
    switch(event.type)
    {
       case SDL_KEYDOWN:
                 m_current_keystate[event.key.keysym.sym] = true;  
-                sendKeyEvent(event.key.keysym.sym);  
+                uat = mapKeyToAction(event.key.keysym.sym);
+                if(uat != IDLE)
+                {
+                    sendInputEvent(uat);
+                }
                 if(event.key.keysym.sym == SDLK_ESCAPE)
                 {
                     m_q_state = true;
@@ -49,7 +54,9 @@ void Input::processEvent(SDL_Event event)
                 break;
       case SDL_MOUSEBUTTONDOWN:     
                 if(event.button.button == SDL_BUTTON_LEFT)
-                   sendMouseEvent();
+                {
+                    sendInputEvent(TURN);
+                }
                 break;
       case SDL_QUIT:
                 m_q_state = true;
@@ -76,33 +83,34 @@ void Input::handleConstantInput()
       {
            if(ks.second == true && ks.second == m_last_keystate[ks.first])
            {
-               sendKeyEvent(ks.first);
+               UserActionType uat = mapKeyToAction(ks.first);
+               if(uat != IDLE)
+               {
+                   sendInputEvent(uat);
+               }     
            }
       }
-      
-}
+}                     
 
 
-void Input::executeServerInput()
-{
+UserActionType Input::mapKeyToAction(SDL_Keycode kc )
+{                   
+    UserActionType action;
+    switch(kc)
+    {
+        case SDLK_w: action = MOVE_TOP;   break;
+        case SDLK_d: action = MOVE_RIGHT; break;
+        case SDLK_a: action = MOVE_LEFT;  break;
+        case SDLK_s: action = MOVE_DOWN;  break;
+        default: action = IDLE;
+    }                      
+    return action;
 }
 
 void Input::sendInputEvent(UserActionType type)
 {
      // InputEvent ie(m_cur_player, type);
      //TODO: send it
-}
-
-void Input::sendKeyEvent(SDL_Keycode key_event) 
-{                      
-    //TODO: network stuff
-}
-
-void Input::sendMouseEvent()
-{
-    int x,y;
-    SDL_GetMouseState(&x,&y);     
-   //TODO: network stuff
 }
 
 std::queue<InputEvent>& Input::getServerInput()
