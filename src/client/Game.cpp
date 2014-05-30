@@ -13,6 +13,7 @@
 #include "PositionManager.hpp"
 #include "InputEvent.hpp"    
 #include "CollisionSystem.hpp"
+#include "Position.hpp"
 
 GameState::GameState() :
 		positionManager(new PositionManager()),
@@ -32,9 +33,14 @@ void GameState::updateOrientation(Entity entity, Orientation orientation)
 	positionManager->updateOrientation(entity, orientation);
 }
 
-void GameState::updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro)
+void GameState::updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro)
 {
 	renderManager->updateRenderObject(deltaType, ro);
+}
+
+void GameState::updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo)
+{
+	positionManager->updateBoundingBox(entity, bo);
 }
 
 bool GameState::isBullet(Entity entity) const
@@ -82,18 +88,23 @@ GameDelta Game::runSystems(const GameDelta gd) const
 	return afterCollision;
 }
 
-GameDelta Game::loadMap(int realm, const Worldmap& world) const
+GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
 {
-	GameDelta delta;
-	for (int y = 0; y < 42; y++) {
-		for (int x = 0; x < 42; x++) {
+    const double BLOCK_SIZE = 1;
+	for (int y = 0; y < world._size_y; y++) {
+		for (int x = 0; x < world._size_x; x++) {
             const Block *block = world.getBlock(x, y);
+            Coords topLeft = {x * BLOCK_SIZE, y * BLOCK_SIZE};
+            Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
+            Entity new_entity = Entity::newEntity();
+
+            delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
+            delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+            delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
+
             if (block->getType() == Block::WALL)
             {
-            	Entity new_entity = Entity::newEntity();
-            	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
 
 //            	for (int i = 0; i < 8; i++) {
 //            		Entity overlay = Entity::newEntity();
@@ -104,10 +115,7 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             }
             else
             {
-            	Entity new_entity = Entity::newEntity();
-            	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "floor/floor_steel", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "floor/floor_steel", 1, 1)));
             }
 		}
 	}
@@ -119,29 +127,29 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
 void Game::setup()
 {
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(1, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(2, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(3, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(4, 60, 60, 5));
 
 
 	GameDelta delta;
 	for (int i = 0; i < m_currentState.getPositionManager().getNumRealms(); i++)
 	{
-		loadMap(i, m_player_map[i]);
+		delta = loadMap(i, m_player_map[i], delta);
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
 
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, RenderObject(m_players[i].entity_main_body, "character/blue/blue_bottom", 1, 1)));
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, RenderObject(m_players[i].entity_top_body,"character/blue/blue_mid", 2, 1)));
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, RenderObject(m_players[i].entity_cannon,"character/blue/blue_top_standard_gun", 3, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, new RenderObject(m_players[i].entity_main_body, "character/blue/blue_bottom", 1, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/blue/blue_mid", 2, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, new RenderObject(m_players[i].entity_cannon,"character/blue/blue_top_standard_gun", 3, 1)));
 
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, BoundingBox()));
 
@@ -222,22 +230,23 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = player.movePlayer(Coords{ MOVE_STEP, 0});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{ MOVE_STEP, 0}));
                 break;
             case MOVE_LEFT:
-            	delta = player.movePlayer(Coords{-MOVE_STEP, 0});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = player.movePlayer(Coords{0, MOVE_STEP});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP}));
                 break;
             case MOVE_DOWN:
-            	delta = player.movePlayer(Coords{0,-MOVE_STEP});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP}));
                 break;
             case SHOOT:
                 //TODO: shoot logic
+                //delta = deeltaMerga(GameeDelta(entitz, new shot(entitz))
                 break;
             case TURN:
-                player.lookAt(Coords{ input.getX(), input.getY() } , *this, player);
+                delta = delta.mergeDelta(player.lookAt(Coords{ input.getX(), input.getY() } , *this, player));
                 break;
         }  
         ie->pop();

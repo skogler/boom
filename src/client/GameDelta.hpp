@@ -34,13 +34,13 @@ public:
 		deltaBehaviours()
 	{}
 
-	GameDelta(const GameDelta &src);
-	GameDelta(Entity entity, Position pos);
-	GameDelta(Entity entity, Coords coords);
-	GameDelta(Entity entity, Orientation orientation);
-	GameDelta(Entity entity, BoundingBox bb);
-	GameDelta(Entity entity, Health health);
-	GameDelta(Entity, RenderObject ro);
+	GameDelta(const GameDelta &delta);
+	GameDelta(Entity entity, const Position& pos);
+	GameDelta(Entity entity, const Coords& coords);
+	GameDelta(Entity entity, const Orientation& orientation);
+	GameDelta(Entity entity, const BoundingBox& bb);
+	GameDelta(Entity entity, const Health& health);
+	GameDelta(Entity, RenderObject* ro);
 	GameDelta(Entity entity, Behaviour *behaviour) : GameDelta()
 	{
 		deltaBehaviours[entity].push_back(behaviour);
@@ -99,13 +99,13 @@ enum class ObjectDelta {
 
 class RenderObjectDelta{
 public:
-    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) :
+    RenderObjectDelta(ObjectDelta updateType, RenderObject* renderObject) :
         m_updateType(updateType),
         m_renderObject(renderObject)
     {}
 
 	ObjectDelta m_updateType;
-	RenderObject m_renderObject;
+	RenderObject* m_renderObject;
 };
 
 #endif /* GAMEDELTA_H_ */

@@ -83,7 +83,8 @@ public:
 
 	void updatePosition(Entity entity, int realm, Coords coords);
 	void updateOrientation(Entity entity, Orientation orientation);
-    void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro);
+    void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro);
+    void updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo);
 
     void addBehaviour(Entity entity, Behaviour *behaviour)
     {
@@ -125,35 +126,10 @@ private:
 //
 //}
 
-typedef enum 
-{
-       IDLE,
-       MOVE_RIGHT,
-       MOVE_LEFT,
-       MOVE_TOP,
-       MOVE_DOWN,
-       SHOOT,
-       TURN
-}UserActionType;
-
 struct UserActions
 {                 
     
 };
-
-typedef struct
-{
-	Entity entity;
-	Position position;
-	Orientation orientation;
-	RenderObject renderObject;
-} RealmRenderData;
-
-typedef struct
-{
-	int realm;
-	std::vector<RealmRenderData> realmData;
-} RenderData;
 
 class Player
 {
@@ -172,10 +148,8 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta loadMap(int realm, const Worldmap& world) const;
+	GameDelta& loadMap(int realm, const Worldmap& world, GameDelta& delta) const;
 	void setup();
-
-	std::vector<RenderData> getRenderData() const;
 
     GameDelta stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;

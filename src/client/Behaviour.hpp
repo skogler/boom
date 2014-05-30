@@ -8,8 +8,9 @@
 #ifndef BEHAVIOUR_H_
 #define BEHAVIOUR_H_
 
-class Game;
 #include "GameDelta.hpp"
+class Game;
+
 
 typedef struct
 {
@@ -52,24 +53,13 @@ private:
     
 class Shot : Behaviour
 {                      
-   Shot();
-   bool isFinished() const
-   {
-      if(true) //TODO: game.isEntityCollided(m_entity) 
-        return true;
-      else
-        return false;
-   }                 
-
-   GameDelta stepBehaviour(const Game &game)
-   {
-       GameDelta delta;// = GameDelta(m_entity, Coords {5,0});
-       //game.getCurrentGameState().getPositionManager().getPosition(m_entity);
-       return delta;
-   }
+   Shot(Coords target);
+   bool isFinished() const;
+   GameDelta stepBehaviour(const Game &game);
 
    private:
        Entity m_entity;
+       Coords m_target;
 };         
 
 

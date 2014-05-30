@@ -56,7 +56,6 @@ public:
 	Position operator+(const Position &other) const
 	{
 //		if (m_realm != other.m_realm)
-		assert(m_realm == other.getRealm());
 		return Position(m_realm,
 				getCoords().x + other.getCoords().x,
 				getCoords().y + other.getCoords().y);
@@ -64,7 +63,6 @@ public:
 
 	const Position &operator+=(const Position &other)
     {
-		assert(m_realm == other.getRealm());
 		m_coords.x += other.getCoords().x;
 		m_coords.y += other.getCoords().y;
 		return *this;

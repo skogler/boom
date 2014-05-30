@@ -12,7 +12,9 @@ RenderObject::RenderObject(const Entity& entity) :
     m_entity(entity),
 	m_fileName(""),
 	m_zLevel(0),
-	m_alpha(1)
+	m_alpha(1),
+    m_offset({0,0}),
+    m_size({1,1})
 {
 }
 
@@ -20,7 +22,9 @@ RenderObject::RenderObject(const Entity& entity, std::string filename) :
     m_entity(entity),
 	m_fileName(filename),
 	m_zLevel(0),
-	m_alpha(1)
+	m_alpha(1),
+    m_offset({0,0}),
+    m_size({1,1})
 {
 
 }
@@ -29,7 +33,19 @@ RenderObject::RenderObject(const Entity& entity, std::string fileName, int zLeve
         m_entity(entity),
 		m_fileName(fileName),
 		m_zLevel(zLevel),
-		m_alpha(alpha)
+		m_alpha(alpha),
+        m_offset({0,0}),
+        m_size({1,1})
+{
+
+}
+RenderObject::RenderObject(const Entity& entity, std::string fileName, int zLevel, double alpha, Coords offset, Coords size) :
+        m_entity(entity),
+		m_fileName(fileName),
+		m_zLevel(zLevel),
+		m_alpha(alpha),
+        m_offset(offset),
+        m_size(size)
 {
 
 }

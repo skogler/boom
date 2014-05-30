@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL_image.h>
+#include <stdio.h>
 
 #include <assert.h>
 
@@ -8,6 +9,8 @@
 #include "Game.hpp"
 #include "Input.hpp"
 #include "common.hpp"
+#include "BoomClient.hpp"
+#include "BoomNet.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +22,17 @@ int main(int argc, char *argv[])
     Renderer renderer(&window);
     Game game;
     Input input(game);
+
+    /* initialize SDL_net */
+    if(SDLNet_Init()==-1)
+    {
+        printf("SDLNet_Init: %s\n",SDLNet_GetError());
+        SDL_Quit();
+        exit(3);
+    }
+
+   // BoomClient network("localhost", BOOM_PORT, "super duper client");
+
     renderer.setGame(&game);
 
     // receive server seeds
@@ -31,7 +45,9 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-    	Uint32 newTime = SDL_GetTicks();
+        
+        input.handleInput();   //TODO: move down 
+        Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;
     	while (frameTime > 16)
         {
@@ -42,8 +58,10 @@ int main(int argc, char *argv[])
     	startTime = newTime;
     	// receive server actions
         
-        input.handleInput();
         
+       // network.checkMessages();
+
+       // network.sendTextMessge("heartbeat");
 
         renderer.startFrame();
         renderer.renderScene();
