@@ -8,6 +8,7 @@
 #include <math.h>
 #include <cmath>
 #include <stdio.h>
+#include <iostream>
 
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
@@ -78,7 +79,10 @@ GameDelta Game::runSystems(const GameDelta gd) const
 		{
 			afterCollision.purgePosition(collision.active);
 		}
+        afterCollision.mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
+        afterCollision.mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
 	}
+
 
 	return afterCollision;
 }
@@ -152,6 +156,7 @@ void Game::setup()
 }
 
 void Game::applyGameDelta(GameDelta delta) {
+	modifyCurrentGameState().cleanBehaviours();
 	for (std::map<Entity, Position>::const_iterator it = delta.getPositionsDelta().begin();
 			it != delta.getPositionsDelta().end();
 			it++)
@@ -186,6 +191,19 @@ void Game::applyGameDelta(GameDelta delta) {
     		m_currentState.addBehaviour(entry.first, behaviour);
     	}
     }
+
+    for (auto &entry : delta.getCollisionEvents())
+    {
+    	for (auto &event : entry.second)
+    	{
+    		m_currentState.addEvent(entry.first, event);
+    	}
+    }
+
+    for (auto &entry : delta.getRemoveEvents())
+    {
+        modifyCurrentGameState().removeEntity(entry.first);
+    }
 }
 
 GameDelta Player::movePlayer(Coords direction ) const
@@ -209,6 +227,21 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
    return delta;
 }
 
+GameDelta Game::spawnBullet() const
+{
+    GameDelta delta;
+    Entity bullet = Entity::newEntity();
+
+    Shot *beh = new Shot(bullet, Coords{0, 200});
+
+    delta.mergeDelta(GameDelta(bullet, Position(0, 5, 5)));
+    delta.mergeDelta(GameDelta(bullet, Orientation(0)));
+    delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/bullet", 1, 1)));
+    delta.mergeDelta(GameDelta(bullet, beh));
+
+    return delta;
+}
+
 GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) const 
 {               
     GameDelta delta;
@@ -216,6 +249,7 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
     {                     
         InputEvent input = ie->front();  
         Player player = getPlayerByID(input.getUID());
+
         switch(input.getType())
         {
             case MOVE_RIGHT:
@@ -233,6 +267,8 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
             case SHOOT:
                 //TODO: shoot logic
                 //delta = deeltaMerga(GameeDelta(entitz, new shot(entitz))
+                delta.mergeDelta(spawnBullet());
+            	
                 break;
             case TURN:
                 delta = delta.mergeDelta(player.lookAt(m_renderer->screenToRealm(input.getX(), input.getY(), 
@@ -241,7 +277,13 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
         }  
         ie->pop();
     }
-    return delta;
+
+	GameDelta behaviourStep = stepBehaviours(timeDelta);
+
+	behaviourStep.mergeDelta(delta);
+
+	GameDelta systemStep = runSystems(behaviourStep);
+    return systemStep;
 }
 
 

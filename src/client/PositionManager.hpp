@@ -11,6 +11,7 @@
 #include <map>
 #include "Position.hpp"
 #include "Entity.hpp"
+#include <stdio.h>
 
 class PositionManager {
 public:
@@ -35,7 +36,7 @@ public:
 
 	bool hasPosition(Entity entity) const
 	{
-		if (m_positions.find(entity) == m_positions.end())
+		if (m_positions.find(entity) != m_positions.end())
 		{
 			return true;
 		}
@@ -45,7 +46,7 @@ public:
 
 	bool hasOrientation(Entity entity) const
 	{
-		if (m_orientations.find(entity) == m_orientations.end())
+		if (m_orientations.find(entity) != m_orientations.end())
 		{
 			return true;
 		}
@@ -53,7 +54,7 @@ public:
 	}
 	bool hasBoundingBox(Entity entity) const
 	{
-		if (m_bounding_boxes.find(entity) == m_bounding_boxes.end())
+		if (m_bounding_boxes.find(entity) != m_bounding_boxes.end())
 		{
 			return true;
 		}

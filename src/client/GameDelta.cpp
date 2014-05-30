@@ -44,6 +44,17 @@ GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
 		for (auto &behaviour : entry.second)
 		deltaBehaviours[entry.first].push_back(behaviour);
 	}
+
+	for (auto &entry : newDelta.deltaCollisionEvents)
+	{
+		for (auto &event : entry.second)
+                        deltaCollisionEvents[entry.first].push_back(event);
+	}
+
+	for (auto &entry : newDelta.deltaRemoveEvents)
+	{
+		deltaRemoveEvents[entry.first] = entry.second;
+	}
 //			std::map<Entity, Health>::const_iterator it = newDelta)
 	return *this;
 }
@@ -56,6 +67,7 @@ GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 	deltaRenderObjects = src.deltaRenderObjects;
 	deltaHealth = src.deltaHealth;
 	deltaBehaviours = src.deltaBehaviours;
+	deltaCollisionEvents = src.deltaCollisionEvents;
 }
 
 GameDelta::GameDelta(Entity entity, const Position& pos) : GameDelta()
@@ -86,3 +98,10 @@ GameDelta::GameDelta(Entity entity, RenderObject* ro) : GameDelta()
 {
     deltaRenderObjects[entity] = std::make_shared<RenderObjectDelta>(ObjectDelta::ADDED, ro);
 }
+
+GameDelta::GameDelta(Entity entity, CollisionEvent event) : GameDelta()
+{
+	deltaCollisionEvents[entity].push_back(event);
+}
+
+

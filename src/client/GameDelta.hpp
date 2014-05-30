@@ -22,6 +22,14 @@ class Behaviour;
 using std::shared_ptr;
 
 class RenderObjectDelta;
+class CollisionEvent;
+
+
+enum class ObjectDelta {
+	ADDED,
+	REMOVED,
+	UPDATED
+};
 
 class GameDelta {
 public:
@@ -31,7 +39,8 @@ public:
 		deltaBoundingBoxes(),
 		deltaRenderObjects(),
 		deltaHealth(),
-		deltaBehaviours()
+		deltaBehaviours(),
+		deltaCollisionEvents()
 	{}
 
 	GameDelta(const GameDelta &delta);
@@ -41,6 +50,11 @@ public:
 	GameDelta(Entity entity, const BoundingBox& bb);
 	GameDelta(Entity entity, const Health& health);
 	GameDelta(Entity, RenderObject* ro);
+	GameDelta(Entity entity, CollisionEvent event);
+	GameDelta(Entity entity, ObjectDelta type) : GameDelta()
+	{
+		deltaRemoveEvents[entity] = type;
+	}
 	GameDelta(Entity entity, Behaviour *behaviour) : GameDelta()
 	{
 		deltaBehaviours[entity].push_back(behaviour);
@@ -81,21 +95,39 @@ public:
 		return deltaHealth;
 	}
 
+	const std::map<Entity, std::vector<CollisionEvent> >& getCollisionEvents()
+	{
+		return deltaCollisionEvents;
+	}
+
+	const std::map<Entity, ObjectDelta>& getRemoveEvents() const
+	{
+		return deltaRemoveEvents;
+	}
+
 private:
 	std::map<Entity, Position> deltaPositions;
 	std::map<Entity, Orientation> deltaOrientations;
 	std::map<Entity, BoundingBox> deltaBoundingBoxes;
 	std::map<Entity, Health> deltaHealth;
 	std::map<Entity, std::vector<Behaviour *> > deltaBehaviours;
-	std::map<Entity, shared_ptr<RenderObjectDelta>> deltaRenderObjects;
+	std::map<Entity, shared_ptr<RenderObjectDelta> > deltaRenderObjects;
+	std::map<Entity, std::vector<CollisionEvent> > deltaCollisionEvents;
+
+	std::map<Entity, ObjectDelta> deltaRemoveEvents;
+};
+
+class CollisionEvent
+{
+public:
+	CollisionEvent(Entity active, Entity passive) : m_active(active), m_passive(passive) {};
+private:
+	Entity m_active;
+	Entity m_passive;
 };
 
 
-enum class ObjectDelta {
-	ADDED,
-	REMOVED,
-	UPDATED
-};
+
 
 class RenderObjectDelta{
 public:
