@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 class Window;
+class Game;
 struct SDL_Renderer;
 
 class Renderer
@@ -20,16 +21,17 @@ public:
     inline void startFrame();
     void renderScene();
     inline void endFrame();
-
-    SDL_Renderer* m_renderer;
+    void setGame(Game* game);
 
 private:
     void loadAllTextures();
     void loadTexture(const boost::filesystem::path& path);
 
+    SDL_Renderer* m_renderer;
     Window* m_window;
     std::unordered_map<string, SDL_Texture*> m_textures;
     boost::filesystem::path m_texture_dir;
+    Game* m_game;
 };
 
 void Renderer::startFrame()

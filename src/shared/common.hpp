@@ -12,5 +12,6 @@ const string GAME_NAME = "Boom!";
 #define DISABLECOPY(classname)  private: \
                                  classname(const classname &rhs); \
                                  classname& operator=(const classname &rhs)
+#define UNUSED(var) (void) (var);
 
 #endif /* end of include guard: COMMON_HPP_UVOCTULR */

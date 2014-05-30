@@ -21,9 +21,9 @@ Worldmap::Worldmap(const int &seed, const int& size_x, const int& size_y, const 
 Worldmap::~Worldmap()
 {
     std::vector<Block*>::iterator blocks = _world.begin();
-    for (; blocks != _world.end(); blocks++) {
-        delete *blocks;
-    }
+    //for (; blocks != _world.end(); blocks++) {
+    //    delete *blocks;
+    //}
     _world.clear();
 }
 

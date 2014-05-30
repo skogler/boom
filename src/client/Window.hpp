@@ -13,7 +13,6 @@ public:
     virtual ~Window ();
 
     SDL_Window* m_window;
-    
 };
 
 #endif /* end of include guard: WINDOW_HPP_UGPBTZKY */

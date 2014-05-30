@@ -14,6 +14,7 @@
 #include "Game.hpp"
 
 class RenderObjectManager {
+    DISABLECOPY(RenderObjectManager);
 public:
 	RenderObjectManager();
 	virtual ~RenderObjectManager();
@@ -26,8 +27,7 @@ public:
 		return m_renderObjects.at(entity);
 	}
 
-	void updateRenderObject(Entity entity, ObjectDelta deltaType,
-			RenderObject ro);
+	void updateRenderObject(const Entity& entity, const ObjectDelta& deltaType, RenderObject& ro);
 
 	std::map<Entity, RenderObject> m_renderObjects;
 };

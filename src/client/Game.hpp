@@ -11,9 +11,13 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <queue>
+//class Input;
+//class InputEvent;
+
 #include "RenderObject.hpp"
 #include "CollisionSystem.hpp"
-
+#include "PositionManager.hpp"
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
 #include "time.h"
@@ -36,15 +40,22 @@ private:
 	CollisionSystem *collisionSystem;
 };
 
-typedef enum {
-	OBJECT_ADDED,
-	OBJECT_REMOVED,
-	OBJECT_UPDATED
-} ObjectDelta;
+enum class ObjectDelta {
+	ADDED,
+	REMOVED,
+	UPDATED
+};
 
-struct RenderObjectDelta {
-	ObjectDelta updateType;
-	RenderObject renderObject;
+class RenderObjectDelta{
+public:
+    RenderObjectDelta() : m_updateType(), m_renderObject() {}
+    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) : 
+        m_updateType(updateType), 
+        m_renderObject(renderObject) 
+    {}
+
+	ObjectDelta m_updateType;
+	RenderObject m_renderObject;
 };
 
 class GameDelta {
@@ -64,20 +75,20 @@ public:
 
 	GameDelta mergeDelta(const GameDelta &oldDelta) const;
 
-	std::map<Entity, Position> getPositionsDelta() const
+	const std::map<Entity, Position>& getPositionsDelta() const
     {
 		return deltaPositions;
     }
-	std::map<Entity, Orientation> getOrientationsDelta() const
+	const std::map<Entity, Orientation>& getOrientationsDelta() const
 	{
 		return deltaOrientations;
 	}
-	std::map<Entity, BoundingBox> getBoundingBoxDelta() const
+	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
 		{
 		return deltaBoundingBoxes;
 		}
 
-	std::map<Entity, RenderObjectDelta> getRenderObjectsDelta() const
+	std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta()
 		{
 		return deltaRenderObjects;
 		}
@@ -98,7 +109,7 @@ private:
 //
 //}
 
-enum UserActionType 
+typedef enum 
 {
        MOVE_RIGHT,
        MOVE_LEFT,
@@ -106,7 +117,7 @@ enum UserActionType
        MOVE_DOWN,
        SHOOT,
        TURN
-};
+}UserActionType;
 
 struct UserActions
 {                 
@@ -137,8 +148,8 @@ public:
 
 	std::vector<RenderData> getRenderData() const;
 
-	GameDelta stepGame(const UserActions *ua,
-						const double timeDelta) const;
+ //   GameDelta stepGame(const std::queue<InputEvent> *ie,
+ //   					const double timeDelta) const;
 	GameDelta runSystems(const GameDelta gd) const;
 
 //    GameDelta entitySetPosition(Entity entity, Position newPosition) const;
@@ -153,7 +164,7 @@ public:
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
     int getCurrentPlayer();
-    Entity getPlayerByID(int i);
+    Entity getPlayerByID(int i) const;
 
     int getNumberOfPlayers() const;
 

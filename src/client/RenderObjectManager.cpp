@@ -8,22 +8,20 @@
 #include "RenderObjectManager.hpp"
 #include "Game.hpp"
 
-RenderObjectManager::RenderObjectManager() {
-	// TODO Auto-generated constructor stub
-
+RenderObjectManager::RenderObjectManager() :
+    m_renderObjects()
+{
 }
 
 RenderObjectManager::~RenderObjectManager() {
-	// TODO Auto-generated destructor stub
 }
 
-void RenderObjectManager::updateRenderObject(Entity entity, ObjectDelta deltaType,
-		RenderObject ro)
+void RenderObjectManager::updateRenderObject(const Entity& entity, const ObjectDelta& deltaType,
+		RenderObject& ro)
 {
-	if (deltaType == OBJECT_REMOVED) {
+	if (deltaType == ObjectDelta::REMOVED) {
 		m_renderObjects.erase(entity);
-	} else
-	{
+	} else {
 		m_renderObjects[entity] = ro;
 	}
 }

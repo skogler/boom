@@ -44,13 +44,6 @@ public:
 		}
 	virtual ~Position();
 
-	Position operator=(const Position &other) const
-	{
-		return Position(m_realm,
-				other.getCoords().x,
-				other.getCoords().y);
-	}
-
 	Coords getCoords() const { return m_coords; }
 	int getRealm() const { return m_realm; }
 
@@ -76,15 +69,15 @@ public:
 				getCoords().y + other.y);
 	}
 
-	Position operator=(const Coords &other) const
+	Position& operator=(const Coords &other)
 	{
-		return Position(m_realm,
-				other.x, other.y);
+        m_coords = other;
+        return *this;
 	}
 
 private:
-	const int m_realm;
-	const Coords m_coords;
+	int m_realm;
+	Coords m_coords;
 };
 
 class Orientation {
@@ -92,11 +85,6 @@ public:
 	Orientation();
 	Orientation(double angle) : m_angle(angle) {}
 	virtual ~Orientation();
-
-	Orientation operator=(const Orientation &other) const
-	{
-		return Orientation(other.getAngle());
-	}
 
 	double getAngle() const { return m_angle; }
 
@@ -107,7 +95,7 @@ public:
 
 
 private:
-	const double m_angle;
+	double m_angle;
 };
 
 #endif /* POSITION_H_ */
