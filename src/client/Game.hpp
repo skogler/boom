@@ -72,15 +72,6 @@ public:
     double m_travel_speed;
 };
 
-class CollisionEvent
-{
-public:
-	CollisionEvent(Entity active, Entity passive);
-private:
-	Entity m_active;
-	Entity m_passive;
-};
-
 
 class GameState {
 public:
@@ -91,6 +82,11 @@ public:
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
 	const HealthSystem &getHealthSystem() const { return *healthSystem; }
 	const std::map<Entity, std::vector<Behaviour* > >& getBehaviours() const { return m_behaviours; }
+	const std::map<Entity, std::vector<CollisionEvent> >& getCollisionEvents() const { return m_collision_events; }
+
+	const std::vector<CollisionEvent>& entityCollided(Entity entity) const {
+		return m_collision_events.at(entity);
+	}
 
 	Health getHealth(Entity entity) const { return m_health.at(entity); }
 	void updateHealth(Entity entity, Health health) { m_health.at(entity) += health; }
@@ -103,6 +99,8 @@ public:
     void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro);
     void updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo);
 
+    void cleanBehaviours() { m_behaviours.clear(); }
+
 	void addWall(Entity entity) {
 		m_walls[entity] = Wall(entity, entity);
 	}
@@ -114,6 +112,11 @@ public:
     void addBehaviour(Entity entity, Behaviour *behaviour)
     {
     	m_behaviours[entity].push_back(behaviour);
+    }
+
+    void addEvent(Entity entity, CollisionEvent event)
+    {
+    	m_collision_events[entity].push_back(event);
     }
 
 	void removeEntity(Entity entity)
@@ -139,7 +142,7 @@ private:
 	std::map<Entity, BoundingBox> m_bounding_boxes;
 	std::map<Entity, std::vector<Behaviour *>> m_behaviours;
 
-	std::vector<CollisionEvent> collision_events;
+	std::map<Entity, std::vector<CollisionEvent> > m_collision_events;
 };
 
 
@@ -178,6 +181,8 @@ public:
 
     GameDelta stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;
+
+    GameDelta spawnBullet() const;
 
 	GameDelta runSystems(const GameDelta gd) const;
 

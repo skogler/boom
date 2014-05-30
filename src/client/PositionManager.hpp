@@ -11,6 +11,7 @@
 #include <map>
 #include "Position.hpp"
 #include "Entity.hpp"
+#include <stdio.h>
 
 class PositionManager {
 public:

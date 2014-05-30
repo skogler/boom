@@ -62,8 +62,7 @@ int main(int argc, char *argv[])
         {
             GameDelta delta = game.stepGame( &input.getServerInput(), 8.0);
     		frameTime -= 8;
-    		GameDelta newDelta = game.runSystems(delta);
-    		game.applyGameDelta(newDelta);
+    		game.applyGameDelta(delta);
     	}
 
 		remaining = frameTime;

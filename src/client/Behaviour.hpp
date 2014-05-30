@@ -51,11 +51,12 @@ private:
 	Entity m_entity;
 };
     
-class Shot : Behaviour
+class Shot : public Behaviour
 {                      
-   Shot(Coords target);
+public:
+   Shot(Entity entity, Coords target) : m_entity(entity), m_target(target) {};
    bool isFinished() const;
-   GameDelta stepBehaviour(const Game &game);
+   BehaviourStep stepBehaviour(const Game &game, double dt);
 
    private:
        Entity m_entity;
