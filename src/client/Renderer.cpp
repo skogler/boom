@@ -22,7 +22,7 @@ Renderer::Renderer(Window* window)
       m_textures(),
       m_texture_dir(fs::path("resources")/"textures")
 {
-    m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_ACCELERATED);
+    m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     loadAllTextures();
 }
 
@@ -62,7 +62,6 @@ void Renderer::loadTexture(const fs::path& path)
 
     Texture* tex = new Texture(m_renderer, path.string().c_str());;
     
-    std::cout << "Loaded texture " << name << std::endl;
     m_textures[name] = std::unique_ptr<Texture>(tex);
 }
 
@@ -94,8 +93,8 @@ void Renderer::updateViewports()
 
 void Renderer::updateCameras()
 {
-    for (int i = 0; i < m_cameras.size(); ++i) {
-        const auto& player = m_game->getPlayerByID(i);
+    for (uint i = 1; i < m_cameras.size(); ++i) {
+        const auto& player = m_game->getPlayerByID(i-1);
         m_cameras[i].first = m_game->getPlayerPosition(player);
         m_cameras[i].first.x -= m_cameras[i].second.x/2;
         m_cameras[i].first.y -= m_cameras[i].second.y/2;
@@ -114,6 +113,7 @@ void Renderer::renderScene()
         {
             auto& tex = m_textures.at(renderObject->m_fileName);
             auto pos = state.getPositionManager().getPosition(renderObject->m_entity);
+            auto rot = state.getPositionManager().getOrientation(renderObject->m_entity);
             int realm = pos.getRealm();
             const SDL_Rect& viewport = m_viewports[realm + 1];
 
@@ -123,10 +123,10 @@ void Renderer::renderScene()
             SDL_Rect target;
             target.w = SCALE * ( renderObject->m_size.x);
             target.h = SCALE * ( renderObject->m_size.y);
-            target.x = SCALE * (-cam.first.x + pos.getCoords().x + renderObject->m_offset.x - (renderObject->m_size.x / 2)); 
-            target.y = SCALE * (-cam.first.y + pos.getCoords().y + renderObject->m_offset.y - (renderObject->m_size.y / 2));
+            target.x = SCALE * (-cam.first.x + pos.getCoords().x + renderObject->m_offset.x); 
+            target.y = SCALE * (-cam.first.y + pos.getCoords().y + renderObject->m_offset.y);
 
-            SDL_RenderCopy(m_renderer, tex->m_texture, nullptr, &target);
+            SDL_RenderCopyEx(m_renderer, tex->m_texture, nullptr, &target, rot.getAngleDegrees(), nullptr, SDL_FLIP_NONE);
         }
         catch (const std::runtime_error& ex)
         {

@@ -92,19 +92,22 @@ GameDelta Game::runSystems(const GameDelta gd) const
 GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
 {
     const double BLOCK_SIZE = Wall::size();
+
+    double x_off = -world._size_x * Wall::size() * 0.5 - Wall::size() *0.5;
+    double y_off = -world._size_y * Wall::size() * 0.5 - Wall::size() *0.5;
 	for (int y = 0; y < world._size_y; y++) {
 		for (int x = 0; x < world._size_x; x++) {
             const Block *block = world.getBlock(x, y);
-            Coords topLeft = {x * BLOCK_SIZE, y * BLOCK_SIZE};
+            Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = Entity::newEntity();
 
-            delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
-            delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
 
             if (block->getType() == Block::WALL)
             {
+                delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
+                delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+                delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
             	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
 
 //            	for (int i = 0; i < 8; i++) {
@@ -113,10 +116,6 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) con
 //            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
 //            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
 //            	}
-            }
-            else
-            {
-            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "floor/floor_steel", 1, 1)));
             }
 		}
 	}

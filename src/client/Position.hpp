@@ -95,6 +95,7 @@ public:
 	virtual ~Orientation();
 
 	double getAngle() const { return m_angle; }
+	double getAngleDegrees() const { return m_angle * 180 / M_PI; }
 
 	const Orientation &operator+=(const Orientation &other)
     {
