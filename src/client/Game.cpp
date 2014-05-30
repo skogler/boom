@@ -144,27 +144,22 @@ std::vector<RenderData> Game::getRenderData() const
 
 void Game::setup()
 {
-	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	m_players.push_back(Entity::newEntity());
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
+	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	Entity p1_bottom = Entity::newEntity();
-	Entity p1_top = Entity::newEntity();
-	Entity p2 = Entity::newEntity();
-	Entity p3 = Entity::newEntity();
-	Entity p4 = Entity::newEntity();
-
-	GameDelta delta = GameDelta(p1_bottom, Position(1, 50, 50));
-	delta = delta.mergeDelta(GameDelta(p1_bottom, RenderObject("character/blue/blue_bottom", 1, 1)));
-	delta = delta.mergeDelta(GameDelta(p1_top, Position(1, 50, 50)));
-	delta = delta.mergeDelta(GameDelta(p1_top, RenderObject("character/blue/blue_bottom", 2, 1)));
+	GameDelta delta = GameDelta(m_players[0].entity_main_body, Position(1, 50, 50));
+//	delta = delta.mergeDelta(GameDelta(p1_bottom, RenderObject("character/blue/blue_bottom", 1, 1)));
+//	delta = delta.mergeDelta(GameDelta(p1_top, Position(1, 50, 50)));
+//	delta = delta.mergeDelta(GameDelta(p1_top, RenderObject("character/blue/blue_bottom", 2, 1)));
 
 	applyGameDelta(delta);
 }
@@ -230,7 +225,7 @@ int Game::getCurrentPlayer()
     return m_currentPlayer;
 }
 
-Entity Game::getPlayerByID(int id) const
+Player Game::getPlayerByID(int id) const
 {   
    return m_players[id] ;
 }
