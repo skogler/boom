@@ -20,15 +20,17 @@ class Block {
     DISABLECOPY(Block);
 public:
 
-    static const int NEIGHBOR_UP =      0x01;
-    static const int NEIGHBOR_DOWN =    0x02;
-    static const int NEIGHBOR_LEFT =    0x04;
-    static const int NEIGHBOR_RIGHT =   0x08;
+    static void getTextureNames(std::vector<std::string>& texures, int neighbors);
 
-    static const int NEIGHBOR_UP_LEFT =     0x10;
-    static const int NEIGHBOR_UP_RIGHT =    0x20;
-    static const int NEIGHBOR_DOWN_RIGHT =  0x40;
-    static const int NEIGHBOR_DOWN_LEFT =   0x80;
+    static const int BORDER_UP =      0x01;
+    static const int BORDER_DOWN =    0x02;
+    static const int BORDER_LEFT =    0x04;
+    static const int BORDER_RIGHT =   0x08;
+
+    static const int BORDER_UP_LEFT =     0x10;
+    static const int BORDER_UP_RIGHT =    0x20;
+    static const int BORDER_DOWN_RIGHT =  0x40;
+    static const int BORDER_DOWN_LEFT =   0x80;
 
     typedef enum BlockType_ {
         WALL,
@@ -42,7 +44,6 @@ public:
 
     void setType(const BlockType& type)
     {
-        printf("block (%d, %d): set type %d\n", _x, _y, type);
         _type = type;
     }
     const BlockType getType() const {
@@ -52,6 +53,7 @@ public:
     int getNeighbors();
 
     int getTextures(std::vector<std::string>&);
+
 
 private:
 

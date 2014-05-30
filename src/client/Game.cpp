@@ -101,15 +101,13 @@ GameDelta& Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
             Entity new_entity = Entity::newEntity();
 
 
-            if (block != NULL) {
+            if (block != NULL && block->getType() == Block::WALL) {
                 std::vector<std::string> textures;
                 block->getTextures(textures);
                 modifyCurrentGameState().addWall(new_entity);
                 delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
                 delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
                 delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[0].c_str(), 1, 1)));
-                for (int i = 0; i < textures.size(); i++) {
-                }
             }
 		}
 	}

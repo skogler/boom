@@ -36,6 +36,7 @@ public:
 private:
     void loadAllTextures();
     void loadTexture(const boost::filesystem::path& path);
+    void createWallTextures();
 
     SDL_Renderer* m_renderer;
     Window* m_window;

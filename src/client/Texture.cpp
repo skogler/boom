@@ -9,19 +9,38 @@ Texture::Texture(SDL_Renderer* renderer, const string& absPath) :
     m_width(0),
     m_height(0)
 {
-    SDL_Surface* surf = IMG_Load(absPath.c_str());
-    if (!surf) {
+    m_surface = IMG_Load(absPath.c_str());
+    if (!m_surface) {
         std::cerr << "Error loading texture " << absPath << std::endl;
         return;
     }
-    m_width = surf->w;
-    m_height = surf->h;
+    m_width = m_surface->w;
+    m_height = m_surface->h;
 
-    SDL_Texture* tex  = SDL_CreateTextureFromSurface(renderer, surf);
-    SDL_FreeSurface(surf);
-    surf = nullptr;
+    SDL_Texture* tex  = SDL_CreateTextureFromSurface(renderer, m_surface);
+   // SDL_FreeSurface(surf);
+   // m_surface = nullptr;
     if (!tex) {
         std::cerr << "Error loading texture " << absPath << std::endl;
+        return;
+    }
+    m_texture = tex;
+}
+
+Texture::Texture(SDL_Renderer* renderer, SDL_Surface* surf) :
+    m_texture(nullptr),
+    m_width(0),
+    m_height(0),
+    m_surface(surf)
+{
+    m_width = m_surface->w;
+    m_height = m_surface->h;
+
+    SDL_Texture* tex  = SDL_CreateTextureFromSurface(renderer, m_surface);
+   // SDL_FreeSurface(surf);
+    surf = nullptr;
+    if (!tex) {
+        std::cerr << "Error creating texture ";
         return;
     }
     m_texture = tex;

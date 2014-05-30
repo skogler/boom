@@ -7,6 +7,7 @@
 
 #include "Block.hpp"
 #include "Worldmap.hpp"
+#include <string.h>
 
 Block::Block(const BlockType& type, Worldmap* map, const int& x, const int& y) :
 _type(type),
@@ -25,6 +26,36 @@ Block::~Block()
     // TODO Auto-generated destructor stub
 }
 
+ void Block::getTextureNames(std::vector<std::string>& textures, int neighbors)
+{
+    textures.push_back("wall/wall_simple/wall_basic");
+
+    if ((neighbors & BORDER_DOWN)) {
+        textures.push_back("wall/wall_simple/wall_S");
+    }
+    if (neighbors & BORDER_UP) {
+        textures.push_back("wall/wall_simple/wall_N");
+    }
+    if (neighbors & BORDER_LEFT) {
+        textures.push_back("wall/wall_simple/wall_W");
+    }
+    if (neighbors & BORDER_RIGHT) {
+        textures.push_back("wall/wall_simple/wall_E");
+    }
+    if (neighbors & BORDER_DOWN_LEFT) {
+        textures.push_back("wall/wall_simple/wall_SW");
+    }
+    if (neighbors & BORDER_DOWN_RIGHT) {
+        textures.push_back("wall/wall_simple/wall_SE");
+    }
+    if (neighbors & BORDER_UP_RIGHT) {
+        textures.push_back("wall/wall_simple/wall_NE");
+    }
+    if (neighbors & BORDER_UP_LEFT) {
+        textures.push_back("wall/wall_simple/wall_NW");
+    }
+}
+
 int Block::getTextures(std::vector<std::string>& textures)
 {
     if (_worldmap == NULL || _worldmap->generated() == false) {
@@ -35,36 +66,14 @@ int Block::getTextures(std::vector<std::string>& textures)
         textures.push_back("floor/floor_steel");
     }
     else if (getType() == WALL) {
-        textures.push_back("wall/wall_simple/wall_basic");
-
-        if (getNeighbors() && NEIGHBOR_DOWN) {
-            textures.push_back("wall/wall_simple/wall_S");
-        }
-        if (getNeighbors() && NEIGHBOR_UP) {
-            textures.push_back("wall/wall_simple/wall_N");
-        }
-        if (getNeighbors() && NEIGHBOR_LEFT) {
-            textures.push_back("wall/wall_simple/wall_W");
-        }
-        if (getNeighbors() && NEIGHBOR_RIGHT) {
-            textures.push_back("wall/wall_simple/wall_E");
-        }
-        if (getNeighbors() && NEIGHBOR_DOWN_LEFT) {
-            textures.push_back("wall/wall_simple/wall_SW");
-        }
-        if (getNeighbors() && NEIGHBOR_DOWN_RIGHT) {
-            textures.push_back("wall/wall_simple/wall_SE");
-        }
-        if (getNeighbors() && NEIGHBOR_UP_RIGHT) {
-            textures.push_back("wall/wall_simple/wall_NE");
-        }
-        if (getNeighbors() && NEIGHBOR_UP_LEFT) {
-            textures.push_back("wall/wall_simple/wall_NW");
-        }
+        char name[20];
+        memset(name, 0, sizeof(name));
+        int neighbors = getNeighbors();
+        sprintf(name, "wall/%04d", neighbors);
+        printf("require texture %s\n", name);
+        textures.push_back(name);
     }
-
     return textures.size() - count;
-
 }
 
 
@@ -83,30 +92,37 @@ void Block::_checkNeighbors()
     }
     _neighbors = 0;
 
-    if (_worldmap->getBlock(_x + 1, _y)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_UP;
+    if (_worldmap->getBlock(_x, _y + 1 )->getType() == FLOOR) {
+        _neighbors |= BORDER_DOWN;
+        _neighbors |= BORDER_DOWN_LEFT;
+        _neighbors |= BORDER_DOWN_RIGHT;
     }
-    if (_worldmap->getBlock(_x - 1, _y)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_DOWN;
+    if (_worldmap->getBlock(_x, _y - 1)->getType() == FLOOR) {
+        _neighbors |= BORDER_UP;
+        _neighbors |= BORDER_UP_LEFT;
+        _neighbors |= BORDER_UP_RIGHT;
     }
-    if (_worldmap->getBlock(_x, _y + 1)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_RIGHT;
+    if (_worldmap->getBlock(_x + 1, _y)->getType() == FLOOR) {
+        _neighbors |= BORDER_RIGHT;
+        _neighbors |= BORDER_DOWN_RIGHT;
+        _neighbors |= BORDER_UP_RIGHT;
     }
-    if (_worldmap->getBlock(_x, _y - 1)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_LEFT;
+    if (_worldmap->getBlock(_x - 1, _y )->getType() == FLOOR) {
+        _neighbors |= BORDER_LEFT;
+        _neighbors |= BORDER_DOWN_LEFT;
+        _neighbors |= BORDER_UP_LEFT;
     }
-
-    if (_worldmap->getBlock(_x + 1, _y + 1)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_UP_RIGHT;
+    if (_worldmap->getBlock(_x + 1, _y - 1)->getType() == FLOOR) {
+        _neighbors |= BORDER_UP_RIGHT;
     }
-    if (_worldmap->getBlock(_x + 1, _y - 1)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_UP_LEFT;
+    if (_worldmap->getBlock(_x - 1, _y - 1)->getType() == FLOOR) {
+        _neighbors |= BORDER_UP_LEFT;
     }
-    if (_worldmap->getBlock(_x - 1, _y + 1)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_DOWN_RIGHT;
+    if (_worldmap->getBlock(_x + 1, _y + 1)->getType() == FLOOR) {
+        _neighbors |= BORDER_DOWN_RIGHT;
     }
-    if (_worldmap->getBlock(_x - 1, _y - 1)->getType() == WALL) {
-        _neighbors |= NEIGHBOR_DOWN_LEFT;
+    if (_worldmap->getBlock(_x - 1, _y + 1)->getType() == FLOOR) {
+        _neighbors |= BORDER_DOWN_LEFT;
     }
 }
 
