@@ -18,86 +18,92 @@
 
 class BoomSession {
 public:
-        BoomSession(TCPsocket socket):
-            _socket(socket),
-            _set(NULL),
-            _messages(),
-            _error(false)
-        {
-            _error = false;
-            _set = SDLNet_AllocSocketSet(1);
-            if(!_set) {
-              printf("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
-              _error = true;
-            }
-            else {
-                SDLNet_TCP_AddSocket(_set, _socket);
-            }
+    BoomSession(TCPsocket socket):
+        _socket(socket),
+        _set(NULL),
+        _messages(),
+        _error(false)
+{
+        _socket = socket;
+        _error = false;
+        _set = SDLNet_AllocSocketSet(1);
+        if(!_set) {
+            printf("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+            _error = true;
         }
-        ~BoomSession()
-        {
-            SDLNet_TCP_Close(_socket);
-            SDLNet_FreeSocketSet(_set);
+        else {
+            SDLNet_TCP_AddSocket(_set, _socket);
         }
+}
 
-        Message* recv()
-        {
-            if (_error) {
-                return NULL;
-            }
-            unsigned char buffer[512];
-            int result = SDLNet_TCP_Recv(_socket, buffer, sizeof(buffer));
-            if(result <= 0)
-            {
-                printf("recv Error: %s\n", SDLNet_GetError());
-                _error = true;
-            }
-            else {
-                _messages.addData(buffer, result);
-            }
-            return _messages.getMessage();
-        }
+    ~BoomSession()
+    {
+        SDLNet_TCP_Close(_socket);
+        SDLNet_FreeSocketSet(_set);
+    }
 
-        bool send(Message* msg)
-        {
-            if (_error) {
-                return false;
-            }
-            int result;
-            msg->prepareSendData();
-            result = SDLNet_TCP_Send(_socket, msg->getSendData(), msg->getMsgLen());
-            if(result <= 0)
-            {
-                printf("Send Error: %s\n", SDLNet_GetError());
-                _error = true;
-                return false;
-            }
-            return true;
+    Message* recv()
+    {
+        if (_error) {
+            return NULL;
         }
-
-        bool hasData()
+        unsigned char buffer[512];
+        int result = SDLNet_TCP_Recv(_socket, buffer, sizeof(buffer));
+        if(result <= 0)
         {
-            if (_error) {
-                return false;
-            }
-            int numready = SDLNet_CheckSockets(_set, 100);
-            if (numready == -1) {
-                printf("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
-                _error = true;
-            }
-            else if (numready) {
-                printf("There are %d sockets with activity!\n", numready);
-                return true;
-            }
+            printf("recv Error: %s\n", SDLNet_GetError());
+            _error = true;
+        }
+        else {
+            _messages.addData(buffer, result);
+        }
+        return _messages.getMessage();
+    }
+
+    bool send(Message* msg)
+    {
+        if (_error) {
             return false;
         }
-
-        bool hasErrors()
+        int result;
+        msg->prepareSendData();
+        result = SDLNet_TCP_Send(_socket, msg->getSendData(), msg->getMsgLen());
+        if(result <= 0)
         {
-            return _error;
+            printf("Send Error: %s\n", SDLNet_GetError());
+            _error = true;
+            return false;
         }
+        return true;
+    }
+
+    bool hasData()
+    {
+        if (_error) {
+            return false;
+        }
+        int numready = SDLNet_CheckSockets(_set, 100);
+        if (numready == -1) {
+            printf("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
+            _error = true;
+        }
+        else if (numready) {
+            printf("There are %d sockets with activity!\n", numready);
+            return true;
+        }
+        return false;
+    }
+
+    bool hasErrors()
+    {
+        return _error;
+    }
 
 private:
+    BoomSession(const BoomSession& other);
+    BoomSession& operator=(const BoomSession& other);
+
+
     TCPsocket           _socket;
     SDLNet_SocketSet    _set;
     MessageSet          _messages;

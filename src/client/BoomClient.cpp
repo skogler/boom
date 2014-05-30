@@ -86,7 +86,7 @@ void BoomClient::sendTextMessge(const std::string& text)
     if (_uid < 0) {
         return;
     }
-    Message msg(MSG_TYPE_TEXT, text.size(), (unsigned char*) text.c_str());
+    Message msg(MSG_TYPE_TEXT, text.size()+1, (unsigned char*) text.c_str());
     _session->send(&msg);
 }
 

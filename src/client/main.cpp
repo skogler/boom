@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
 
     BoomClient network("localhost", BOOM_PORT, "super duper client");
 
+    network.start_handshake();
+
     renderer.setGame(&game);
 
     // receive server seeds
@@ -41,6 +43,7 @@ int main(int argc, char *argv[])
     renderer.updateViewports();
 
     Uint32 startTime = SDL_GetTicks();
+    Uint32 heartBeat = startTime;
 
     while(!input.quit())
     {   
@@ -59,7 +62,10 @@ int main(int argc, char *argv[])
         
         network.checkMessages();
 
-        network.sendTextMessge("heartbeat");
+        if ((newTime - heartBeat) > 1000) {
+            network.sendTextMessge("heartbeat");
+            heartBeat = newTime;
+        }
 
         renderer.startFrame();
         renderer.renderScene();
