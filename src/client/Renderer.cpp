@@ -4,6 +4,7 @@
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
 #include "PositionManager.hpp"
+#include "Texture.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <SDL2/SDL.h>
@@ -27,12 +28,6 @@ Renderer::Renderer(Window* window)
 
 Renderer::~Renderer()
 {
-    for (auto& entry : m_textures) {
-        if (entry.second) {
-            SDL_DestroyTexture(entry.second);
-            entry.second = nullptr;
-        }
-    }
     if(m_renderer)
         SDL_DestroyRenderer(m_renderer);
     m_renderer = nullptr;
@@ -53,27 +48,22 @@ void Renderer::loadAllTextures()
 
 void Renderer::loadTexture(const fs::path& path)
 {
-    SDL_Surface* surf = IMG_Load(path.string().c_str());
-    if (!surf) {
-        std::cerr << "Error loading texture " << path << std::endl;
-        return;
-    }
-    SDL_Texture* tex  = SDL_CreateTextureFromSurface(m_renderer, surf);
-    SDL_FreeSurface(surf);
-    surf = nullptr;
-    if (!tex) {
-        std::cerr << "Error loading texture " << path << std::endl;
-        return;
-    }
     string basepath = m_texture_dir.string().c_str();
     string name = path.parent_path().string().c_str();
     name.erase(0, basepath.length());
-    if (name[0] == '/')
-        name.erase(0, 1);
+    if (name.size() != 0) 
+    {
+        if (name[0] == '/')
+            name.erase(0, 1);
+        if (name[name.size()-1] != '/')
+            name.append("/");
+    }
     name.append(path.stem().string().c_str());
+
+    Texture* tex = new Texture(m_renderer, path.string().c_str());;
     
     std::cout << "Loaded texture " << name << std::endl;
-    m_textures[name] = tex;
+    m_textures[name] = std::unique_ptr<Texture>(tex);
 }
 
 void Renderer::updateViewports() 
@@ -82,7 +72,7 @@ void Renderer::updateViewports()
     std::pair<uint, uint> w_size = m_window->getSize();
 
     m_viewports.clear();
-    m_viewports.resize(players);
+    m_viewports.reserve(players);
     int w = static_cast<int>(w_size.second / 2);
     int h = static_cast<int>(players <= 2 ? w_size.first : w_size.first / 2);
     
@@ -96,22 +86,34 @@ void Renderer::updateViewports()
 
 void Renderer::renderScene()
 {
+    SDL_RenderSetViewport(m_renderer, nullptr);
+    SDL_RenderCopy(m_renderer, m_textures.at("foo")->m_texture, nullptr, nullptr);
+
     const GameState& state = m_game->getCurrentGameState();
     for(auto& renderObject : state.getRenderObjectManager()->m_zSortedRenderObjects)
     {
-        auto pos = state.getPositionManager()->getPosition(renderObject.m_entity);
-        SDL_RenderSetViewport(m_renderer, &m_viewports[pos.getRealm()]);
-        SDL_Rect target;
-        target.x = pos.getCoords().x;
-        target.y = pos.getCoords().y;
-        target.w = 32;
-        target.h = 32;
-        SDL_RenderCopy(m_renderer, m_textures[renderObject.m_fileName], nullptr, &target);
+        try 
+        {
+            auto& tex = m_textures.at(renderObject.m_fileName);
+            auto pos = state.getPositionManager()->getPosition(renderObject.m_entity);
+            int realm = pos.getRealm();
+            std::cout << realm << std::endl;
+            if (realm >= 0)
+                SDL_RenderSetViewport(m_renderer, &m_viewports[realm]);
+            else
+                SDL_RenderSetViewport(m_renderer, nullptr);
+            SDL_Rect target;
+            target.x = pos.getCoords().x + renderObject.m_offset.x;
+            target.y = pos.getCoords().y + renderObject.m_offset.y;
+            target.w = tex->m_width;
+            target.h = tex->m_height;
+            SDL_RenderCopy(m_renderer, tex->m_texture, nullptr, &target);
+        }
+        catch (const std::runtime_error& ex)
+        {
+            std::cout << "Invalid texture name: " << renderObject.m_fileName << std::endl;
+        }
     }
-
-    SDL_RenderSetViewport(m_renderer, nullptr);
-
-    SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
 }
 
 void Renderer::setGame(Game* game)

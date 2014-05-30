@@ -6,9 +6,12 @@
 #include <SDL2/SDL.h>
 #include <unordered_map>
 #include <vector>
+#include <memory>
+using std::unique_ptr;
 
 class Window;
 class Game;
+class Texture;
 struct SDL_Renderer;
 
 class Renderer
@@ -31,7 +34,7 @@ private:
 
     SDL_Renderer* m_renderer;
     Window* m_window;
-    std::unordered_map<string, SDL_Texture*> m_textures;
+    std::unordered_map<string, unique_ptr<Texture>> m_textures;
     boost::filesystem::path m_texture_dir;
     Game* m_game;
     std::vector<SDL_Rect> m_viewports;

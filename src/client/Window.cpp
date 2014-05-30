@@ -1,8 +1,10 @@
 #include "Window.hpp"
 #include <SDL2/SDL.h>
 
-Window::Window (uint width, uint height, bool fullscreen)
-    : m_window(nullptr)
+Window::Window (uint width, uint height, bool fullscreen) : 
+    m_window(nullptr),
+    m_width(width),
+    m_height(height)
 {
     SDL_Init(SDL_INIT_VIDEO);
     int flags = SDL_WINDOW_OPENGL;

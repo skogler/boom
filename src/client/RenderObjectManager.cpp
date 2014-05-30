@@ -30,6 +30,11 @@ void RenderObjectManager::updateRenderObject(const ObjectDelta& deltaType, Rende
         }
 	} else {
         auto iter = std::lower_bound(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
-        *iter = ro;
+        if (iter == m_zSortedRenderObjects.end()) {
+            m_zSortedRenderObjects.push_back(ro);
+        }
+        else {
+            *iter = ro;
+        }
 	}
 }
