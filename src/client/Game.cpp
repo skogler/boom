@@ -8,7 +8,9 @@
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
 #include "PositionManager.hpp"
-#include "InputEvent.hpp"
+#include "InputEvent.hpp"    
+#include <math.h>
+#include <cmath>
 
 GameState::GameState() :
 		positionManager(new PositionManager()),
@@ -151,34 +153,68 @@ void Game::applyGameDelta(GameDelta delta) {
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 
-GameDelta Game::stepGame(const std::queue<InputEvent> *ie, const double timeDelta) const 
+GameDelta Player::movePlayer(Coords direction ) const
+{
+    GameDelta delta;                     
+    //TODO: add orientation
+    delta = delta.mergeDelta(GameDelta( this->entity_main_body, direction  ));
+    delta = delta.mergeDelta(GameDelta( this->entity_top_body, direction  ));
+    delta = delta.mergeDelta(GameDelta( this->entity_cannon, direction  ));   
+    return delta;
+}
+
+GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) const 
 {               
     GameDelta delta;
     while(!ie->empty())
     {                     
-        InputEvent input = ie->front();
+        InputEvent input = ie->front();  
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{MOVE_STEP, 0}));
+            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{ MOVE_STEP, 0});
                 break;
             case MOVE_LEFT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{MOVE_STEP, 0}));
+            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{-MOVE_STEP, 0});
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{0, MOVE_STEP}));
+            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{0, MOVE_STEP});
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{0, -MOVE_STEP}));
+            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{0,-MOVE_STEP});
                 break;
             case SHOOT:
-            	//delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entitiy, Position(-1, - MOVE_STEP, 0)));
+                //TODO: shoot logic
                 break;
             case TURN:
-            	//delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, - MOVE_STEP, 0))); 
+                Coords target = Coords{ input.getX(), input.getY() }; 
+                Coords pl = getPlayerPosition( getPlayerByID(input.getUID()) );
+                Orientation plo = getPlayerPartOrientation( getPlayerByID(input.getUID()).entity_top_body );
+                double m2h = atan2(target.x - pl.x, target.y - pl.y )  * 180 / M_PI;     
+                double diff = m2h - plo.getAngle(); 
+                delta = getPlayerByID(input.getUID()).rotateTopBodyAndCannon(Orientation(diff));
                 break;
-        }
+        }  
+        ie->pop();
     }
+    return delta;
+}
+
+Coords Game::getPlayerPosition(Player player ) const
+{
+    return this-> m_currentState.getPositionManager()->getPosition(player.entity_main_body).getCoords();
+} 
+
+Orientation Game::getPlayerPartOrientation(Entity part) const
+{
+    return this->m_currentState.getPositionManager()->getOrientation(part); 
+}
+
+GameDelta Player::rotateTopBodyAndCannon(Orientation orientation) const
+{
+    GameDelta delta;
+    delta = delta.mergeDelta(GameDelta( this->entity_cannon, orientation));
+    delta = delta.mergeDelta(GameDelta( this->entity_top_body, orientation));
     return delta;
 }
 
@@ -201,5 +237,7 @@ Game::Game() :
 }
 
 Game::~Game() {
-}
+}  
+
+
 

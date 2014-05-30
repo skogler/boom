@@ -10,17 +10,17 @@ class InputEvent
     protected:
         int m_uid;
         UserActionType m_type;                              
-        int m_x;
-        int m_y;
+        double m_x;
+        double m_y;
 
     public:
         InputEvent(int uid, UserActionType type);
-        InputEvent(int uid, UserActionType type, int x, int y);
+        InputEvent(int uid, UserActionType type, double  x, double  y);
         virtual ~InputEvent();
         int getUID();
         UserActionType getType();
-        int getX();
-        int getY();
+        double getX();
+        double getY();
 };
 
 
