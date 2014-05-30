@@ -90,7 +90,7 @@ GameDelta Game::runSystems(const GameDelta gd) const
 
 GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
 {
-    const double BLOCK_SIZE = 1;
+    const double BLOCK_SIZE = Wall::size();
 	for (int y = 0; y < world._size_y; y++) {
 		for (int x = 0; x < world._size_x; x++) {
             const Block *block = world.getBlock(x, y);

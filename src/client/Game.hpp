@@ -41,7 +41,7 @@ class Game;
 class Wall
 {
 public:
-	static const double size() { return 5; }
+	static const double size() { return 1; }
 	const Entity m_baseWall;
 	const Entity m_decoration;
 };
@@ -49,7 +49,7 @@ public:
 class Bullet
 {
 public:
-	static const double size() { return 0.5; }
+	static const double size() { return 1/32.0; }
 	const Entity m_body;
 	const Entity m_smoke;
     const double m_travel_speed;
