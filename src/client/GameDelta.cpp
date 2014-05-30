@@ -45,6 +45,7 @@ GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 	deltaOrientations = src.deltaOrientations;
 	deltaBoundingBoxes = src.deltaBoundingBoxes;
 	deltaRenderObjects = src.deltaRenderObjects;
+	deltaHealth = src.deltaHealth;
 }
 
 GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
