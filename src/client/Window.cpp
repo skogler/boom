@@ -25,3 +25,8 @@ Window::~Window()
     SDL_DestroyWindow(m_window);
     m_window = nullptr;
 }
+
+std::pair<uint, uint> Window::getSize()
+{
+    return std::pair<uint, uint>(m_width, m_height);
+}

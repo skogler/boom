@@ -5,6 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <SDL2/SDL.h>
 #include <unordered_map>
+#include <vector>
 
 class Window;
 class Game;
@@ -21,7 +22,8 @@ public:
     inline void startFrame();
     void renderScene();
     inline void endFrame();
-//    void setGame(Game* game);
+    void setGame(Game* game);
+    void updateViewports();
 
 private:
     void loadAllTextures();
@@ -32,6 +34,7 @@ private:
     std::unordered_map<string, SDL_Texture*> m_textures;
     boost::filesystem::path m_texture_dir;
     Game* m_game;
+    std::vector<SDL_Rect> m_viewports;
 };
 
 void Renderer::startFrame()

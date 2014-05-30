@@ -47,6 +47,11 @@ public:
 	Coords getCoords() const { return m_coords; }
 	int getRealm() const { return m_realm; }
 
+	double distance(const Position &other) const
+	{
+		return (sqrt(pow(getCoords().x - other.getCoords().x, 2)) + pow(getCoords().y - other.getCoords().y, 2));
+	}
+
 	Position operator+(const Position &other) const
 	{
 //		if (m_realm != other.m_realm)

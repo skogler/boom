@@ -5,12 +5,14 @@
  *      Author: Marco
  */
 
+#include <math.h>
+#include <cmath>
+
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
 #include "PositionManager.hpp"
 #include "InputEvent.hpp"    
-#include <math.h>
-#include <cmath>
+#include "CollisionSystem.hpp"
 
 GameState::GameState() :
 		positionManager(new PositionManager()),
@@ -18,6 +20,38 @@ GameState::GameState() :
 		collisionSystem(new CollisionSystem())
 {
 
+}
+
+bool GameState::isBullet(Entity entity) const
+{
+	for (auto &bullet : m_bullets)
+	{
+		if (bullet.m_body == entity || bullet.m_smoke == entity)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool GameState::isWall(Entity entity) const
+{
+	for (auto &wall : m_walls)
+	{
+		if (wall.m_baseWall == entity || wall.m_decoration == entity)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+GameDelta Game::runSystems(const GameDelta gd) const
+{
+	const CollisionSystem &system = m_currentState.getCollisionSystem();
+	system.checkCollisions(*this, gd);
+
+	return gd;
 }
 
 GameDelta Game::loadMap(int realm, const Worldmap& world) const
@@ -241,3 +275,7 @@ Game::~Game() {
 
 
 
+int Game::getNumberOfPlayers() const
+{
+    return m_players.size();
+}
