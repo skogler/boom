@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL_image.h>
+#include <stdio.h>
 
 #include <assert.h>
 
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-    BoomClient network("localhost", BOOM_PORT, "super duper client");
+   // BoomClient network("localhost", BOOM_PORT, "super duper client");
 
     network.start_handshake();
 
@@ -47,18 +48,19 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-    	Uint32 newTime = SDL_GetTicks();
+        
+        input.handleInput();   //TODO: move down 
+        Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;
     	while (frameTime > 16)
         {
             GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
     		frameTime -= 16;
-//    		game.applyGameDelta(delta);
+    		game.applyGameDelta(delta);
     	}
     	startTime = newTime;
     	// receive server actions
         
-        input.handleInput();
         
         network.checkMessages();
 

@@ -34,14 +34,14 @@ public:
 		deltaBehaviours()
 	{}
 
-	GameDelta(const GameDelta &src);
-	GameDelta(Entity entity, Position pos);
-	GameDelta(Entity entity, Coords coords);
-	GameDelta(Entity entity, Orientation orientation);
-	GameDelta(Entity entity, BoundingBox bb);
-	GameDelta(Entity entity, Health health);
-	GameDelta(Entity, RenderObject ro);
-	GameDelta(Entity entity, const Behaviour *behaviour) : GameDelta()
+	GameDelta(const GameDelta &delta);
+	GameDelta(Entity entity, const Position& pos);
+	GameDelta(Entity entity, const Coords& coords);
+	GameDelta(Entity entity, const Orientation& orientation);
+	GameDelta(Entity entity, const BoundingBox& bb);
+	GameDelta(Entity entity, const Health& health);
+	GameDelta(Entity, RenderObject* ro);
+	GameDelta(Entity entity, Behaviour *behaviour) : GameDelta()
 	{
 		deltaBehaviours[entity].push_back(behaviour);
 	}
@@ -52,6 +52,11 @@ public:
 	}
 
 	GameDelta &mergeDelta(const GameDelta &oldDelta);
+
+	const std::map<Entity, std::vector<Behaviour *> >& getBehaviourDelta() const
+	{
+		return deltaBehaviours;
+	}
 
 	const std::map<Entity, Position>& getPositionsDelta() const
     {
@@ -81,7 +86,7 @@ private:
 	std::map<Entity, Orientation> deltaOrientations;
 	std::map<Entity, BoundingBox> deltaBoundingBoxes;
 	std::map<Entity, Health> deltaHealth;
-	std::map<Entity, std::vector<const Behaviour *> > deltaBehaviours;
+	std::map<Entity, std::vector<Behaviour *> > deltaBehaviours;
 	std::map<Entity, shared_ptr<RenderObjectDelta>> deltaRenderObjects;
 };
 
@@ -94,13 +99,13 @@ enum class ObjectDelta {
 
 class RenderObjectDelta{
 public:
-    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) :
+    RenderObjectDelta(ObjectDelta updateType, RenderObject* renderObject) :
         m_updateType(updateType),
         m_renderObject(renderObject)
     {}
 
 	ObjectDelta m_updateType;
-	RenderObject m_renderObject;
+	RenderObject* m_renderObject;
 };
 
 #endif /* GAMEDELTA_H_ */

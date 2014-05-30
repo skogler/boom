@@ -13,10 +13,12 @@
 #include "Position.hpp"
 
 class RenderObject {
+    DISABLECOPY(RenderObject);
 public:
 	RenderObject(const Entity& entity);
 	RenderObject(const Entity& entity, std::string filename);
     RenderObject(const Entity& entity, std::string fileName, int zLevel, double alpha);
+    RenderObject(const Entity& entity, std::string fileName, int zLevel, double alpha, Coords offset, Coords size);
 	virtual ~RenderObject();
 
     bool operator==(const RenderObject& other) {
@@ -34,6 +36,7 @@ public:
 	int m_zLevel;
 	double m_alpha;
     Coords m_offset;
+    Coords m_size;
 };
 
 #endif /* RENDEROBJECT_HPP_ */

@@ -78,7 +78,7 @@ public:
 	{
 		if (m_positions.find(entity) != m_positions.end())
 		{
-			m_positions[entity] += Position(realm, coord.x, coord.y);
+			m_positions[entity] += Position(m_positions[entity].getRealm(), coord.x, coord.y);
 		} else
 		{
 			m_positions[entity] = Position(realm, coord.x, coord.y);

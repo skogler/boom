@@ -135,7 +135,7 @@ bool BoomClient::_connect()
     socket = SDLNet_TCP_Open(&ip);
     if(!socket)
     {
-        printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
+        //printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
         return false;
     }
     _session = new BoomSession(socket);

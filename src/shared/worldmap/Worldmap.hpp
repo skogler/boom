@@ -22,6 +22,9 @@ public:
     bool isCenter(const int& x, const int& y);
 
     virtual ~Worldmap();
+
+    int _size_x;
+    int _size_y;
 private:
 
     void _generate(const int &seed, const int& size_x, const int& size_y);
@@ -29,8 +32,6 @@ private:
     void _init(const int& size_x, const int& size_y);
     int  _smoothPerlin(int x, int y, float max);
 
-    int _size_x;
-    int _size_y;
     int _center_area;
     std::vector<Block* > _world;
 };

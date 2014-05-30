@@ -15,6 +15,7 @@
 #include "SDL_net.h"
 #include "Messages.hpp"
 #include <vector>
+#include <stdio.h>
 
 class BoomSession {
 public:

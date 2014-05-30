@@ -1,5 +1,6 @@
 #include "Input.hpp"
-#include "InputEvent.hpp"
+#include "InputEvent.hpp"        
+#include <stdio.h>
 
 Input::Input(Game& game) : 
     m_current_keystate(),
@@ -37,9 +38,10 @@ void Input::processEvent(SDL_Event event)
    int x = 0;
    int y = 0;
    //Keyboard
+   
    switch(event.type)
    {
-      case SDL_KEYDOWN:
+      case SDL_KEYDOWN:  
                 m_current_keystate[event.key.keysym.sym] = true;  
                 uat = mapKeyToAction(event.key.keysym.sym);
                 if(uat != IDLE)
@@ -117,13 +119,14 @@ UserActionType Input::mapKeyToAction(SDL_Keycode kc )
 void Input::sendInputEvent(UserActionType type)
 {
      InputEvent ie(m_cur_player, type);
-     //TODO: send it
+     //TODO: send it    
+     m_serverInput.push(ie);
 }
 
 void Input::sendInputEvent(UserActionType type, double x, double y)
 {
    InputEvent event(m_cur_player, type, x, y );
-   //TODO: send it
+   m_serverInput.push(event);
 }
 
 std::queue<InputEvent>& Input::getServerInput()

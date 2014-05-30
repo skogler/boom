@@ -72,10 +72,11 @@ void Renderer::updateViewports()
     auto w_size = m_window->getSize();
 
     m_viewports.clear();
-    m_viewports.reserve(players);
+    m_viewports.reserve(players+1);
     int w = w_size.first / 2;
     int h = players <= 2 ? w_size.second : w_size.second / 2;
     
+    m_viewports.push_back(SDL_Rect{0,0,w_size.first,w_size.second});
     m_viewports.push_back(SDL_Rect{0,0,w,h});
     m_viewports.push_back(SDL_Rect{w,0,w,h});
     if (players > 2) {
@@ -94,23 +95,23 @@ void Renderer::renderScene()
     {
         try 
         {
-            auto& tex = m_textures.at(renderObject.m_fileName);
-            auto pos = state.getPositionManager().getPosition(renderObject.m_entity);
+            auto& tex = m_textures.at(renderObject->m_fileName);
+            auto pos = state.getPositionManager().getPosition(renderObject->m_entity);
             int realm = pos.getRealm();
-            if (realm >= 0)
-                SDL_RenderSetViewport(m_renderer, &m_viewports[realm]);
-            else
-                SDL_RenderSetViewport(m_renderer, nullptr);
+            const SDL_Rect& viewport = m_viewports[realm + 1];
+
+            SDL_RenderSetViewport(m_renderer, &viewport);
+
             SDL_Rect target;
-            target.x = pos.getCoords().x + renderObject.m_offset.x;
-            target.y = pos.getCoords().y + renderObject.m_offset.y;
-            target.w = tex->m_width;
-            target.h = tex->m_height;
+            target.x = 32 * (pos.getCoords().x + renderObject->m_offset.x);
+            target.y = 32 * (pos.getCoords().y + renderObject->m_offset.y);
+            target.w = 32 * (renderObject->m_size.x);
+            target.h = 32 * (renderObject->m_size.y);
             SDL_RenderCopy(m_renderer, tex->m_texture, nullptr, &target);
         }
         catch (const std::runtime_error& ex)
         {
-            std::cout << "Invalid texture name: " << renderObject.m_fileName << std::endl;
+            std::cout << "Invalid texture name: " << renderObject->m_fileName << std::endl;
         }
     }
 }

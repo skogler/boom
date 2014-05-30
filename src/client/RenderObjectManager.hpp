@@ -13,6 +13,7 @@
 #include "Entity.hpp"
 #include "Game.hpp"
 
+
 class RenderObjectManager {
     DISABLECOPY(RenderObjectManager);
 public:
@@ -21,9 +22,9 @@ public:
 
 //    std::vector<RenderObject*> getRenderObjectsFor(const Entity& entity)
 
-	void updateRenderObject(const ObjectDelta& deltaType, RenderObject& ro);
+	void updateRenderObject(const ObjectDelta& deltaType, RenderObject* ro);
 
-    std::vector<RenderObject> m_zSortedRenderObjects;
+    std::vector<RenderObject*> m_zSortedRenderObjects;
 };
 
 #endif /* RENDEROBJECTMANAGER_HPP_ */
