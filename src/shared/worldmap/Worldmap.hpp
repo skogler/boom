@@ -9,10 +9,12 @@
 #define WORLDMAP_H_
 
 #include <vector>
+#include "../common.hpp"
 
 class Block;
 
 class Worldmap {
+    DISABLECOPY(Worldmap);
 public:
     Worldmap(const int &seed, const int& size_x, const int& size_y, const int& center_area);
 

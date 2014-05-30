@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
         Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime + remaining;
         std::cout << frameTime << std::endl;
-    	while (frameTime > 8)
+    	while (frameTime > 16)
         {
-            GameDelta delta = game.stepGame( &input.getServerInput(), 8.0);
-    		frameTime -= 8;
+            const GameDelta *delta = game.stepGame( &input.getServerInput(), 16.0);
+    		frameTime -= 16;
     		game.applyGameDelta(delta);
     	}
 

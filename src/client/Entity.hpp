@@ -56,7 +56,7 @@ Entity newEntity();
 //};
 
 struct hash_Entity {
-	inline size_t operator()(const Entity &ent) const {
+	inline size_t operator()(const Entity ent) const {
 		return ent;
 	}
 };

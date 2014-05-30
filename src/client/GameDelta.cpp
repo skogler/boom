@@ -59,7 +59,7 @@ GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
 	return *this;
 }
 
-GameDelta::GameDelta(const GameDelta &src) : GameDelta()
+/*GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 {
 	deltaPositions = src.deltaPositions;
 	deltaOrientations = src.deltaOrientations;
@@ -68,7 +68,7 @@ GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 	deltaHealth = src.deltaHealth;
 	deltaBehaviours = src.deltaBehaviours;
 	deltaCollisionEvents = src.deltaCollisionEvents;
-}
+}*/
 
 GameDelta::GameDelta(Entity entity, const Position& pos) : GameDelta()
 {

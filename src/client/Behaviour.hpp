@@ -15,7 +15,7 @@ class Game;
 typedef struct
 {
 	Behaviour *nextBehaviour;
-	GameDelta generatedDelta;
+	const GameDelta *generatedDelta;
 } BehaviourStep;
 
 class Behaviour
@@ -34,12 +34,14 @@ class Pushback : public Behaviour
 	BehaviourStep stepBehaviour(const Game &game, double dt)
 	{
 		if (m_timeLeft < dt) {
-			GameDelta delta = GameDelta(m_entity, Coords{-10*m_timeLeft, -10*m_timeLeft});
+			GameDelta delta(m_entity, Coords{-10*m_timeLeft, -10*m_timeLeft});
 			m_timeLeft = 0;
-            return BehaviourStep{nullptr, delta};
+			GameDelta *gd = new GameDelta();
+			gd->mergeDelta(delta);
+            return BehaviourStep{nullptr, gd};
 		} else {
 			m_timeLeft -= dt;
-            return BehaviourStep{this, GameDelta(m_entity, Coords{-10*dt, 10*dt})};
+            return BehaviourStep{this, new GameDelta(m_entity, Coords{-10*dt, 10*dt})};
 		}
 	}
 

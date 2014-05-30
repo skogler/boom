@@ -168,9 +168,9 @@ struct UserActions
 class Player
 {
 public:
-	GameDelta movePlayer(Coords direction) const;
-	GameDelta rotateTopBodyAndCannon(Orientation orientation) const;
-    GameDelta lookAt(Coords cor, const Game &game, Player &player) const;
+	void movePlayer(GameDelta &delta, Coords direction) const;
+	void rotateTopBodyAndCannon(GameDelta &delta, Orientation orientation) const;
+    void lookAt(GameDelta &delta, Coords cor, const Game &game, Player &player) const;
 
 	Entity entity_main_body;
 	Entity entity_top_body;
@@ -182,15 +182,15 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta& loadMap(int realm, const Worldmap& world, GameDelta& delta);
+	void loadMap(int realm, const Worldmap* world, GameDelta& delta);
 	void setup();
 
-    GameDelta stepGame(std::queue<InputEvent> *ie,
+    const GameDelta *stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;
 
-    GameDelta spawnBullet() const;
+    void spawnBullet(GameDelta &delta) const;
 
-	GameDelta runSystems(const GameDelta gd) const;
+	const GameDelta *runSystems(const GameDelta &gd) const;
 
 //    GameDelta entitySetPosition(Entity entity, Position newPosition) const;
     GameDelta entityTranslate(Entity entity, Position delta) const;
@@ -198,17 +198,17 @@ public:
     GameDelta entitySetBoundingBox(Entity entity, BoundingBox bb) const;
     GameDelta entitySetRenderObject(Entity entity, RenderObject ro) const;
 
-    GameDelta stepBehaviours(double dt) const //__attribute__ ((deprecated)) // DO NOT USE THIS
+    const GameDelta *stepBehaviours(double dt) const //__attribute__ ((deprecated)) // DO NOT USE THIS
     {
-    	GameDelta delta;
+    	GameDelta *delta = new GameDelta();
     	for (const auto &entry : getCurrentGameState().getBehaviours())
     	{
     		for (auto &behaviour : entry.second)
     		{
     			BehaviourStep step = behaviour->stepBehaviour(*this, dt);
-    			delta.mergeDelta(step.generatedDelta);
+    			delta->mergeDelta(*(step.generatedDelta));
     			if (step.nextBehaviour != nullptr) {
-    				delta.mergeDelta(GameDelta(entry.first, step.nextBehaviour));
+    				delta->mergeDelta(GameDelta(entry.first, step.nextBehaviour));
     			}
     		}
         }
@@ -216,7 +216,7 @@ public:
     }
 
     // update game state
-    void applyGameDelta(GameDelta gd);
+    void applyGameDelta(const GameDelta *gd);
 
     Entity getEntityById(EntityId id) const;
     Entity getEntityByName(std::string name) const;
@@ -258,7 +258,7 @@ private:
 //	std::map<EntityId, Entity> m_entities;
 
 	std::vector<Player> m_players;
-	std::vector<Worldmap> m_player_map;
+	std::vector<Worldmap*> m_player_map;
     Renderer* m_renderer;
 };
 

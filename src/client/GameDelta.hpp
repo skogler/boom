@@ -13,6 +13,7 @@
 #include "Position.hpp"
 #include "Entity.hpp"
 #include "Health.hpp"
+#include "common.hpp"
 
 class Behaviour;
 
@@ -32,6 +33,7 @@ enum class ObjectDelta {
 };
 
 class GameDelta {
+	DISABLECOPY(GameDelta);
 public:
 	GameDelta() :
 		deltaPositions(),
@@ -43,7 +45,7 @@ public:
 		deltaCollisionEvents()
 	{}
 
-	GameDelta(const GameDelta &delta);
+//	GameDelta(const GameDelta &delta);
 	GameDelta(Entity entity, const Position& pos);
 	GameDelta(Entity entity, const Coords& coords);
 	GameDelta(Entity entity, const Orientation& orientation);
@@ -85,7 +87,7 @@ public:
         return deltaBoundingBoxes;
     }
 
-    std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity>& getRenderObjectsDelta()
+    const std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity>& getRenderObjectsDelta() const
     {
 		return deltaRenderObjects;
     }
@@ -95,7 +97,7 @@ public:
 		return deltaHealth;
 	}
 
-	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity >& getCollisionEvents()
+	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity >& getCollisionEvents() const
 	{
 		return deltaCollisionEvents;
 	}

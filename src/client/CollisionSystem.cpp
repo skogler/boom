@@ -16,7 +16,7 @@ CollisionSystem::CollisionSystem() :
 CollisionSystem::~CollisionSystem() {
 }
 
-std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const GameDelta delta) const
+std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const GameDelta &delta) const
 {
 	const GameState &state = game.getCurrentGameState();
 	const PositionManager &pm = state.getPositionManager();

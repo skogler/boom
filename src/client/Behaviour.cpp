@@ -45,13 +45,13 @@ public:
             m_current_time = 0;
             if (m_current_frame >= m_frames.size())
             {
-                return BehaviourStep{nullptr, GameDelta()};
+                return BehaviourStep{nullptr, new GameDelta()};
             }
 
             return stepBehaviour(game, overflow);
         } else {
             m_current_time += dt;
-            return BehaviourStep{this, GameDelta(m_entity, new RenderObject(m_entity, m_frames[m_current_frame].name, 1, 1))};
+            return BehaviourStep{this, new GameDelta(m_entity, new RenderObject(m_entity, m_frames[m_current_frame].name, 1, 1))};
         }
     }
 
@@ -67,16 +67,16 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
     double step = 8*dt/1000;
     double x = 0.0;
     double y = 0.0;
-    GameDelta delta;
+    GameDelta *delta = new GameDelta();
     Coords origin = game.getCurrentGameState().getPositionManager().getPosition(m_entity).getCoords();
     double a = game.getCurrentGameState().getPositionManager().getOrientation(m_entity).getAngle(); 
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
 		std::cout << "Collision" << std::endl;
         Entity explosion = newEntity();
-        delta.mergeDelta(GameDelta(explosion, Position(0, origin.x, origin.y)));
-        delta.mergeDelta(GameDelta(explosion, Orientation(0)));
-        delta.mergeDelta(GameDelta(explosion, new RenderObject(explosion, "explosions/wall/expl_wall_01", 1, 1)));
+        delta->mergeDelta(GameDelta(explosion, Position(0, origin.x, origin.y)));
+        delta->mergeDelta(GameDelta(explosion, Orientation(0)));
+        delta->mergeDelta(GameDelta(explosion, new RenderObject(explosion, "explosions/wall/expl_wall_01", 1, 1)));
 
 //       delta.mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
 
@@ -103,7 +103,7 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
     }
 
     Coords delt  = normalizeCoords({m_target.x - origin.x, m_target.y - origin.y});
-    delta = GameDelta(m_entity, Coords{ delt.x * step, delt.y * step} );
+    delta->mergeDelta(GameDelta(m_entity, Coords{ delt.x * step, delt.y * step} ));
 
     return BehaviourStep{this, delta};
 }

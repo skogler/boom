@@ -42,6 +42,7 @@ public:
 
     void setType(const BlockType& type)
     {
+        printf("block (%d, %d): set type %d\n", _x, _y, type);
         _type = type;
     }
     const BlockType getType() const {

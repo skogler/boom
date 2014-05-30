@@ -32,7 +32,7 @@ public:
 	CollisionSystem();
 	virtual ~CollisionSystem();
 
-	std::vector<Collision> checkCollisions(const Game &game, const GameDelta delta) const;
+	std::vector<Collision> checkCollisions(const Game &game, const GameDelta &delta) const;
 
 private:
 	QuadTree *m_quad_tree;

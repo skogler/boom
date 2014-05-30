@@ -115,6 +115,13 @@ Block* Worldmap::getBlock(const int& x, const int& y) const
 {
     int x_coord = x % _size_x;
     int y_coord = y % _size_y;
+    if (x_coord < 0) {
+        x_coord = (_size_x - 1) - abs(x_coord);
+    }
+    if (y_coord < 0) {
+        y_coord = (_size_y - 1) - abs(y_coord);
+    }
+
     int index = x_coord * _size_x + y_coord;
     return _world[index];
 }
