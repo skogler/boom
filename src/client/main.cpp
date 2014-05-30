@@ -31,7 +31,9 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-   // BoomClient network("localhost", BOOM_PORT, "super duper client");
+    BoomClient network("localhost", BOOM_PORT, "super duper client");
+
+    network.start_handshake();
 
     renderer.setGame(&game);
 
@@ -42,6 +44,7 @@ int main(int argc, char *argv[])
     renderer.updateViewports();
 
     Uint32 startTime = SDL_GetTicks();
+    Uint32 heartBeat = startTime;
 
     while(!input.quit())
     {   
@@ -54,15 +57,19 @@ int main(int argc, char *argv[])
         {
             GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
     		frameTime -= 16;
-    		game.applyGameDelta(delta);
+    		GameDelta newDelta = game.runSystems(delta);
+    		game.applyGameDelta(newDelta);
     	}
     	startTime = newTime;
     	// receive server actions
         
         
-       // network.checkMessages();
+        network.checkMessages();
 
-       // network.sendTextMessge("heartbeat");
+        if ((newTime - heartBeat) > 1000) {
+            network.sendTextMessge("heartbeat");
+            heartBeat = newTime;
+        }
 
         renderer.startFrame();
         renderer.renderScene();

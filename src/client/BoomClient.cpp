@@ -86,7 +86,7 @@ void BoomClient::sendTextMessge(const std::string& text)
     if (_uid < 0) {
         return;
     }
-    Message msg(MSG_TYPE_TEXT, text.size(), (unsigned char*) text.c_str());
+    Message msg(MSG_TYPE_TEXT, text.size()+1, (unsigned char*) text.c_str());
     _session->send(&msg);
 }
 
@@ -135,7 +135,7 @@ bool BoomClient::_connect()
     socket = SDLNet_TCP_Open(&ip);
     if(!socket)
     {
-        printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
+        //printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
         return false;
     }
     _session = new BoomSession(socket);

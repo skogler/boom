@@ -53,7 +53,8 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
         		else if (state.isWall(entity))
         		{
         			const double wall_size = Wall::size();
-        			if (entityPos.distance(newPos) < wall_size) {
+        			const double player_size = Wall::size();
+        			if (entityPos.distance(newPos) < wall_size/2.0 + player_size/2.0) {
         				collisions.push_back(Collision{posDelta.first, entity});
         			}
         		}

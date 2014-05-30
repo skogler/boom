@@ -90,7 +90,7 @@ GameDelta Game::runSystems(const GameDelta gd) const
 
 GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
 {
-    const double BLOCK_SIZE = 1;
+    const double BLOCK_SIZE = Wall::size();
 	for (int y = 0; y < world._size_y; y++) {
 		for (int x = 0; x < world._size_x; x++) {
             const Block *block = world.getBlock(x, y);
@@ -189,6 +189,14 @@ void Game::applyGameDelta(GameDelta delta) {
 		m_currentState.updateRenderObject(entry.first, entry.second->m_updateType, entry.second->m_renderObject);
 	}
 
+    for (auto &entry : delta.getBehaviourDelta())
+    {
+    	for (auto &behaviour : entry.second)
+    	{
+    		m_currentState.addBehaviour(entry.first, behaviour);
+    	}
+    }
+
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 
@@ -215,7 +223,6 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
 
 GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) const 
 {               
-    printf("-gamestep-\n");
     GameDelta delta;
     while(!ie->empty())
     {                     
