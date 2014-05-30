@@ -98,7 +98,7 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
             Block *block = world.getBlock(x, y);
             Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
-            Entity new_entity = Entity::newEntity();
+            Entity new_entity = newEntity();
 
 
             if (block != NULL) {
@@ -122,16 +122,16 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
 
 void Game::setup()
 {
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
 	m_player_map.push_back(Worldmap(1, 60, 60, 5));
 
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
 	m_player_map.push_back(Worldmap(2, 60, 60, 5));
 
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
 	m_player_map.push_back(Worldmap(3, 60, 60, 5));
 
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
 	m_player_map.push_back(Worldmap(4, 60, 60, 5));
 
 
@@ -232,7 +232,7 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
 GameDelta Game::spawnBullet() const
 {
     GameDelta delta;
-    Entity bullet = Entity::newEntity();
+    Entity bullet = newEntity();
 
     Shot *beh = new Shot(bullet, Coords{0, 200});
 

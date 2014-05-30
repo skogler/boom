@@ -120,10 +120,10 @@ private:
 class CollisionEvent
 {
 public:
-	CollisionEvent(const Entity &active, const Entity &passive) : m_active(active), m_passive(passive) {};
+	CollisionEvent(Entity active, Entity passive) : m_active(active), m_passive(passive) {};
 private:
-	const Entity &m_active;
-	const Entity &m_passive;
+	Entity m_active;
+	Entity m_passive;
 };
 
 

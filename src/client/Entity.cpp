@@ -9,18 +9,19 @@
 
 static EntityId nextId = 1;
 
-Entity Entity::newEntity() {
-	Entity entity;
+Entity newEntity() {
+	Entity entity = nextId;
+	nextId += 1;
 	return entity;
 }
 
-Entity::Entity() : entityId(nextId) {
-	nextId += 1;
+//Entity::Entity() : entityId(nextId) {
+//	nextId += 1;
 	// TODO Auto-generated constructor stub
 
-}
+//}
 
-EntityId Entity::getId() const
-{
-    return entityId;
-}
+//EntityId Entity::getId() const
+//{
+//    return entityId;
+//}

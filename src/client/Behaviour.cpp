@@ -73,7 +73,7 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
 		std::cout << "Collision" << std::endl;
-        Entity explosion = Entity::newEntity();
+        Entity explosion = newEntity();
         delta.mergeDelta(GameDelta(explosion, Position(0, origin.x, origin.y)));
         delta.mergeDelta(GameDelta(explosion, Orientation(0)));
         delta.mergeDelta(GameDelta(explosion, new RenderObject(explosion, "explosions/wall/expl_wall_01", 1, 1)));

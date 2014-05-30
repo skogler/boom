@@ -22,7 +22,7 @@ public:
 	virtual ~RenderObject();
 
     bool operator==(const RenderObject& other) {
-        return m_entity.getId() == other.m_entity.getId() 
+        return m_entity == other.m_entity 
             && m_fileName == other.m_fileName
             && m_zLevel == other.m_zLevel;
     }

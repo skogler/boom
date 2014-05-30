@@ -16,44 +16,48 @@ typedef int EntityId;
 #include <unordered_map>
 	
 //static EntityId nextId;
+//
 
-class Entity {
-	DISABLECOPY(Entity);
-public:
-	static Entity newEntity();
+typedef int Entity;
+Entity newEntity();
+
+//class Entity {
+//	DISABLECOPY(Entity);
+//public:
+//	static Entity newEntity();
 
 //	Entity(const Entity &entity) : entityId(entity.entityId) {};
 
-    EntityId getId() const;
+//    EntityId getId() const;
 
-	bool operator==(const Entity &rhs) const
-	{
-		if (entityId == rhs.entityId)
-		{
-			return true;
-		}
+//	bool operator==(const Entity &rhs) const
+//	{
+//		if (entityId == rhs.entityId)
+//		{
+//			return true;
+//		}
+//
+//		return false;
+//	}
 
-		return false;
-	}
+//	bool operator<(const Entity& rhs) const
+//	{
+//		if (entityId < rhs.entityId)
+//   	{
+//			return true;
+//		}
+//		return false;
+//	}
 
-	bool operator<(const Entity& rhs) const
-	{
-		if (entityId < rhs.entityId)
-		{
-			return true;
-		}
-		return false;
-	}
+//private:
+//	Entity();
+//	EntityId entityId;
 
-private:
-	Entity();
-	EntityId entityId;
-
-};
+//};
 
 struct hash_Entity {
 	inline size_t operator()(const Entity &ent) const {
-		return ent.getId();
+		return ent;
 	}
 };
 

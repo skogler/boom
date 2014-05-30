@@ -43,8 +43,8 @@ class Renderer;
 class Wall
 {
 public:
-	Wall() : m_baseWall(Entity::newEntity()),
-		m_decoration(Entity::newEntity()) {}
+	Wall() : m_baseWall(newEntity()),
+		m_decoration(newEntity()) {}
 	Wall(const Wall &other) :
 		m_baseWall(other.m_baseWall),
 		m_decoration(other.m_decoration)
@@ -58,8 +58,8 @@ public:
 class Bullet
 {
 public:
-	Bullet() : m_body(Entity::newEntity()),
-		m_smoke(Entity::newEntity()) {}
+	Bullet() : m_body(newEntity()),
+		m_smoke(newEntity()) {}
 	Bullet(const Bullet &other) : m_body(other.m_body), m_smoke(other.m_smoke), m_travel_speed(other.m_travel_speed) {}
 	Bullet(Entity body, Entity smoke, double travel_speed) :
 		m_body(body),
