@@ -78,7 +78,7 @@ GameState::GameState() :
 
 }
 
-GameDelta Game::loadMap(const Worldmap& world) const
+GameDelta Game::loadMap(int realm, const Worldmap& world) const
 {
 	GameDelta delta;
 	for (int y = 0; y < 42; y++) {
@@ -87,16 +87,16 @@ GameDelta Game::loadMap(const Worldmap& world) const
             if (block->getType() == Block::WALL)
             {
             	Entity new_entity = Entity::newEntity();
-            	delta = delta.mergeDelta(GameDelta(new_entity, Position(-1, x, y)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject("baseWall", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject("resources/textures/wall/wall_easy/wall_basic", 1, 1)));
 
-            	for (int i = 0; i < 8; i++) {
-            		Entity overlay = Entity::newEntity();
-            		delta = delta.mergeDelta(GameDelta(overlay, Position(-1, x, y)));
-            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
-            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
-            	}
+//            	for (int i = 0; i < 8; i++) {
+//            		Entity overlay = Entity::newEntity();
+//            		delta = delta.mergeDelta(GameDelta(overlay, Position(realm, x, y)));
+//            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
+//            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
+//            	}
             }
 		}
 	}
@@ -156,10 +156,23 @@ void Game::setup()
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	GameDelta delta = GameDelta(m_players[0].entity_main_body, Position(1, 50, 50));
-//	delta = delta.mergeDelta(GameDelta(p1_bottom, RenderObject("character/blue/blue_bottom", 1, 1)));
-//	delta = delta.mergeDelta(GameDelta(p1_top, Position(1, 50, 50)));
-//	delta = delta.mergeDelta(GameDelta(p1_top, RenderObject("character/blue/blue_bottom", 2, 1)));
+
+	for (int i = 0; i < m_currentState.getPositionManager()->getNumRealms(); i++)
+	{
+		GameDelta delta = GameDelta(m_players[i].entity_main_body, Position(i, 50, 50));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 50, 50)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 50, 50)));
+
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, RenderObject("resources/textures/character/blue/blue_bottom", 1, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, RenderObject("resources/textures/character/blue/blue_mid", 2, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, RenderObject("resources/textures/character/blue/blue_top_standard_gun", 3, 1)));
+
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, BoundingBox()));
+
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, Orientation(0)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Orientation(0)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Orientation(0)));
+	}
 
 	applyGameDelta(delta);
 }

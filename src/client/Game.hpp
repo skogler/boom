@@ -150,6 +150,7 @@ typedef struct
 typedef struct
 {
 	Entity entity_main_body;
+	Entity entity_top_body;
 	Entity entity_cannon;
 } Player;
 
@@ -158,7 +159,7 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta loadMap(const Worldmap& world) const;
+	GameDelta loadMap(int realm, const Worldmap& world) const;
 	void setup();
 
 	std::vector<RenderData> getRenderData() const;
