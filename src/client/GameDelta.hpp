@@ -30,6 +30,7 @@ public:
 		deltaRenderObjects(),
 		deltaHealth()
 	{}
+
 	GameDelta(const GameDelta &src);
 	GameDelta(Entity entity, Position pos);
 	GameDelta(Entity entity, Coords coords);
@@ -43,7 +44,7 @@ public:
 		deltaPositions.erase(entity);
 	}
 
-	GameDelta mergeDelta(const GameDelta &oldDelta) const;
+	GameDelta &mergeDelta(const GameDelta &oldDelta);
 
 	const std::map<Entity, Position>& getPositionsDelta() const
     {
