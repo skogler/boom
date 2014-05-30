@@ -33,7 +33,9 @@ void Input::handleInput()
 
 void Input::processEvent(SDL_Event event)
 {
-   UserActionType uat;
+   UserActionType uat;      
+   int x = 0;
+   int y = 0;
    //Keyboard
    switch(event.type)
    {
@@ -55,11 +57,16 @@ void Input::processEvent(SDL_Event event)
       case SDL_MOUSEBUTTONDOWN:     
                 if(event.button.button == SDL_BUTTON_LEFT)
                 {
-                    sendInputEvent(TURN);
+                    SDL_GetMouseState(&x,&y);
+                    sendInputEvent(SHOOT, x, y);
                 }
                 break;
       case SDL_QUIT:
                 m_q_state = true;
+                break;      
+      case SDL_MOUSEMOTION:              
+                SDL_GetMouseState(&x,&y);
+                sendInputEvent(TURN, x, y);
                 break;
    }  
 
@@ -72,7 +79,7 @@ void Input::processEvent(SDL_Event event)
    //Mouse                      
    if(event.type == SDL_MOUSEMOTION)
    {
-      //TODO: maybe transmit  mouse pos without shoot action? 
+      //TODO: maybe transmit  
    }
 
 }        
@@ -109,8 +116,14 @@ UserActionType Input::mapKeyToAction(SDL_Keycode kc )
 
 void Input::sendInputEvent(UserActionType type)
 {
-     // InputEvent ie(m_cur_player, type);
+     InputEvent ie(m_cur_player, type);
      //TODO: send it
+}
+
+void Input::sendInputEvent(UserActionType type, int x, int y)
+{
+   InputEvent event(m_cur_player, type, x, y );
+   //TODO: send it
 }
 
 std::queue<InputEvent>& Input::getServerInput()
