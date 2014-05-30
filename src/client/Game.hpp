@@ -26,6 +26,7 @@ class CollisionSystem;
 class PositionManager;
 class RenderObjectManager;
 class InputEvent;
+class HealthSystem;
 
 typedef int FrameEvents;   
 
@@ -87,6 +88,10 @@ public:
 	PositionManager *getPositionManager() const { return positionManager; }
 	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
+	const HealthSystem &getHealthSystem() const { return *healthSystem; }
+
+	Health getHealth(Entity entity) const { return m_health.at(entity); }
+	void updateHealth(Entity entity, Health health) { m_health.at(entity) += health; }
 
 	bool isBullet(Entity entity) const;
 	bool isWall(Entity entity) const;
@@ -95,6 +100,7 @@ private:
 	PositionManager *positionManager;
 	RenderObjectManager *renderManager;
 	CollisionSystem *collisionSystem;
+	HealthSystem *healthSystem;
 
 	std::vector<Bullet> m_bullets;
 	std::vector<Wall> m_walls;
@@ -184,7 +190,18 @@ public:
     int getNumberOfPlayers() const;
     inline const GameState& getCurrentGameState() const;
 
-    bool isPlayer(Entity entity) const;
+    bool isPlayer(Entity entity) const
+    {
+    	for (auto &player : m_players) {
+    		if (player.entity_cannon == entity
+    				|| player.entity_main_body == entity
+    				|| player.entity_top_body == entity)
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 
 private:
 	GameState m_currentState;

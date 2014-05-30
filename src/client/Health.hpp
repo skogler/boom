@@ -11,7 +11,18 @@
 class Health {
 public:
 	Health(int health);
+	Health() : m_health(0) {}
 	virtual ~Health();
+
+	int getHealth() const { return m_health; }
+
+	Health operator+=(const Health &rhs) {
+		return Health(m_health + rhs.getHealth());
+	}
+
+	Health operator+(const Health &rhs) {
+		return Health(m_health + rhs.getHealth());
+	}
 
 private:
 	int m_health;

@@ -12,6 +12,7 @@
 #include "RenderObject.hpp"
 #include "Position.hpp"
 #include "Entity.hpp"
+#include "Health.hpp"
 
 #include <map>
 #include <vector>
@@ -24,14 +25,21 @@ public:
 		deltaPositions(),
 		deltaOrientations(),
 		deltaBoundingBoxes(),
-		deltaRenderObjects()
+		deltaRenderObjects(),
+		deltaHealth()
 	{}
 	GameDelta(const GameDelta &src);
 	GameDelta(Entity entity, Position pos);
 	GameDelta(Entity entity, Coords coords);
 	GameDelta(Entity entity, Orientation orientation);
 	GameDelta(Entity entity, BoundingBox bb);
+	GameDelta(Entity entity, Health health);
 	GameDelta(Entity, RenderObject ro);
+
+	void purgePosition(Entity entity)
+	{
+		deltaPositions.erase(entity);
+	}
 
 	GameDelta mergeDelta(const GameDelta &oldDelta) const;
 
@@ -53,11 +61,17 @@ public:
 		return deltaRenderObjects;
 		}
 
+	const std::map<Entity, Health>& getHealthDelta() const
+	{
+		return deltaHealth;
+	}
+
 private:
 	std::map<Entity, Position> deltaPositions;
 	std::map<Entity, Orientation> deltaOrientations;
 	std::map<Entity, BoundingBox> deltaBoundingBoxes;
 	std::map<Entity, RenderObjectDelta> deltaRenderObjects;
+	std::map<Entity, Health> deltaHealth;
 };
 
 

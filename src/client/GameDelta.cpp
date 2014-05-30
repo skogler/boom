@@ -24,6 +24,18 @@ GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
     {
 		delta.deltaOrientations[it->first] += (it->second);
     }
+
+	for (auto &health : newDelta.deltaHealth)
+	{
+		delta.deltaHealth[health.first] += health.second;
+	}
+
+	for (auto &renderObject : newDelta.deltaRenderObjects)
+	{
+//		if (r)
+		delta.deltaRenderObjects[renderObject.first] = renderObject.second;
+	}
+//			std::map<Entity, Health>::const_iterator it = newDelta)
 	return delta;
 }
 
@@ -40,22 +52,18 @@ GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
 	deltaPositions[entity] = pos;
 }
 
-GameDelta::GameDelta(Entity entity, Coords coords) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
+GameDelta::GameDelta(Entity entity, Coords coords) : GameDelta()
 {
 	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y);
 }
 
-GameDelta::GameDelta(Entity entity, Orientation orientation) :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
-{
+GameDelta::GameDelta(Entity entity, Orientation orientation) : GameDelta() {
 	deltaOrientations[entity] = orientation;
+}
+
+GameDelta::GameDelta(Entity entity, Health health) : GameDelta()
+{
+	deltaHealth[entity] = health;
 }
 
 GameDelta::GameDelta(Entity entity, BoundingBox bb) : GameDelta()
