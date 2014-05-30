@@ -13,7 +13,7 @@ set(src
     #MouseEvent.cpp
     main.cpp
     Window.cpp
-
+    BoomClient.cpp
     )
 
 set(headers

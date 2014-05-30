@@ -9,16 +9,65 @@
 #define MESSAGES_HPP_
 
 #include <vector>
+#include "common.hpp"
 
-#define MSG_TYPE_TEXT 0x01
+#define BOOM_PORT                       9997
+#define BOOM_CLIENT_NAME_LEN            50
+
+#define MSG_TYPE_TEXT                   0x01
+#define MSG_TYPE_INPUT_EVENT            0x02
+#define MSG_TYPE_HANDSHAKE_INIT         0x03
+#define MSG_TYPE_HANDSHAKE_ACCEPT       0x04
 
 #define MSG_HEADER_1 0xFF
 #define MSG_HEADER_2 0x00
 #define MSG_HEADER_3 0x31
 
+typedef struct HandshakeInitMessage_ {
+    char name[BOOM_CLIENT_NAME_LEN+1];
+}HandshakeInitMessage;
+
+typedef struct HandshakeAcceptMessage_ {
+    int     uid;
+    int     error;
+}HandshakeAcceptMessage;
+
+
+typedef struct InputEventMessage_ {
+    int m_uid;
+    UserActionType m_type;
+    double m_x;
+    double m_y;
+}InputEventMessage;
+
 class Message {
 public:
-    Message(const int Type, const size_t& size, unsigned char* data)
+    Message(const int Type, const size_t& size, unsigned char* data): _type(0), _data(), _msg_data()
+    {
+        init(Type, size, data);
+    }
+
+    Message(HandshakeAcceptMessage* data): _type(0), _data(), _msg_data()
+    {
+        init(MSG_TYPE_HANDSHAKE_ACCEPT, sizeof(HandshakeAcceptMessage), (unsigned char*) data);
+    }
+
+    Message(HandshakeInitMessage* data): _type(0), _data(), _msg_data()
+    {
+        init(MSG_TYPE_HANDSHAKE_INIT, sizeof(HandshakeInitMessage), (unsigned char*) data);
+    }
+
+    Message(InputEventMessage* data): _type(0), _data(), _msg_data()
+    {
+        init(MSG_TYPE_INPUT_EVENT, sizeof(InputEventMessage), (unsigned char*) data);
+    }
+
+    Message():_type(0), _data(), _msg_data()
+    {
+    }
+    ~Message() {};
+
+    void init(const int Type, const size_t& size, unsigned char* data)
     {
         _data.clear();
         _data.reserve(size);
@@ -27,12 +76,6 @@ public:
         }
         _type = Type;
     }
-    Message()
-    {
-        _data.clear();
-        _msg_data.clear();
-    }
-    ~Message() {};
 
     int getType()
     {
@@ -51,7 +94,7 @@ public:
         _msg_data.push_back(MSG_HEADER_2);
         _msg_data.push_back(MSG_HEADER_3);
         _msg_data.push_back(_type);
-        for (int i = 0; i < _data.size(); i++) {
+        for (unsigned int i = 0; i < _data.size(); i++) {
             _msg_data.push_back(_data[i]);
         }
         _msg_data.push_back(MSG_HEADER_3);
@@ -62,7 +105,7 @@ public:
 
     unsigned char *getRecvData()
     {
-        for (int i = 4; i < _msg_data.size() - 3; i++) {
+        for (unsigned int i = 4; i < _msg_data.size() - 3; i++) {
             _data.push_back(_msg_data[i]);
         }
         return _data.data();
@@ -73,7 +116,7 @@ public:
         return _msg_data.size();
     }
 
-    int addByte(unsigned char byte)
+    void addByte(unsigned char byte)
     {
         if (_msg_data.size() > 4) {
             _type = _msg_data[3];
@@ -105,7 +148,7 @@ private:
 
 class MessageSet {
 public:
-    MessageSet() {}
+    MessageSet():_messages() {}
     ~MessageSet() {};
 
     void addData(unsigned char* buffer, int bytes)

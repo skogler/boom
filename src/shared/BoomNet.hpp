@@ -19,7 +19,10 @@
 class BoomSession {
 public:
         BoomSession(TCPsocket socket):
-            _socket(socket)
+            _socket(socket),
+            _set(NULL),
+            _messages(),
+            _error(false)
         {
             _error = false;
             _set = SDLNet_AllocSocketSet(1);
@@ -100,147 +103,6 @@ private:
     MessageSet          _messages;
     bool                _error;
 };
-
-class BoomServer {
-public:
-    BoomServer(const int port): _port(port)
-    {
-        // create a listening TCP socket on (server)
-        IPaddress ip;
-        TCPsocket tcpsock;
-
-        if(SDLNet_ResolveHost(&ip,NULL,_port)==-1) {
-            printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-            exit(1);
-        }
-
-        _listen_socket = SDLNet_TCP_Open(&ip);
-        if(!_listen_socket) {
-            printf("SDLNet_TCP_Open: %s\n", SDLNet_GetError());
-            exit(2);
-        }
-    }
-
-    void accept_connections()
-    {
-        TCPsocket socket = SDLNet_TCP_Accept(_listen_socket);
-        if (socket != NULL) {
-            printf("got connection!\n");
-            _sessions.push_back(new BoomSession(socket));
-        }
-    }
-
-    void listen_messages()
-    {
-        for (int i = 0; i < _sessions.size(); i++) {
-            BoomSession * client = _sessions[i];
-            if (client->hasData() == true) {
-                Message  *msg;
-                msg = client->recv();
-                if (msg != NULL) {
-                    printf("got full message!\n");
-                    if (msg->getType() == MSG_TYPE_TEXT) {
-                        printf("Text message: %s\n", msg->getRecvData());
-                    }
-                    // echo to all
-                    sendToAll(msg);
-                    delete msg;
-                }
-                if (client->hasErrors() == true) {
-                    printf("client %d disconnected\n", i+1);
-                    _sessions.erase(_sessions.begin()+i);
-                }
-            }
-        }
-    }
-    ~BoomServer()
-    {
-    }
-
-    void sendToAll(Message* msg)
-    {
-        for (int i = 0; i < _sessions.size(); i++) {
-            BoomSession * client = _sessions[i];
-            client->send(msg);
-        }
-    }
-
-private:
-    int _port;
-    TCPsocket _listen_socket;
-    std::vector<BoomSession*> _sessions;
-};
-
-class BoomClient {
-public:
-    BoomClient(const std::string& hostname, const int port): _hostname(hostname), _port(port)
-    {
-        _session = NULL;
-        connect();
-    }
-    ~BoomClient()
-    {
-        delete _session;
-    }
-
-    bool connect()
-    {
-        if (_session != NULL) {
-            delete _session;
-            _session = NULL;
-        }
-
-        IPaddress ip;
-
-        if(SDLNet_ResolveHost(&ip, _hostname.c_str(), _port) == -1)
-        {
-          printf("SDLNet_ResolveHost: %s\n",SDLNet_GetError());
-          return false;
-        }
-
-        TCPsocket socket;
-        /* open the server socket */
-        socket = SDLNet_TCP_Open(&ip);
-        if(!socket)
-        {
-          printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
-          return false;
-        }
-        _session = new BoomSession(socket);
-
-        return true;
-    }
-
-    bool send(Message* msg)
-    {
-        if (_session == NULL || _session->hasErrors()) {
-            if (connect() == false) {
-                return false;
-            }
-        }
-        msg->prepareSendData();
-        return _session->send(msg);
-    }
-
-    Message* recv()
-    {
-        if (_session == NULL || _session->hasErrors()) {
-            if (connect() == false) {
-                return NULL;
-            }
-        }
-        if (_session->hasData()) {
-            return _session->recv();
-        }
-        return NULL;
-    }
-
-private:
-   BoomSession  *_session;
-   std::string  _hostname;
-   int          _port;
-};
-
 
 
 #endif /* BOOMNET_H_ */
