@@ -42,7 +42,20 @@ GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
 	deltaPositions[entity] = pos;
 }
 
-GameDelta::GameDelta(Entity entity, Orientation orientation) :  GameDelta()
+GameDelta::GameDelta(Entity entity, Coords coords) :
+		deltaPositions(),
+		deltaOrientations(),
+		deltaBoundingBoxes(),
+		deltaRenderObjects()
+{
+	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y);
+}
+
+GameDelta::GameDelta(Entity entity, Orientation orientation) :
+		deltaPositions(),
+		deltaOrientations(),
+		deltaBoundingBoxes(),
+		deltaRenderObjects()
 {
 	deltaOrientations[entity] = orientation;
 }
@@ -161,7 +174,9 @@ void Game::applyGameDelta(GameDelta delta) {
 			it != delta.getPositionsDelta().end();
 			it++)
 	{
-		m_currentState.getPositionManager()->updatePosition(it->first, it->second.getCoords());
+		m_currentState.getPositionManager()->updatePosition(
+				it->first, it->second.getRealm(), it->second.getCoords()
+			);
 	}
 
 	for (std::map<Entity, Orientation>::const_iterator it = delta.getOrientationsDelta().begin();

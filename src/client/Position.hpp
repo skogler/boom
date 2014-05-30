@@ -45,6 +45,7 @@ public:
 	virtual ~Position();
 
 	Coords getCoords() const { return m_coords; }
+	int getRealm() const { return m_realm; }
 
 	Position operator+(const Position &other) const
 	{
@@ -73,11 +74,6 @@ public:
         m_coords = other;
         return *this;
 	}
-
-    int getRealm() const
-    {
-        return m_realm;
-    }
 
 private:
 	int m_realm;
