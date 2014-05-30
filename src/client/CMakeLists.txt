@@ -29,6 +29,8 @@ set(headers
     HealthSystem.hpp
     Input.hpp
     InputEvent.hpp
+    GameDelta.cpp
+    GameDelta.hpp
     #KeyEvent.hpp
     Position.cpp
     Position.hpp

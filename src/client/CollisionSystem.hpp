@@ -14,6 +14,9 @@
 #include "common.hpp"
 #include "Entity.hpp"
 #include "Position.hpp"
+#include "GameDelta.hpp"
+
+class Game;
 
 class QuadTree;
 
@@ -23,7 +26,7 @@ public:
 	CollisionSystem();
 	virtual ~CollisionSystem();
 
-	void checkCollisions(std::vector<Entity> entities);
+	void checkCollisions(const Game &game, GameDelta delta);
 
 private:
 	QuadTree *m_quad_tree;

@@ -16,3 +16,8 @@ CollisionSystem::CollisionSystem() :
 CollisionSystem::~CollisionSystem() {
 }
 
+
+void CollisionSystem::checkCollisions(const Game &game, GameDelta delta)
+{
+	// implicit bounding boxes for walls
+}
