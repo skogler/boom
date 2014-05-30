@@ -14,6 +14,7 @@
 Worldmap::Worldmap(const int &seed, const int& size_x, const int& size_y, const int& center_area = 5):
     _size_x(size_x), _size_y(size_y), _center_area(center_area), _world()
 {
+    _generated = false;
     _init(size_x, size_y);
     _generate(seed, size_x, size_y);
 }
@@ -165,6 +166,7 @@ void Worldmap::_generate(const int &seed, const int& size_x, const int& size_y)
             getBlock(mirror_x, mirror_y)->setType(type);
         }
     }
+    _generated = true;
 
 }
 

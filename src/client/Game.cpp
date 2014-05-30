@@ -86,7 +86,7 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
     const double BLOCK_SIZE = Wall::size();
 	for (int y = 0; y < world._size_y; y++) {
 		for (int x = 0; x < world._size_x; x++) {
-            const Block *block = world.getBlock(x, y);
+            Block *block = world.getBlock(x, y);
             Coords topLeft = {x * BLOCK_SIZE, y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = Entity::newEntity();
@@ -95,22 +95,36 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
             delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
             delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
 
-            if (block->getType() == Block::WALL)
-            {
-            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
-				modifyCurrentGameState().addWall(new_entity);
+            if (block != NULL) {
+				std::vector<std::string> textures;
+				block->getTextures(textures);
 
+				if (block->getType() == Block::WALL){
+					modifyCurrentGameState().addWall(new_entity);
+				}
+                for (int i = 0; i < textures.size(); i++) {
+                    delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[i].c_str(), 1, 1)));
+                }
+            }
+//            block->getTextures()
+//
+//            if (block->getType() == Block::WALL)
+//            {
+//
+//
+//            	delta = delta.merge
+//
 //            	for (int i = 0; i < 8; i++) {
 //            		Entity overlay = Entity::newEntity();
 //            		delta = delta.mergeDelta(GameDelta(overlay, Position(realm, x, y)));
 //            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
 //            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
 //            	}
-            }
-            else
-            {
-            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "floor/floor_steel", 1, 1)));
-            }
+//            }
+//            else
+//            {
+//            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "floor/floor_steel", 1, 1)));
+//            }
 		}
 	}
 
