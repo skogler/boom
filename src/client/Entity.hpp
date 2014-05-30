@@ -15,9 +15,10 @@ typedef int EntityId;
 class Entity {
 public:
 	static Entity newEntity();
-	const EntityId entityId;
+
 	Entity(const Entity &entity) : entityId(entity.entityId) {};
-	virtual ~Entity();
+
+    EntityId getId() const;
 
 	bool operator==(const Entity &rhs) const
 	{
@@ -40,6 +41,7 @@ public:
 
 private:
 	Entity();
+	EntityId entityId;
 
 	static EntityId nextId;
 };

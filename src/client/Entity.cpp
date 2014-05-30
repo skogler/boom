@@ -20,7 +20,7 @@ Entity::Entity() : entityId(nextId) {
 
 }
 
-Entity::~Entity() {
-	// TODO Auto-generated destructor stub
+EntityId Entity::getId() const
+{
+    return entityId;
 }
-

@@ -16,6 +16,8 @@
 
 #include <map>
 #include <vector>
+#include <memory>
+using std::shared_ptr;
 
 class RenderObjectDelta;
 
@@ -52,14 +54,14 @@ public:
 		return deltaOrientations;
 	}
 	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
-		{
-		return deltaBoundingBoxes;
-		}
+    {
+        return deltaBoundingBoxes;
+    }
 
-	std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta()
-		{
+    std::map<Entity, shared_ptr<RenderObjectDelta>>& getRenderObjectsDelta()
+    {
 		return deltaRenderObjects;
-		}
+    }
 
 	const std::map<Entity, Health>& getHealthDelta() const
 	{
@@ -70,8 +72,8 @@ private:
 	std::map<Entity, Position> deltaPositions;
 	std::map<Entity, Orientation> deltaOrientations;
 	std::map<Entity, BoundingBox> deltaBoundingBoxes;
-	std::map<Entity, RenderObjectDelta> deltaRenderObjects;
 	std::map<Entity, Health> deltaHealth;
+	std::map<Entity, shared_ptr<RenderObjectDelta>> deltaRenderObjects;
 };
 
 
@@ -83,7 +85,6 @@ enum class ObjectDelta {
 
 class RenderObjectDelta{
 public:
-    RenderObjectDelta() : m_updateType(), m_renderObject() {}
     RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) :
         m_updateType(updateType),
         m_renderObject(renderObject)

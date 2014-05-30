@@ -168,7 +168,7 @@ public:
 
 	std::vector<RenderData> getRenderData() const;
 
-    GameDelta stepGame(const std::queue<InputEvent> *ie,
+    GameDelta stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;
 
 	GameDelta runSystems(const GameDelta gd) const;
@@ -202,6 +202,9 @@ public:
     	}
     	return false;
     }
+
+    Coords getPlayerPosition(Player player) const;
+    Orientation getPlayerPartOrientation(Entity part) const;
 
 private:
 	GameState m_currentState;

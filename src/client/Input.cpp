@@ -58,7 +58,7 @@ void Input::processEvent(SDL_Event event)
                 if(event.button.button == SDL_BUTTON_LEFT)
                 {
                     SDL_GetMouseState(&x,&y);
-                    sendInputEvent(SHOOT, x, y);
+                    sendInputEvent(SHOOT, (double)x,(double) y);
                 }
                 break;
       case SDL_QUIT:
@@ -66,7 +66,7 @@ void Input::processEvent(SDL_Event event)
                 break;      
       case SDL_MOUSEMOTION:              
                 SDL_GetMouseState(&x,&y);
-                sendInputEvent(TURN, x, y);
+                sendInputEvent(TURN,(double) x,(double) y);
                 break;
    }  
 
@@ -120,7 +120,7 @@ void Input::sendInputEvent(UserActionType type)
      //TODO: send it
 }
 
-void Input::sendInputEvent(UserActionType type, int x, int y)
+void Input::sendInputEvent(UserActionType type, double x, double y)
 {
    InputEvent event(m_cur_player, type, x, y );
    //TODO: send it
