@@ -50,6 +50,11 @@ GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
 		for (auto &event : entry.second)
                         deltaCollisionEvents[entry.first].push_back(event);
 	}
+
+	for (auto &entry : newDelta.deltaRemoveEvents)
+	{
+		deltaRemoveEvents[entry.first] = entry.second;
+	}
 //			std::map<Entity, Health>::const_iterator it = newDelta)
 	return *this;
 }

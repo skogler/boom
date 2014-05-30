@@ -24,6 +24,13 @@ using std::shared_ptr;
 class RenderObjectDelta;
 class CollisionEvent;
 
+
+enum class ObjectDelta {
+	ADDED,
+	REMOVED,
+	UPDATED
+};
+
 class GameDelta {
 public:
 	GameDelta() :
@@ -44,6 +51,10 @@ public:
 	GameDelta(Entity entity, const Health& health);
 	GameDelta(Entity, RenderObject* ro);
 	GameDelta(Entity entity, CollisionEvent event);
+	GameDelta(Entity entity, ObjectDelta type) : GameDelta()
+	{
+		deltaRemoveEvents[entity] = type;
+	}
 	GameDelta(Entity entity, Behaviour *behaviour) : GameDelta()
 	{
 		deltaBehaviours[entity].push_back(behaviour);
@@ -89,6 +100,11 @@ public:
 		return deltaCollisionEvents;
 	}
 
+	const std::map<Entity, ObjectDelta>& getRemoveEvents() const
+	{
+		return deltaRemoveEvents;
+	}
+
 private:
 	std::map<Entity, Position> deltaPositions;
 	std::map<Entity, Orientation> deltaOrientations;
@@ -97,6 +113,8 @@ private:
 	std::map<Entity, std::vector<Behaviour *> > deltaBehaviours;
 	std::map<Entity, shared_ptr<RenderObjectDelta> > deltaRenderObjects;
 	std::map<Entity, std::vector<CollisionEvent> > deltaCollisionEvents;
+
+	std::map<Entity, ObjectDelta> deltaRemoveEvents;
 };
 
 class CollisionEvent
@@ -109,11 +127,7 @@ private:
 };
 
 
-enum class ObjectDelta {
-	ADDED,
-	REMOVED,
-	UPDATED
-};
+
 
 class RenderObjectDelta{
 public:

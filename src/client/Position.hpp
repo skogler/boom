@@ -20,6 +20,8 @@ typedef struct {
 	double y;
 } Coords;
 
+Coords normalizeCoords(const Coords &coords);
+
 class BoundingBox {
 private:
 	std::vector<Coords> m_polygon;
