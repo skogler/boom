@@ -102,7 +102,7 @@ private:
 class CollisionEvent
 {
 public:
-	CollisionEvent(Entity active, Entity passive);
+	CollisionEvent(Entity active, Entity passive) : m_active(active), m_passive(passive) {};
 private:
 	Entity m_active;
 	Entity m_passive;
