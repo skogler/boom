@@ -184,35 +184,42 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
     while(!ie->empty())
     {                     
         InputEvent input = ie->front();  
+        Player player = getPlayerByID(input.getUID());
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{ MOVE_STEP, 0});
+            	delta = player.movePlayer(Coords{ MOVE_STEP, 0});
                 break;
             case MOVE_LEFT:
-            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{-MOVE_STEP, 0});
+            	delta = player.movePlayer(Coords{-MOVE_STEP, 0});
                 break;    
             case MOVE_TOP:
-            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{0, MOVE_STEP});
+            	delta = player.movePlayer(Coords{0, MOVE_STEP});
                 break;
             case MOVE_DOWN:
-            	delta = getPlayerByID(input.getUID()).movePlayer(Coords{0,-MOVE_STEP});
+            	delta = player.movePlayer(Coords{0,-MOVE_STEP});
                 break;
             case SHOOT:
                 //TODO: shoot logic
                 break;
             case TURN:
-                Coords target = Coords{ input.getX(), input.getY() }; 
-                Coords pl = getPlayerPosition( getPlayerByID(input.getUID()) );
-                Orientation plo = getPlayerPartOrientation( getPlayerByID(input.getUID()).entity_top_body );
-                double m2h = atan2(target.x - pl.x, target.y - pl.y )  * 180 / M_PI;     
-                double diff = m2h - plo.getAngle(); 
-                delta = getPlayerByID(input.getUID()).rotateTopBodyAndCannon(Orientation(diff));
+                player.lookAt(Coords{ input.getX(), input.getY() } , *this, player);
                 break;
         }  
         ie->pop();
     }
     return delta;
+}
+
+GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const 
+{
+   GameDelta delta;
+   Coords pl = game.getPlayerPosition(player ); 
+   Orientation plo = game.getPlayerPartOrientation(player.entity_top_body ); 
+   double m2h = atan2(cor.x - pl.x, cor.y - pl.y )  * 180 / M_PI;     
+   double diff = m2h - plo.getAngle();   
+   delta = player.rotateTopBodyAndCannon(Orientation(diff));      
+   return delta;
 }
 
 Coords Game::getPlayerPosition(Player player ) const

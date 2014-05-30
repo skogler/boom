@@ -152,6 +152,7 @@ class Player
 public:
 	GameDelta movePlayer(Coords direction) const;
 	GameDelta rotateTopBodyAndCannon(Orientation orientation) const;
+    GameDelta lookAt(Coords cor, const Game &game, Player &player) const;
 
 	Entity entity_main_body;
 	Entity entity_top_body;
