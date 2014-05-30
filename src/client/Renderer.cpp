@@ -3,6 +3,7 @@
 #include "Window.hpp" 
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
+#include "PositionManager.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <SDL2/SDL.h>
@@ -96,7 +97,19 @@ void Renderer::updateViewports()
 void Renderer::renderScene()
 {
     const GameState& state = m_game->getCurrentGameState();
+    for(auto& renderObject : state.getRenderObjectManager()->m_zSortedRenderObjects)
+    {
+        auto pos = state.getPositionManager()->getPosition(renderObject.m_entity);
+        SDL_RenderSetViewport(m_renderer, &m_viewports[pos.getRealm()]);
+        SDL_Rect target;
+        target.x = pos.getCoords().x;
+        target.y = pos.getCoords().y;
+        target.w = 32;
+        target.h = 32;
+        SDL_RenderCopy(m_renderer, m_textures[renderObject.m_fileName], nullptr, &target);
+    }
 
+    SDL_RenderSetViewport(m_renderer, nullptr);
 
     SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
 }
