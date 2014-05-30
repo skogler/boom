@@ -23,6 +23,7 @@ class Input
         void receiveInputEvent(InputEvent& event);
         void handleConstantInput();        
         bool quit();
+        void handleFrameByFrameInput();
 
     private:
         std::map<int, bool> m_current_keystate;

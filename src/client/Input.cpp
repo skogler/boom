@@ -28,7 +28,8 @@ void Input::handleInput()
     {
         processEvent(event);
         handleConstantInput();
-    }               
+    }     
+    handleConstantInput(); 
 
 }
 
@@ -82,7 +83,7 @@ void Input::processEvent(SDL_Event event)
    {
         m_last_keystate[event.key.keysym.sym] = m_current_keystate[event.key.keysym.sym];
    }
-   handleConstantInput();
+  
 
    //Mouse                      
    if(event.type == SDL_MOUSEMOTION)
@@ -131,13 +132,26 @@ void Input::sendInputEvent(UserActionType type)
     else {
         m_serverInput.push(ie);
     }
+}      
+
+void Input::handleFrameByFrameInput()
+{
+   std::map<int, bool>::iterator iter;
+
+   for (iter = m_current_keystate.begin(); iter != m_current_keystate.end(); ++iter)
+   { 
+       InputEvent event(InputEvent(m_cur_player, mapKeyToAction(iter->first), 0,0));
+       if(iter->second == true)
+           m_network->sendInputEvent( event );
+
+   }
 }
 
 void Input::sendInputEvent(UserActionType type, double x, double y)
 {
     InputEvent event(m_cur_player, type, x, y );
     if (m_network != NULL && m_network->connected()) {
-        m_network->sendInputEvent(event);
+     m_network->sendInputEvent(event);
     }
     else {
         m_serverInput.push(event);
