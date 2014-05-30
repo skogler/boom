@@ -38,6 +38,7 @@ static const double MOVE_STEP = 2.0;
 typedef std::vector<Entity> EntityGroup;
 
 class Game;
+class Renderer;
 
 class Wall
 {
@@ -242,6 +243,15 @@ public:
     Coords getPlayerPosition(Player player) const;
     Orientation getPlayerPartOrientation(Entity part) const;
 
+    inline void setRenderer(Renderer* renderer)
+    {
+        m_renderer = renderer;
+    }
+    void setCurrentPlayer(int currentPlayer)
+    {
+        m_currentPlayer = currentPlayer;
+    }
+
 private:
 	GameState m_currentState;
     int m_currentPlayer;
@@ -249,6 +259,7 @@ private:
 
 	std::vector<Player> m_players;
 	std::vector<Worldmap> m_player_map;
+    Renderer* m_renderer;
 };
 
 const GameState& Game::getCurrentGameState() const

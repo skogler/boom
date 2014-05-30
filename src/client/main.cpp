@@ -14,8 +14,12 @@
 
 int main(int argc, char *argv[])
 {
-    UNUSED(argc);
-    UNUSED(argv);
+
+    if (argc != 2) {
+        printf("usage: boom-client server\n");
+        printf("where server is a hostname or ip-address\n");
+        return 0;
+    }
 
     Window window(640, 480, true);
     IMG_Init(IMG_INIT_PNG);
@@ -31,15 +35,13 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-    BoomClient network("localhost", BOOM_PORT, "super duper client", &input);
-
+    BoomClient network(argv[1], BOOM_PORT, "super duper client", &input, &game);
     network.start_handshake();
-
-    network.getUId();
 
     input.setBoomClient(&network);
 
     renderer.setGame(&game);
+    game.setRenderer(&renderer);
 
     // receive server seeds
 //    game.loadMap(seeds)
@@ -54,7 +56,6 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-        input.handleInput();   //TODO: move down 
         Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime + remaining;
         std::cout << frameTime << std::endl;
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
             heartBeat = newTime;
         }
 
+        input.handleInput();   //TODO: move down 
         renderer.startFrame();
         renderer.updateCameras();
         renderer.renderScene();

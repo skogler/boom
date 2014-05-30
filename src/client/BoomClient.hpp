@@ -16,7 +16,7 @@
 
 class BoomClient {
 public:
-    BoomClient(const std::string& hostname, const int port, const std::string& name, Input* input);
+    BoomClient(const std::string& hostname, const int port, const std::string& name, Input* input, Game* game);
     ~BoomClient();
 
     void checkMessages();
@@ -51,6 +51,7 @@ private:
     std::string  _name;
     int          _uid;
     Input*       _input;
+    Game*        _game;
 };
 
 
