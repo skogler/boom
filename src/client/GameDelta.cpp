@@ -51,31 +51,31 @@ GameDelta::GameDelta(const GameDelta &src) : GameDelta()
 	deltaHealth = src.deltaHealth;
 }
 
-GameDelta::GameDelta(Entity entity, Position pos) : GameDelta()
+GameDelta::GameDelta(Entity entity, const Position& pos) : GameDelta()
 {
 	deltaPositions[entity] = pos;
 }
 
-GameDelta::GameDelta(Entity entity, Coords coords) : GameDelta()
+GameDelta::GameDelta(Entity entity, const Coords& coords) : GameDelta()
 {
 	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y);
 }
 
-GameDelta::GameDelta(Entity entity, Orientation orientation) : GameDelta() {
+GameDelta::GameDelta(Entity entity, const Orientation& orientation) : GameDelta() {
 	deltaOrientations[entity] = orientation;
 }
 
-GameDelta::GameDelta(Entity entity, Health health) : GameDelta()
+GameDelta::GameDelta(Entity entity, const Health& health) : GameDelta()
 {
 	deltaHealth[entity] = health;
 }
 
-GameDelta::GameDelta(Entity entity, BoundingBox bb) : GameDelta()
+GameDelta::GameDelta(Entity entity, const BoundingBox& bb) : GameDelta()
 {
 	deltaBoundingBoxes[entity] = bb;
 }
 
-GameDelta::GameDelta(Entity entity, RenderObject ro) : GameDelta()
+GameDelta::GameDelta(Entity entity, RenderObject* ro) : GameDelta()
 {
     deltaRenderObjects[entity] = std::make_shared<RenderObjectDelta>(ObjectDelta::ADDED, ro);
 }
