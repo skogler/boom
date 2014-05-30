@@ -11,9 +11,13 @@ BoomServer::~BoomServer()
 {
 }
 
-BoomServer::BoomServer(const int port): _port(port), _listen_socket(), _clients(), _lastUId(0)
+BoomServer::BoomServer(const int port): _port(port), _listen_socket(), _clients()
 {
-    _lastUId = 0;
+    _players[0] = -1;
+    _players[1] = -1;
+    _players[2] = -1;
+    _players[3] = -1;
+
     // create a listening TCP socket on (server)
     IPaddress ip;
 
@@ -42,7 +46,7 @@ void BoomServer::accept_connections()
 
 void BoomServer::listen_messages()
 {
-    bool found = false;
+    bool found = true;
 
     std::vector<BoomClientData*>::iterator client = _clients.begin();
 
@@ -64,7 +68,6 @@ void BoomServer::listen_messages()
                     found = true;
                     handleMessage(*client, msg);
                     delete msg;
-                    continue;
                 }
                 if ((*client)->getConnection()->hasErrors() == true) {
                     printf("client %d disconnected\n", (*client)->getUId());
@@ -90,11 +93,11 @@ void BoomServer::listen_messages()
 
 void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
 
-    printf("Message from %s(ID %d):\n", client->getName().c_str(), client->getUId());
 
     switch(msg->getType()) {
     case MSG_TYPE_HANDSHAKE_INIT:
     {
+        printf("Message from %s(ID %d):\n", client->getName().c_str(), client->getUId());
         printf("\tHandshake init\n");
         HandshakeInitMessage *hsi_msg = (HandshakeInitMessage*)msg->getRecvData();
         client->setName(hsi_msg->name);
@@ -111,19 +114,21 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
     case MSG_TYPE_INPUT_EVENT:
     {
         InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
-        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
-                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
+//        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
+//                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
         sendToAll(msg);
         break;
     }
     case MSG_TYPE_TEXT:
     {
+        printf("Message from %s(ID %d):\n", client->getName().c_str(), client->getUId());
         printf("\tText Message: %s\n", msg->getRecvData());
         sendToOthers(msg, client->getUId());
         break;
     }
     default:
     {
+        printf("Message from %s(ID %d):\n", client->getName().c_str(), client->getUId());
         printf("\tunknown message\n");
         break;
     }
@@ -161,7 +166,12 @@ void BoomServer::sendToOthers(Message* msg, int myUId)
 
 int BoomServer::getFreeUId()
 {
-    _lastUId ++;
-    return _lastUId;
+    for (int i = 0; i < 4; i++) {
+        if (_players[i] < 0) {
+            _players[i] = 1;
+            return i;
+        }
+    }
+    return -1;
 }
 

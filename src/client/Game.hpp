@@ -232,6 +232,11 @@ public:
     Coords getPlayerPosition(Player player) const;
     Orientation getPlayerPartOrientation(Entity part) const;
 
+    void setCurrentPlayer(int currentPlayer)
+    {
+        m_currentPlayer = currentPlayer;
+    }
+
 private:
 	GameState m_currentState;
     int m_currentPlayer;

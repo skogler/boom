@@ -31,11 +31,9 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-    BoomClient network("localhost", BOOM_PORT, "super duper client", &input);
+    BoomClient network("localhost", BOOM_PORT, "super duper client", &input, &game);
 
     network.start_handshake();
-
-    network.getUId();
 
     input.setBoomClient(&network);
 
