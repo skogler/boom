@@ -16,8 +16,9 @@ public:
 
 	int getHealth() const { return m_health; }
 
-	Health operator+=(const Health &rhs) {
-		return Health(m_health + rhs.getHealth());
+	const Health &operator+=(const Health &rhs) {
+		m_health += rhs.getHealth();
+		return *this;
 	}
 
 	Health operator+(const Health &rhs) {

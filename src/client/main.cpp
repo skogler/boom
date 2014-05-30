@@ -32,12 +32,13 @@ int main(int argc, char *argv[])
 
     BoomClient network("localhost", BOOM_PORT, "super duper client");
 
-   // renderer.setGame(&game);
+    renderer.setGame(&game);
 
     // receive server seeds
 //    game.loadMap(seeds)
 
     game.setup();
+    renderer.updateViewports();
 
     Uint32 startTime = SDL_GetTicks();
 

@@ -21,6 +21,8 @@ set(headers
     Action.hpp
     Health.hpp
     Health.cpp
+    Behaviour.cpp
+    Behaviour.hpp
     CollisionSystem.cpp
     CollisionSystem.hpp
     Entity.cpp
@@ -45,6 +47,8 @@ set(headers
     Renderer.cpp
     Renderer.hpp
     Window.hpp
+    Texture.hpp
+    Texture.cpp
     )
 
 add_executable(${CLIENT_NAME} ${headers} ${src})

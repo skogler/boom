@@ -22,6 +22,21 @@ GameState::GameState() :
 
 }
 
+void GameState::updatePosition(Entity entity, int realm, Coords coords)
+{
+	positionManager->updatePosition(entity, realm, coords);
+}
+
+void GameState::updateOrientation(Entity entity, Orientation orientation)
+{
+	positionManager->updateOrientation(entity, orientation);
+}
+
+void GameState::updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro)
+{
+	renderManager->updateRenderObject(deltaType, ro);
+}
+
 bool GameState::isBullet(Entity entity) const
 {
 	for (auto &bullet : m_bullets)
@@ -78,7 +93,7 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             	Entity new_entity = Entity::newEntity();
             	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "resources/textures/wall/wall_easy/wall_basic", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
 
 //            	for (int i = 0; i < 8; i++) {
 //            		Entity overlay = Entity::newEntity();
@@ -92,7 +107,7 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             	Entity new_entity = Entity::newEntity();
             	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "resources/textures/floor/floor_steel", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "floor/floor_steel", 1, 1)));
             }
 		}
 	}
@@ -117,16 +132,16 @@ void Game::setup()
 
 
 	GameDelta delta;
-	for (int i = 0; i < m_currentState.getPositionManager()->getNumRealms(); i++)
+	for (int i = 0; i < m_currentState.getPositionManager().getNumRealms(); i++)
 	{
 		loadMap(i, m_player_map[i]);
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
 
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, RenderObject(m_players[i].entity_main_body, "resources/textures/character/blue/blue_bottom", 1, 1)));
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, RenderObject(m_players[i].entity_top_body,"resources/textures/character/blue/blue_mid", 2, 1)));
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, RenderObject(m_players[i].entity_cannon,"resources/textures/character/blue/blue_top_standard_gun", 3, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, RenderObject(m_players[i].entity_main_body, "character/blue/blue_bottom", 1, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, RenderObject(m_players[i].entity_top_body,"character/blue/blue_mid", 2, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, RenderObject(m_players[i].entity_cannon,"character/blue/blue_top_standard_gun", 3, 1)));
 
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, BoundingBox()));
 
@@ -143,7 +158,7 @@ void Game::applyGameDelta(GameDelta delta) {
 			it != delta.getPositionsDelta().end();
 			it++)
 	{
-		m_currentState.getPositionManager()->updatePosition(
+		m_currentState.updatePosition(
 				it->first, it->second.getRealm(), it->second.getCoords()
 			);
 	}
@@ -152,7 +167,7 @@ void Game::applyGameDelta(GameDelta delta) {
 			it != delta.getOrientationsDelta().end();
 			it++)
 	{
-		m_currentState.getPositionManager()->updateOrientation(it->first, it->second);
+		m_currentState.updateOrientation(it->first, it->second);
 	}
 
 	for (auto &entry : delta.getHealthDelta())
@@ -162,7 +177,7 @@ void Game::applyGameDelta(GameDelta delta) {
 
     for (auto& entry : delta.getRenderObjectsDelta())
 	{
-		m_currentState.getRenderObjectManager()->updateRenderObject(entry.second->m_updateType, entry.second->m_renderObject);
+		m_currentState.updateRenderObject(entry.first, entry.second->m_updateType, entry.second->m_renderObject);
 	}
 
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
@@ -176,6 +191,17 @@ GameDelta Player::movePlayer(Coords direction ) const
     delta = delta.mergeDelta(GameDelta( this->entity_top_body, direction  ));
     delta = delta.mergeDelta(GameDelta( this->entity_cannon, direction  ));   
     return delta;
+}
+
+GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
+{
+   GameDelta delta;
+   Coords pl = game.getPlayerPosition(player );
+   Orientation plo = game.getPlayerPartOrientation(player.entity_top_body );
+   double m2h = atan2(cor.x - pl.x, cor.y - pl.y )  * 180 / M_PI;
+   double diff = m2h - plo.getAngle();
+   delta = player.rotateTopBodyAndCannon(Orientation(diff));
+   return delta;
 }
 
 GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) const 
@@ -211,25 +237,15 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
     return delta;
 }
 
-GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const 
-{
-   GameDelta delta;
-   Coords pl = game.getPlayerPosition(player ); 
-   Orientation plo = game.getPlayerPartOrientation(player.entity_top_body ); 
-   double m2h = atan2(cor.x - pl.x, cor.y - pl.y )  * 180 / M_PI;     
-   double diff = m2h - plo.getAngle();   
-   delta = player.rotateTopBodyAndCannon(Orientation(diff));      
-   return delta;
-}
 
 Coords Game::getPlayerPosition(Player player ) const
 {
-    return this-> m_currentState.getPositionManager()->getPosition(player.entity_main_body).getCoords();
+    return this-> m_currentState.getPositionManager().getPosition(player.entity_main_body).getCoords();
 } 
 
 Orientation Game::getPlayerPartOrientation(Entity part) const
 {
-    return this->m_currentState.getPositionManager()->getOrientation(part); 
+    return this->m_currentState.getPositionManager().getOrientation(part);
 }
 
 GameDelta Player::rotateTopBodyAndCannon(Orientation orientation) const

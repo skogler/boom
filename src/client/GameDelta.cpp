@@ -14,7 +14,11 @@ GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
 			it++)
 	{
 		// add position updates
-		deltaPositions[it->first] += (it->second);
+		if (deltaPositions.find(it->first) != deltaPositions.end()) {
+			deltaPositions[it->first] += (it->second);
+		} else {
+			deltaPositions[it->first] = it->second;
+		}
 	}
 
 	for (std::map<Entity, Orientation>::const_iterator it = newDelta.deltaOrientations.begin();
