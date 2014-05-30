@@ -1,9 +1,8 @@
 #include "Renderer.hpp"
 
 #include "Window.hpp" 
-
 #include "Game.hpp"
-
+#include "RenderObjectManager.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <SDL2/SDL.h>
@@ -96,6 +95,9 @@ void Renderer::updateViewports()
 
 void Renderer::renderScene()
 {
+    const GameState& state = m_game->getCurrentGameState();
+
+
     SDL_RenderCopy(m_renderer, m_textures["foo"], nullptr, nullptr);
 }
 
@@ -103,3 +105,4 @@ void Renderer::setGame(Game* game)
 {
     m_game = game;
 }
+

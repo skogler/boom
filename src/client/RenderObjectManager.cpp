@@ -9,19 +9,27 @@
 #include "Game.hpp"
 
 RenderObjectManager::RenderObjectManager() :
-    m_renderObjects()
+    m_zSortedRenderObjects()
 {
 }
 
 RenderObjectManager::~RenderObjectManager() {
 }
 
-void RenderObjectManager::updateRenderObject(const Entity& entity, const ObjectDelta& deltaType,
-		RenderObject& ro)
+//std::vector<RenderObject*> RenderObjectManager::getRenderObjectsFor(const Entity& entity)
+//{
+//}
+
+void RenderObjectManager::updateRenderObject(const ObjectDelta& deltaType, RenderObject& ro)
 {
 	if (deltaType == ObjectDelta::REMOVED) {
-		m_renderObjects.erase(entity);
+        auto iter = std::lower_bound(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
+        if (iter != m_zSortedRenderObjects.end() && *iter == ro)
+        {
+            m_zSortedRenderObjects.erase(iter);
+        }
 	} else {
-		m_renderObjects[entity] = ro;
+        auto iter = std::lower_bound(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
+        *iter = ro;
 	}
 }

@@ -122,8 +122,6 @@ public:
 	GameDelta loadMap(int realm, const Worldmap& world) const;
 	void setup();
 
-	std::vector<RenderData> getRenderData() const;
-
     GameDelta stepGame(const std::queue<InputEvent> *ie,
     					const double timeDelta) const;
 

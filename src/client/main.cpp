@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 
     game.setup();
 
-    std::vector<RenderData> data = game.getRenderData();
-
     Uint32 startTime = SDL_GetTicks();
 
     while(!input.quit())
