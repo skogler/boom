@@ -7,12 +7,13 @@
 
 #include "PositionManager.hpp"
 
-PositionManager::PositionManager() : m_positions(), m_orientations() {
-	// TODO Auto-generated constructor stub
-
+PositionManager::PositionManager() : 
+    m_positions(), 
+    m_orientations(),
+    m_bounding_boxes()
+{
 }
 
 PositionManager::~PositionManager() {
-	// TODO Auto-generated destructor stub
 }
 

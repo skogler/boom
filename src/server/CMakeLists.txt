@@ -2,9 +2,11 @@ cmake_minimum_required (VERSION 2.8)
 
 set(src 
     main.cpp
+    BoomServer.cpp
     )
 
 set(headers
+	BoomServer.hpp
     
     )
 add_executable(${SERVER_NAME} ${headers} ${src})

@@ -1,7 +1,8 @@
 #include "Window.hpp"
 #include <SDL2/SDL.h>
+#include <assert.h>
 
-Window::Window (uint width, uint height, bool fullscreen) : 
+Window::Window (int width, int height, bool fullscreen) : 
     m_window(nullptr),
     m_width(width),
     m_height(height)
@@ -20,6 +21,10 @@ Window::Window (uint width, uint height, bool fullscreen) :
             SDL_WINDOWPOS_CENTERED,
             width, height,
             flags);
+
+    assert(m_window);
+
+    SDL_GetWindowSize(m_window, &m_width, &m_height);
 }
 
 Window::~Window()
@@ -28,7 +33,7 @@ Window::~Window()
     m_window = nullptr;
 }
 
-std::pair<uint, uint> Window::getSize()
+std::pair<int, int> Window::getSize()
 {
-    return std::pair<uint, uint>(m_width, m_height);
+    return std::pair<int, int>(m_width, m_height);
 }

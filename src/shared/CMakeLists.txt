@@ -10,9 +10,10 @@ set(src
 set(headers
     Fake.hpp
     common.hpp
-    worldmap/Worldmap.cpp
-    worldmap/Block.cpp
-    worldmap/simplexnoise1234.cpp
+    worldmap/Worldmap.hpp
+    worldmap/Block.hpp
+    worldmap/simplexnoise1234.hpp
+    BoomNet.hpp
     )
 
 add_library(${SHARED_NAME} ${src} ${headers})
