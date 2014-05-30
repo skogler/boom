@@ -45,6 +45,15 @@ GameDelta::GameDelta(Entity entity, Position pos) :
 	deltaPositions[entity] = pos;
 }
 
+GameDelta::GameDelta(Entity entity, Coords coords) :
+		deltaPositions(),
+		deltaOrientations(),
+		deltaBoundingBoxes(),
+		deltaRenderObjects()
+{
+	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y);
+}
+
 GameDelta::GameDelta(Entity entity, Orientation orientation) :
 		deltaPositions(),
 		deltaOrientations(),

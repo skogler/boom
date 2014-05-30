@@ -49,7 +49,7 @@ void Renderer::loadAllTextures()
 
 void Renderer::loadTexture(const fs::path& path)
 {
-    SDL_Surface* surf = IMG_Load(path.native().c_str());
+    SDL_Surface* surf = IMG_Load(path.string().c_str());
     if (!surf) {
         std::cerr << "Error loading texture " << path << std::endl;
         return;
@@ -61,12 +61,12 @@ void Renderer::loadTexture(const fs::path& path)
         std::cerr << "Error loading texture " << path << std::endl;
         return;
     }
-    string basepath = m_texture_dir.native();
-    string name = path.parent_path().native();
+    string basepath = m_texture_dir.string().c_str();
+    string name = path.parent_path().string().c_str();
     name.erase(0, basepath.length());
     if (name[0] == '/')
         name.erase(0, 1);
-    name.append(path.stem().native());
+    name.append(path.stem().string().c_str());
     
     std::cout << "Loaded texture " << name << std::endl;
     m_textures[name] = tex;

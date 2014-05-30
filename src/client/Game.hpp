@@ -57,6 +57,7 @@ public:
 	{}
 	GameDelta(const GameDelta &src);
 	GameDelta(Entity entity, Position pos);
+	GameDelta(Entity entity, Coords coords);
 	GameDelta(Entity entity, Orientation orientation);
 	GameDelta(Entity entity, BoundingBox bb);
 	GameDelta(Entity, RenderObject ro);
