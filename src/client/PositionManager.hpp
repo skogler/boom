@@ -89,6 +89,7 @@ public:
 	{
 		if (m_orientations.find(entity) != m_orientations.end())
 		{
+            printf("ori: %f \n", orientation.getAngle());
 			m_orientations[entity] += orientation;
 		} else
 		{

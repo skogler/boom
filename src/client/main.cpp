@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
         input.handleInput();   //TODO: move down 
         Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime;
+        std::cout << frameTime << std::endl;
     	while (frameTime > 16)
         {
             GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
