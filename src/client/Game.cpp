@@ -46,25 +46,17 @@ void GameState::updateBoundingBox(Entity entity, const ObjectDelta deltaType, Bo
 
 bool GameState::isBullet(Entity entity) const
 {
-	for (auto &bullet : m_bullets)
-	{
-		if (bullet.m_body == entity || bullet.m_smoke == entity)
-		{
-			return true;
-		}
-	}
+	if (m_bullets.find(entity) != m_bullets.end())
+		return true;
+
 	return false;
 }
 
 bool GameState::isWall(Entity entity) const
 {
-	for (auto &wall : m_walls)
-	{
-		if (wall.m_baseWall == entity || wall.m_decoration == entity)
-		{
-			return true;
-		}
-	}
+	if (m_walls.find(entity) != m_walls.end())
+		return true;
+
 	return false;
 }
 
@@ -89,7 +81,7 @@ GameDelta Game::runSystems(const GameDelta gd) const
 	return afterCollision;
 }
 
-GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
+GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
 {
     const double BLOCK_SIZE = Wall::size();
 	for (int y = 0; y < world._size_y; y++) {
@@ -105,8 +97,10 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) con
 
             if (block != NULL) {
                 std::vector<std::string> textures;
-                block->getTextures(textures);
-
+				block->getTextures(textures);
+				if (block->getType() == Block::WALL){
+					modifyCurrentGameState().addWall(new_entity);
+				}
                 for (int i = 0; i < textures.size(); i++) {
                     delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[i].c_str(), 1, 1)));
                 }
@@ -209,8 +203,6 @@ void Game::applyGameDelta(GameDelta delta) {
     		m_currentState.addBehaviour(entry.first, behaviour);
     	}
     }
-
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 
 GameDelta Player::movePlayer(Coords direction ) const

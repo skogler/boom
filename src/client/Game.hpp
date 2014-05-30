@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <unordered_map>
 
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
@@ -41,18 +42,34 @@ class Game;
 class Wall
 {
 public:
+	Wall() : m_baseWall(Entity::newEntity()),
+		m_decoration(Entity::newEntity()) {}
+	Wall(const Wall &other) :
+		m_baseWall(other.m_baseWall),
+		m_decoration(other.m_decoration)
+	{}
+	Wall(Entity baseWall, Entity decoration) : m_baseWall(baseWall), m_decoration(decoration) {}
 	static const double size() { return 1; }
-	const Entity m_baseWall;
-	const Entity m_decoration;
+	Entity m_baseWall;
+	Entity m_decoration;
 };
 
 class Bullet
 {
 public:
+	Bullet() : m_body(Entity::newEntity()),
+		m_smoke(Entity::newEntity()) {}
+	Bullet(const Bullet &other) : m_body(other.m_body), m_smoke(other.m_smoke), m_travel_speed(other.m_travel_speed) {}
+	Bullet(Entity body, Entity smoke, double travel_speed) :
+		m_body(body),
+		m_smoke(smoke),
+		m_travel_speed(travel_speed)
+	{}
+
 	static const double size() { return 1/32.0; }
-	const Entity m_body;
-	const Entity m_smoke;
-    const double m_travel_speed;
+	Entity m_body;
+	Entity m_smoke;
+    double m_travel_speed;
 };
 
 class CollisionEvent
@@ -86,6 +103,14 @@ public:
     void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro);
     void updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo);
 
+	void addWall(Entity entity) {
+		m_walls[entity] = Wall(entity, entity);
+	}
+
+	void addBullet(Entity entity) {
+		m_bullets[entity] = Bullet(entity, entity, 1);
+	}
+
     void addBehaviour(Entity entity, Behaviour *behaviour)
     {
     	m_behaviours[entity].push_back(behaviour);
@@ -107,8 +132,8 @@ private:
 	CollisionSystem *collisionSystem;
 	HealthSystem *healthSystem;
 
-	std::vector<Bullet> m_bullets;
-	std::vector<Wall> m_walls;
+	std::map<Entity, Bullet> m_bullets;
+	std::map<Entity, Wall> m_walls;
 
 	std::map<Entity, Health> m_health;
 	std::map<Entity, BoundingBox> m_bounding_boxes;
@@ -148,7 +173,7 @@ public:
 	Game();
 	virtual ~Game();
 
-	GameDelta& loadMap(int realm, const Worldmap& world, GameDelta& delta) const;
+	GameDelta& loadMap(int realm, const Worldmap& world, GameDelta& delta);
 	void setup();
 
     GameDelta stepGame(std::queue<InputEvent> *ie,
@@ -189,6 +214,7 @@ public:
 
     int getNumberOfPlayers() const;
     inline const GameState& getCurrentGameState() const;
+	GameState &modifyCurrentGameState() { return m_currentState; }
 
     bool isPlayer(Entity entity) const
     {
