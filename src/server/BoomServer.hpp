@@ -92,7 +92,7 @@ private:
     int _port;
     TCPsocket _listen_socket;
     std::vector<BoomClientData*> _clients;
-    int     _lastUId;
+    int     _players[4];
 };
 
 

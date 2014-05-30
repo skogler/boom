@@ -16,6 +16,8 @@
 #include "InputEvent.hpp"    
 #include "CollisionSystem.hpp"
 #include "Position.hpp"
+#include "Renderer.hpp"
+#include <iostream>
 
 GameState::GameState() :
 		positionManager(new PositionManager()),
@@ -216,10 +218,8 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
    GameDelta delta;
    Coords pl = game.getPlayerPosition(player );
    Orientation plo = game.getPlayerPartOrientation(player.entity_top_body );
-   double m2h = atan2(cor.x - pl.x, cor.y - pl.y ); // * 180 / M_PI;
+   double m2h = atan2(cor.y, cor.x); // * 180 / M_PI;
    double diff = m2h - plo.getAngle();
-   if(diff < 0.05) 
-       diff = 0;
    delta = player.rotateTopBodyAndCannon(Orientation(diff));
    return delta;
 }
@@ -268,7 +268,8 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
             	
                 break;
             case TURN:
-                delta = delta.mergeDelta(player.lookAt(Coords{ input.getX(), input.getY() } , *this, player));
+                delta = delta.mergeDelta(player.lookAt(m_renderer->screenToRealm(input.getX(), input.getY(), 
+                                m_currentState.getPositionManager().getPosition(player.entity_main_body).getRealm()), *this, player));
                 break;
         }  
         ie->pop();

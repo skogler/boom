@@ -148,7 +148,7 @@ private:
 
 class MessageSet {
 public:
-    MessageSet():_messages() {}
+    MessageSet():_messages(), _finishedMessages(0) {}
     ~MessageSet() {};
 
     void addData(unsigned char* buffer, int bytes)
@@ -158,6 +158,7 @@ public:
         for (int i = 0; i < bytes; i++) {
             msg->addByte(buffer[i]);
             if (msg->isValid()) {
+                _finishedMessages++;
                 msg = _getUnfinishedMessage();
             }
         }
@@ -165,15 +166,7 @@ public:
 
     int getNumMessages()
     {
-        int messages = 0;
-
-        std::vector<Message*>::iterator msg = _messages.begin();
-        for (; msg != _messages.end(); msg++) {
-            if ((*msg)->isValid()) {
-                messages ++;
-            }
-        }
-        return messages;
+        return _finishedMessages;
     }
 
     Message* getMessage()
@@ -183,6 +176,7 @@ public:
             if ((*msg)->isValid()) {
                 Message* message = *msg;
                 _messages.erase(msg);
+                _finishedMessages--;
                 return (message);
             }
         }
@@ -209,6 +203,8 @@ private:
         _messages.push_back(new_msg);
         return new_msg;
     }
+
+    int _finishedMessages;
 
     std::vector<Message*> _messages;
 };

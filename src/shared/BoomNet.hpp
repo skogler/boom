@@ -48,6 +48,9 @@ public:
         if (_error) {
             return NULL;
         }
+        if (_messages.getNumMessages() > 0) {
+            return _messages.getMessage();
+        }
         unsigned char buffer[512];
         int result = SDLNet_TCP_Recv(_socket, buffer, sizeof(buffer));
         if(result <= 0)

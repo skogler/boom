@@ -139,3 +139,28 @@ void Renderer::setGame(Game* game)
     m_game = game;
 }
 
+Coords Renderer::screenToRealm(int x, int y, int realm) const
+{
+    auto& viewport = m_viewports[realm + 1];
+    auto& cam = m_cameras[realm + 1];
+    x = -x + viewport.x + viewport.w/2;
+    x *= -1;
+    y = -y + viewport.y + viewport.h/2;
+    y *= -1;
+    SDL_RenderDrawLine(m_renderer, viewport.w/2, viewport.h/2, viewport.w/2 + x,viewport.h/2 +  y);
+    
+    Coords ret;
+    ret.x = (double)x / SCALE;
+    ret.y = (double)y / SCALE;
+    return ret;
+    //auto& viewport = m_viewports[realm];
+    //auto& cam = m_cameras[realm];
+    //x = x - viewport.x;
+    //y = y - viewport.y;
+    //Coords ret;
+    //ret.x = (double)x / SCALE;
+    //ret.y = (double)y / SCALE;
+    //ret.x += cam.first.x;
+    //ret.y += cam.first.y;
+    //return ret;
+}
