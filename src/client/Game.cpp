@@ -166,6 +166,7 @@ void Game::applyGameDelta(GameDelta delta) {
 			it != delta.getPositionsDelta().end();
 			it++)
 	{
+        printf("pos delta %f %f  \n ",  it->second.getCoords().x, it->second.getCoords().y);
 		m_currentState.updatePosition(
 				it->first, it->second.getRealm(), it->second.getCoords()
 			);
@@ -223,16 +224,17 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{ MOVE_STEP, 0}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{ MOVE_STEP * timeDelta/1000, 0}));
+                printf("-R-\n");
                 break;
             case MOVE_LEFT:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP, 0}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP * timeDelta/1000, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP * timeDelta/1000}));
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP * timeDelta/1000}));
                 break;
             case SHOOT:
                 //TODO: shoot logic
