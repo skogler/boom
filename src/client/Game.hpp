@@ -52,6 +52,7 @@ public:
 	static const double size() { return 0.5; }
 	const Entity m_body;
 	const Entity m_smoke;
+    const double m_travel_speed;
 };
 
 class CollisionEvent
