@@ -70,7 +70,6 @@ int Block::getTextures(std::vector<std::string>& textures)
         memset(name, 0, sizeof(name));
         int neighbors = getNeighbors();
         sprintf(name, "wall/%04d", neighbors);
-        printf("require texture %s\n", name);
         textures.push_back(name);
     }
     return textures.size() - count;

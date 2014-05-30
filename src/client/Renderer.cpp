@@ -63,7 +63,6 @@ void Renderer::createWallTextures()
         SDL_BlitSurface(tex->m_surface, NULL, surf, NULL);
         for (int j = 1; j < textures.size(); j++) {
             auto& texture = m_textures[textures[j]];
-            printf("blit texure %s\n", textures[j].c_str());
             SDL_BlitSurface(texture->m_surface, NULL, surf, NULL);
         }
         char name[20];
@@ -72,8 +71,6 @@ void Renderer::createWallTextures()
 
         Texture *new_tex = new Texture(m_renderer, surf);
         m_textures[name] = std::unique_ptr<Texture>(new_tex);
-        printf("register texture %s\n", name);
-
     }
 }
 
