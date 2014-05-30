@@ -69,7 +69,7 @@ void Input::processEvent(SDL_Event event)
    }
    handleConstantInput();
 
-   //Mouse
+   //Mouse                      
    if(event.type == SDL_MOUSEMOTION)
    {
       //TODO: maybe transmit  mouse pos without shoot action? 

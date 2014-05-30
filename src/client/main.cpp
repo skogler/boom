@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     Renderer renderer(&window);
     Game game;
     Input input(game);
-    renderer.setGame(&game);
+   // renderer.setGame(&game);
 
     // receive server seeds
 //    game.loadMap(seeds)

@@ -21,7 +21,7 @@ public:
     inline void startFrame();
     void renderScene();
     inline void endFrame();
-    void setGame(Game* game);
+//    void setGame(Game* game);
 
 private:
     void loadAllTextures();

@@ -21,6 +21,8 @@ Renderer::Renderer(Window* window)
     loadAllTextures();
 }
 
+
+
 Renderer::~Renderer()
 {
     for (auto& entry : m_textures) {
