@@ -201,6 +201,11 @@ void Game::applyGameDelta(GameDelta delta) {
     		m_currentState.addEvent(entry.first, event);
     	}
     }
+
+    for (auto &entry : delta.getRemoveEvents())
+    {
+        modifyCurrentGameState().removeEntity(entry.first);
+    }
 }
 
 GameDelta Player::movePlayer(Coords direction ) const
