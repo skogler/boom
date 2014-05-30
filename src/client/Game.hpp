@@ -21,6 +21,7 @@
 #include "RenderObject.hpp"
 #include "GameDelta.hpp"
 #include "Health.hpp"
+#include "Behaviour.hpp"
 
 class CollisionSystem;
 class PositionManager;
@@ -54,63 +55,22 @@ public:
     const double m_travel_speed;
 };
 
-class Behaviour
+class CollisionEvent
 {
 public:
-	virtual bool isFinished() const = 0;
-	virtual GameDelta stepBehaviour(const Game &game, double dt) = 0;
-};
-
-class Pushback : Behaviour
-{
-	Pushback(Entity entity, double time) : m_entity(entity), m_timeLeft(time) {}
-	bool isFinished() const { if (m_timeLeft < 0) { return true; } else { return false; } }
-	GameDelta stepBehaviour(const Game &game, double dt)
-	{
-		if (m_timeLeft < dt) {
-			GameDelta delta = GameDelta(m_entity, Coords{-10*m_timeLeft, -10*m_timeLeft});
-			m_timeLeft = 0;
-			return delta;
-		} else {
-			m_timeLeft -= dt;
-			return GameDelta(m_entity, Coords{-10*dt, 10*dt});
-		}
-	}
-
+	CollisionEvent(Entity active, Entity passive);
 private:
-	double m_timeLeft;
-	Entity m_entity;
+	Entity m_active;
+	Entity m_passive;
 };
 
-
-class Shot : Behaviour
-{                      
-   Shot();
-   bool isFinished() const
-   {
-      if(true) //TODO: game.isEntityCollided(m_entity) 
-        return true;
-      else
-        return false;
-   }                 
-
-   GameDelta stepBehaviour(const Game &game)
-   {
-       GameDelta delta;// = GameDelta(m_entity, Coords {5,0});
-       //game.getCurrentGameState().getPositionManager().getPosition(m_entity);
-       return delta;
-   }
-
-   private:
-       Entity m_entity;
-};
 
 class GameState {
 public:
 	GameState();
 
-	PositionManager *getPositionManager() const { return positionManager; }
-	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
+	const PositionManager &getPositionManager() const { return *positionManager; }
+	const RenderObjectManager &getRenderObjectManager() const { return *renderManager; }
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
 	const HealthSystem &getHealthSystem() const { return *healthSystem; }
 
@@ -119,6 +79,30 @@ public:
 
 	bool isBullet(Entity entity) const;
 	bool isWall(Entity entity) const;
+
+	void updatePosition(Entity entity, int realm, Coords coords);
+	void updateOrientation(Entity entity, Orientation orientation);
+    void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro);
+
+    void addBehaviour(Entity entity, const Behaviour *behaviour)
+    {
+
+    }
+
+    GameDelta stepBehaviours() const
+    {
+    	return GameDelta();
+    }
+
+	void removeEntity(Entity entity)
+	{
+//		positionManager->removeEntity(entity);
+//		renderManager->removeEntity(entity);
+
+		m_health.erase(entity);
+		m_bounding_boxes.erase(entity);
+		m_behaviours.erase(entity);
+	}
 
 private:
 	PositionManager *positionManager;
@@ -130,6 +114,10 @@ private:
 	std::vector<Wall> m_walls;
 
 	std::map<Entity, Health> m_health;
+	std::map<Entity, BoundingBox> m_bounding_boxes;
+	std::map<Entity, std::vector<const Behaviour *>> m_behaviours;
+
+	std::vector<CollisionEvent> collision_events;
 };
 
 

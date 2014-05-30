@@ -21,6 +21,8 @@ set(headers
     Action.hpp
     Health.hpp
     Health.cpp
+    Behaviour.cpp
+    Behaviour.hpp
     CollisionSystem.cpp
     CollisionSystem.hpp
     Entity.cpp

@@ -36,7 +36,6 @@ public:
 
 private:
 	QuadTree *m_quad_tree;
-	std::map<Entity, BoundingBox> m_bounding_boxes;
 };
 
 #endif /* COLLISIONSYSTEM_HPP_ */
