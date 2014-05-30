@@ -98,7 +98,7 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
         InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
         printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
                 ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
-        sendToOthers(msg, client->getUId());
+        sendToAll(msg);
         break;
     }
     case MSG_TYPE_TEXT:
@@ -116,6 +116,17 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
 }
 
 
+void BoomServer::sendToAll(Message* msg)
+{
+    std::vector<BoomClientData*>::iterator client = _clients.begin();
+
+    for (; client != _clients.end(); client++) {
+        if ((*client)->disconnected()) {
+            continue;
+        }
+        (*client)->getConnection()->send(msg);
+    }
+}
 
 
 void BoomServer::sendToOthers(Message* msg, int myUId)

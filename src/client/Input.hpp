@@ -7,15 +7,20 @@
 #include "Game.hpp"
 #include "InputEvent.hpp"
 
+class BoomClient;
+
 class Input 
 {
     DISABLECOPY(Input);
     public:                                     
         Input(Game& game);
         
+        void setBoomClient(BoomClient* client);
+
         std::queue<InputEvent>& getServerInput();
         void handleInput();
         void processEvent( SDL_Event event );
+        void receiveInputEvent(InputEvent& event);
         void handleConstantInput();        
         bool quit();
 
@@ -25,6 +30,7 @@ class Input
         std::queue<InputEvent> m_serverInput;
         bool m_q_state;
         int m_cur_player;
+        BoomClient *m_network;
 
         UserActionType mapKeyToAction(SDL_Keycode kc);
         void sendInputEvent(UserActionType type);

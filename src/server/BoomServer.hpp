@@ -86,6 +86,7 @@ public:
     void listen_messages();
     void handleMessage(BoomClientData* client, Message* msg);
     void sendToOthers(Message* msg, int myUId);
+    void sendToAll(Message* msg);
     int getFreeUId();
 private:
     int _port;
