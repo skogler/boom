@@ -14,7 +14,6 @@ class Input
         Input(Game& game);
         
         std::queue<InputEvent>& getServerInput();
-        void executeServerInput();
         void handleInput();
         void processEvent( SDL_Event event );
         void handleConstantInput();        
@@ -27,9 +26,8 @@ class Input
         bool m_q_state;
         int m_cur_player;
 
+        UserActionType mapKeyToAction(SDL_Keycode kc);
         void sendInputEvent(UserActionType type);
-        void sendKeyEvent(SDL_Keycode key_event);
-        void sendMouseEvent();
 };
 
 #endif /* end of include guard: INPUT_HPP_EYIAZASI */

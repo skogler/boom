@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     Renderer renderer(&window);
     Game game;
     Input input(game);
-    renderer.setGame(&game);
+   // renderer.setGame(&game);
 
     // receive server seeds
 //    game.loadMap(seeds)
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     	Uint32 frameTime = newTime - startTime;
     	while (frameTime > 16)
         {
-      //  	GameDelta delta = game.stepGame( input.getServerInput(), 16.f);
+            GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
     		frameTime -= 16;
 //    		game.applyGameDelta(delta);
     	}
