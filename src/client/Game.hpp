@@ -29,7 +29,7 @@ class InputEvent;
 typedef int FrameEvents;   
 
 
-static const int MOVE_STEP = 30;
+static const double MOVE_STEP = 30;
 
 typedef std::vector<Entity> EntityGroup;
 
@@ -148,12 +148,13 @@ typedef struct
 	std::vector<RealmRenderData> realmData;
 } RenderData;
 
-typedef struct
+class Player
 {
+public:
 	Entity entity_main_body;
 	Entity entity_top_body;
 	Entity entity_cannon;
-} Player;
+};
 
 class Game {
 public:

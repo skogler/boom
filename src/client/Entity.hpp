@@ -10,6 +10,8 @@
 
 typedef int EntityId;
 
+#include "common.hpp"
+
 class Entity {
 public:
 	static Entity newEntity();
