@@ -46,25 +46,17 @@ void GameState::updateBoundingBox(Entity entity, const ObjectDelta deltaType, Bo
 
 bool GameState::isBullet(Entity entity) const
 {
-	for (auto &bullet : m_bullets)
-	{
-		if (bullet.m_body == entity || bullet.m_smoke == entity)
-		{
-			return true;
-		}
-	}
+	if (m_bullets.find(entity) != m_bullets.end())
+		return true;
+
 	return false;
 }
 
 bool GameState::isWall(Entity entity) const
 {
-	for (auto &wall : m_walls)
-	{
-		if (wall.m_baseWall == entity || wall.m_decoration == entity)
-		{
-			return true;
-		}
-	}
+	if (m_walls.find(entity) != m_walls.end())
+		return true;
+
 	return false;
 }
 
@@ -89,7 +81,7 @@ GameDelta Game::runSystems(const GameDelta gd) const
 	return afterCollision;
 }
 
-GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
+GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
 {
     const double BLOCK_SIZE = Wall::size();
 
@@ -97,25 +89,23 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) con
     double y_off = -world._size_y * Wall::size() * 0.5 - Wall::size() *0.5;
 	for (int y = 0; y < world._size_y; y++) {
 		for (int x = 0; x < world._size_x; x++) {
-            const Block *block = world.getBlock(x, y);
+            Block *block = world.getBlock(x, y);
             Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = Entity::newEntity();
 
 
-            if (block->getType() == Block::WALL)
-            {
-                delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
-                delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-                delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
-
-//            	for (int i = 0; i < 8; i++) {
-//            		Entity overlay = Entity::newEntity();
-//            		delta = delta.mergeDelta(GameDelta(overlay, Position(realm, x, y)));
-//            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
-//            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
-//            	}
+            if (block != NULL) {
+                std::vector<std::string> textures;
+				block->getTextures(textures);
+				if (block->getType() == Block::WALL){
+					modifyCurrentGameState().addWall(new_entity);
+                    delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
+                    delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+                    for (int i = 0; i < textures.size(); i++) {
+                        delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[i].c_str(), 1, 1)));
+                    }
+				}
             }
 		}
 	}
@@ -196,8 +186,6 @@ void Game::applyGameDelta(GameDelta delta) {
     		m_currentState.addBehaviour(entry.first, behaviour);
     	}
     }
-
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
 
 GameDelta Player::movePlayer(Coords direction ) const
@@ -217,6 +205,8 @@ GameDelta Player::lookAt(Coords cor, const Game &game, Player &player) const
    Orientation plo = game.getPlayerPartOrientation(player.entity_top_body );
    double m2h = atan2(cor.x - pl.x, cor.y - pl.y ); // * 180 / M_PI;
    double diff = m2h - plo.getAngle();
+   if(diff < 0.05) 
+       diff = 0;
    delta = player.rotateTopBodyAndCannon(Orientation(diff));
    return delta;
 }
@@ -237,10 +227,10 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
             	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP * timeDelta/1000, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP * timeDelta/1000}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP * timeDelta/1000}));
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP * timeDelta/1000}));
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,MOVE_STEP * timeDelta/1000}));
                 break;
             case SHOOT:
                 //TODO: shoot logic

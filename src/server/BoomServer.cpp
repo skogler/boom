@@ -42,34 +42,49 @@ void BoomServer::accept_connections()
 
 void BoomServer::listen_messages()
 {
+    bool found = false;
+
     std::vector<BoomClientData*>::iterator client = _clients.begin();
 
-    for (; client != _clients.end(); client++) {
-        if ((*client)->disconnected()) {
-            continue;
-        }
-        if ((*client)->getConnection()->hasData() == true) {
-            Message  *msg;
-            msg = (*client)->getConnection()->recv();
-            if (msg != NULL) {
-                handleMessage(*client, msg);
-                delete msg;
-            }
-            if ((*client)->getConnection()->hasErrors() == true) {
-                printf("client %d disconnected\n", (*client)->getUId());
-                (*client)->disconnect();
-            }
-        }
-    }
+    for (int i = 0; i < 100; i++) {
 
-    client = _clients.begin();
-    for (; client != _clients.end();) {
-        if ((*client)->disconnected()) {
-            delete *client;
-            client = _clients.erase(client);
-            continue;
+        if (found == false) {
+            break;
         }
-        client ++;
+        found = false;
+        for (; client != _clients.end(); client++) {
+            if ((*client)->disconnected()) {
+                continue;
+            }
+            if ((*client)->getConnection()->hasData() == true) {
+                // check at most 50 messages per client at once
+                Message  *msg;
+                msg = (*client)->getConnection()->recv();
+                if (msg != NULL) {
+                    found = true;
+                    handleMessage(*client, msg);
+                    delete msg;
+                    continue;
+                }
+                if ((*client)->getConnection()->hasErrors() == true) {
+                    printf("client %d disconnected\n", (*client)->getUId());
+                    (*client)->disconnect();
+                }
+                if (msg == NULL) {
+                    break;
+                }
+            }
+        }
+
+        client = _clients.begin();
+        for (; client != _clients.end();) {
+            if ((*client)->disconnected()) {
+                delete *client;
+                client = _clients.erase(client);
+                continue;
+            }
+            client ++;
+        }
     }
 }
 
