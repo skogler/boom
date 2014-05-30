@@ -35,36 +35,37 @@ void BoomServer::accept_connections()
     if (socket != NULL) {
         printf("got connection!\n");
         BoomSession *connection = new BoomSession(socket);
-        BoomClientData client(connection);
+        BoomClientData *client = new BoomClientData(connection);
         _clients.push_back(client);
     }
 }
 
 void BoomServer::listen_messages()
 {
-    std::vector<BoomClientData>::iterator client = _clients.begin();
+    std::vector<BoomClientData*>::iterator client = _clients.begin();
 
     for (; client != _clients.end(); client++) {
-        if (client->disconnected()) {
+        if ((*client)->disconnected()) {
             continue;
         }
-        if (client->getConnection()->hasData() == true) {
+        if ((*client)->getConnection()->hasData() == true) {
             Message  *msg;
-            msg = client->getConnection()->recv();
+            msg = (*client)->getConnection()->recv();
             if (msg != NULL) {
                 handleMessage(*client, msg);
                 delete msg;
             }
-            if (client->getConnection()->hasErrors() == true) {
-                printf("client %d disconnected\n", client->getUId());
-                client->disconnect();
+            if ((*client)->getConnection()->hasErrors() == true) {
+                printf("client %d disconnected\n", (*client)->getUId());
+                (*client)->disconnect();
             }
         }
     }
 
     client = _clients.begin();
     for (; client != _clients.end();) {
-        if (client->disconnected()) {
+        if ((*client)->disconnected()) {
+            delete *client;
             client = _clients.erase(client);
             continue;
         }
@@ -72,24 +73,24 @@ void BoomServer::listen_messages()
     }
 }
 
-void BoomServer::handleMessage(BoomClientData& client, Message* msg) {
+void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
 
-    printf("Message from %s(ID %d):\n", client.getName().c_str(), client.getUId());
+    printf("Message from %s(ID %d):\n", client->getName().c_str(), client->getUId());
 
     switch(msg->getType()) {
     case MSG_TYPE_HANDSHAKE_INIT:
     {
         printf("\tHandshake init\n");
         HandshakeInitMessage *hsi_msg = (HandshakeInitMessage*)msg->getRecvData();
-        client.setName(hsi_msg->name);
-        client.setUid(getFreeUId());
+        client->setName(hsi_msg->name);
+        client->setUid(getFreeUId());
 
         // reply with UID
         HandshakeAcceptMessage hsa_msg;
         hsa_msg.error = 0;
-        hsa_msg.uid = client.getUId();
+        hsa_msg.uid = client->getUId();
         Message reply(&hsa_msg);
-        client.getConnection()->send(&reply);
+        client->getConnection()->send(&reply);
         break;
     }
     case MSG_TYPE_INPUT_EVENT:
@@ -97,13 +98,13 @@ void BoomServer::handleMessage(BoomClientData& client, Message* msg) {
         InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
         printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
                 ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
-        sendToOthers(msg, client.getUId());
+        sendToAll(msg);
         break;
     }
     case MSG_TYPE_TEXT:
     {
         printf("\tText Message: %s\n", msg->getRecvData());
-        sendToOthers(msg, client.getUId());
+        sendToOthers(msg, client->getUId());
         break;
     }
     default:
@@ -115,20 +116,31 @@ void BoomServer::handleMessage(BoomClientData& client, Message* msg) {
 }
 
 
+void BoomServer::sendToAll(Message* msg)
+{
+    std::vector<BoomClientData*>::iterator client = _clients.begin();
+
+    for (; client != _clients.end(); client++) {
+        if ((*client)->disconnected()) {
+            continue;
+        }
+        (*client)->getConnection()->send(msg);
+    }
+}
 
 
 void BoomServer::sendToOthers(Message* msg, int myUId)
 {
-    std::vector<BoomClientData>::iterator client = _clients.begin();
+    std::vector<BoomClientData*>::iterator client = _clients.begin();
 
     for (; client != _clients.end(); client++) {
-        if (client->getUId() == myUId) {
+        if ((*client)->getUId() == myUId) {
             continue;
         }
-        if (client->disconnected()) {
+        if ((*client)->disconnected()) {
             continue;
         }
-        client->getConnection()->send(msg);
+        (*client)->getConnection()->send(msg);
     }
 }
 

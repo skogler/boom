@@ -12,15 +12,27 @@
 #include "BoomNet.hpp"
 #include <string>
 #include "InputEvent.hpp"
+#include "Input.hpp"
 
 class BoomClient {
 public:
-    BoomClient(const std::string& hostname, const int port, const std::string& name);
+    BoomClient(const std::string& hostname, const int port, const std::string& name, Input* input);
     ~BoomClient();
 
     void checkMessages();
     void sendInputEvent(InputEvent&);
     void sendTextMessge(const std::string& text);
+
+    bool connected()
+    {
+        if (_session == NULL || _session->hasErrors()) {
+            return false;
+        }
+        if (_uid < 0) {
+            return false;
+        }
+        return true;
+    }
 
     bool start_handshake();
 
@@ -38,6 +50,7 @@ private:
     int          _port;
     std::string  _name;
     int          _uid;
+    Input*       _input;
 };
 
 

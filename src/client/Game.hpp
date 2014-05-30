@@ -41,7 +41,7 @@ class Game;
 class Wall
 {
 public:
-	static const double size() { return 5; }
+	static const double size() { return 1; }
 	const Entity m_baseWall;
 	const Entity m_decoration;
 };
@@ -49,7 +49,7 @@ public:
 class Bullet
 {
 public:
-	static const double size() { return 0.5; }
+	static const double size() { return 1/32.0; }
 	const Entity m_body;
 	const Entity m_smoke;
     const double m_travel_speed;
@@ -73,6 +73,7 @@ public:
 	const RenderObjectManager &getRenderObjectManager() const { return *renderManager; }
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
 	const HealthSystem &getHealthSystem() const { return *healthSystem; }
+	const std::map<Entity, std::vector<Behaviour* > >& getBehaviours() const { return m_behaviours; }
 
 	Health getHealth(Entity entity) const { return m_health.at(entity); }
 	void updateHealth(Entity entity, Health health) { m_health.at(entity) += health; }
@@ -85,14 +86,9 @@ public:
     void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro);
     void updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo);
 
-    void addBehaviour(Entity entity, const Behaviour *behaviour)
+    void addBehaviour(Entity entity, Behaviour *behaviour)
     {
-
-    }
-
-    GameDelta stepBehaviours() const
-    {
-    	return GameDelta();
+    	m_behaviours[entity].push_back(behaviour);
     }
 
 	void removeEntity(Entity entity)
@@ -116,7 +112,7 @@ private:
 
 	std::map<Entity, Health> m_health;
 	std::map<Entity, BoundingBox> m_bounding_boxes;
-	std::map<Entity, std::vector<const Behaviour *>> m_behaviours;
+	std::map<Entity, std::vector<Behaviour *>> m_behaviours;
 
 	std::vector<CollisionEvent> collision_events;
 };
@@ -165,6 +161,23 @@ public:
     GameDelta entityRotate(Entity entity, Orientation orientation) const;
     GameDelta entitySetBoundingBox(Entity entity, BoundingBox bb) const;
     GameDelta entitySetRenderObject(Entity entity, RenderObject ro) const;
+
+    GameDelta stepBehaviours(double dt) const //__attribute__ ((deprecated)) // DO NOT USE THIS
+    {
+    	GameDelta delta;
+    	for (const auto &entry : getCurrentGameState().getBehaviours())
+    	{
+    		for (auto &behaviour : entry.second)
+    		{
+    			BehaviourStep step = behaviour->stepBehaviour(*this, dt);
+    			delta.mergeDelta(step.generatedDelta);
+    			if (step.nextBehaviour != nullptr) {
+    				delta.mergeDelta(GameDelta(entry.first, step.nextBehaviour));
+    			}
+    		}
+        }
+    	return delta;
+    }
 
     // update game state
     void applyGameDelta(GameDelta gd);

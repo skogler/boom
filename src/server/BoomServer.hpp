@@ -28,6 +28,7 @@ public:
         _disconnected(false)
     {
     }
+
     ~BoomClientData()
     {
         delete _connection;
@@ -68,6 +69,7 @@ public:
     }
 
 private:
+    BoomClientData(const BoomClientData& other);
     std::string     _name;
     int             _uid;
     BoomSession*    _connection;
@@ -82,13 +84,14 @@ public:
     ~BoomServer();
     void accept_connections();
     void listen_messages();
-    void handleMessage(BoomClientData& client, Message* msg);
+    void handleMessage(BoomClientData* client, Message* msg);
     void sendToOthers(Message* msg, int myUId);
+    void sendToAll(Message* msg);
     int getFreeUId();
 private:
     int _port;
     TCPsocket _listen_socket;
-    std::vector<BoomClientData> _clients;
+    std::vector<BoomClientData*> _clients;
     int     _lastUId;
 };
 
