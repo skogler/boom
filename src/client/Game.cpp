@@ -103,7 +103,7 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             	Entity new_entity = Entity::newEntity();
             	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject("resources/textures/floor/floor_steel", 1, 1))
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject("resources/textures/floor/floor_steel", 1, 1)));
             }
 		}
 	}
@@ -151,23 +151,24 @@ std::vector<RenderData> Game::getRenderData() const
 
 void Game::setup()
 {
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
-	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity()});
+	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 
 
+	GameDelta delta;
 	for (int i = 0; i < m_currentState.getPositionManager()->getNumRealms(); i++)
 	{
 		loadMap(i, m_player_map[i]);
-		GameDelta delta = GameDelta(m_players[i].entity_main_body, Position(i, 0, 0));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
 
@@ -219,16 +220,16 @@ GameDelta Game::stepGame(const std::queue<InputEvent> *ie, const double timeDelt
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(MOVE_STEP, 0)));
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{MOVE_STEP, 0}));
                 break;
             case MOVE_LEFT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(MOVE_STEP, 0)));
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{MOVE_STEP, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(0, MOVE_STEP)));
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{0, MOVE_STEP}));
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(0, -MOVE_STEP)));
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords{0, -MOVE_STEP}));
                 break;
             case SHOOT:
             	//delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entitiy, Position(-1, - MOVE_STEP, 0)));
