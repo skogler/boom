@@ -52,6 +52,7 @@ public:
 	}
 
 	Coords getCoords() const { return m_coords; }
+	int getRealm() const { return m_realm; }
 
 	Position operator+(const Position &other) const
 	{

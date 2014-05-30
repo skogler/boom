@@ -166,7 +166,9 @@ void Game::applyGameDelta(GameDelta delta) {
 			it != delta.getPositionsDelta().end();
 			it++)
 	{
-		m_currentState.getPositionManager()->updatePosition(it->first, it->second.getCoords());
+		m_currentState.getPositionManager()->updatePosition(
+				it->first, it->second.getRealm(), it->second.getCoords()
+			);
 	}
 
 	for (std::map<Entity, Orientation>::const_iterator it = delta.getOrientationsDelta().begin();
