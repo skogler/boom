@@ -9,8 +9,7 @@
 #include "PositionManager.hpp"
 
 CollisionSystem::CollisionSystem() :
-    m_quad_tree(nullptr),
-    m_bounding_boxes()
+    m_quad_tree(nullptr)
 {
 }
 
@@ -20,16 +19,16 @@ CollisionSystem::~CollisionSystem() {
 std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const GameDelta delta) const
 {
 	const GameState &state = game.getCurrentGameState();
-	const PositionManager *pm = state.getPositionManager();
+	const PositionManager &pm = state.getPositionManager();
 
 	std::vector<Collision> collisions;
 
 	for (auto &posDelta : delta.getPositionsDelta())
 	{
-        Position oldPos = pm->getPosition(posDelta.first);
+        Position oldPos = pm.getPosition(posDelta.first);
         Position newPos = oldPos + posDelta.second;
 
-        std::vector<Entity> entities = pm->getEntitiesOfRealm(posDelta.second.getRealm());
+        std::vector<Entity> entities = pm.getEntitiesOfRealm(posDelta.second.getRealm());
         for (auto &entity : entities)
         {
         	// skip self
@@ -42,7 +41,7 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
         	}
         	else
         	{
-        		Position entityPos = pm->getPosition(entity);
+        		Position entityPos = pm.getPosition(entity);
 
         		if (state.isBullet(entity))
         		{

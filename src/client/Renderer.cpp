@@ -90,12 +90,12 @@ void Renderer::renderScene()
     SDL_RenderCopy(m_renderer, m_textures.at("foo")->m_texture, nullptr, nullptr);
 
     const GameState& state = m_game->getCurrentGameState();
-    for(auto& renderObject : state.getRenderObjectManager()->m_zSortedRenderObjects)
+    for(auto& renderObject : state.getRenderObjectManager().m_zSortedRenderObjects)
     {
         try 
         {
             auto& tex = m_textures.at(renderObject.m_fileName);
-            auto pos = state.getPositionManager()->getPosition(renderObject.m_entity);
+            auto pos = state.getPositionManager().getPosition(renderObject.m_entity);
             int realm = pos.getRealm();
             std::cout << realm << std::endl;
             if (realm >= 0)
