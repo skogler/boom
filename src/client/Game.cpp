@@ -219,16 +219,16 @@ GameDelta Game::stepGame(const std::queue<InputEvent> *ie, const double timeDelt
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Position(-1,  MOVE_STEP, 0)));
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(MOVE_STEP, 0)));
                 break;
             case MOVE_LEFT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Position(-1, MOVE_STEP, 0))); 
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(MOVE_STEP, 0)));
                 break;    
             case MOVE_TOP:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Position(-1, 0, MOVE_STEP)));
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(0, MOVE_STEP)));
                 break;
             case MOVE_DOWN:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Position(-1, 0, -MOVE_STEP))); 
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entity_main_body, Coords(0, -MOVE_STEP)));
                 break;
             case SHOOT:
             	//delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()).entitiy, Position(-1, - MOVE_STEP, 0)));
