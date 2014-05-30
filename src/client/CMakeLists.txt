@@ -47,6 +47,8 @@ set(headers
     Renderer.cpp
     Renderer.hpp
     Window.hpp
+    Texture.hpp
+    Texture.cpp
     )
 
 add_executable(${CLIENT_NAME} ${headers} ${src})

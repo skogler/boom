@@ -93,7 +93,7 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             	Entity new_entity = Entity::newEntity();
             	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "resources/textures/wall/wall_easy/wall_basic", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "wall/wall_easy/wall_basic", 1, 1)));
 
 //            	for (int i = 0; i < 8; i++) {
 //            		Entity overlay = Entity::newEntity();
@@ -107,7 +107,7 @@ GameDelta Game::loadMap(int realm, const Worldmap& world) const
             	Entity new_entity = Entity::newEntity();
             	delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, x, y)));
             	delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "resources/textures/floor/floor_steel", 1, 1)));
+            	delta = delta.mergeDelta(GameDelta(new_entity, RenderObject(new_entity, "floor/floor_steel", 1, 1)));
             }
 		}
 	}
@@ -139,9 +139,9 @@ void Game::setup()
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
 
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, RenderObject(m_players[i].entity_main_body, "resources/textures/character/blue/blue_bottom", 1, 1)));
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, RenderObject(m_players[i].entity_top_body,"resources/textures/character/blue/blue_mid", 2, 1)));
-		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, RenderObject(m_players[i].entity_cannon,"resources/textures/character/blue/blue_top_standard_gun", 3, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, RenderObject(m_players[i].entity_main_body, "character/blue/blue_bottom", 1, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_top_body, RenderObject(m_players[i].entity_top_body,"character/blue/blue_mid", 2, 1)));
+		delta = delta.mergeDelta(GameDelta(m_players[i].entity_cannon, RenderObject(m_players[i].entity_cannon,"character/blue/blue_top_standard_gun", 3, 1)));
 
 		delta = delta.mergeDelta(GameDelta(m_players[i].entity_main_body, BoundingBox()));
 
