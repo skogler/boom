@@ -51,6 +51,7 @@ public:
 	static const double size() { return 0.5; }
 	const Entity m_body;
 	const Entity m_smoke;
+    const double m_travel_speed;
 };
 
 class Behaviour
@@ -79,6 +80,29 @@ class Pushback : Behaviour
 private:
 	double m_timeLeft;
 	Entity m_entity;
+};
+
+
+class Shot : Behaviour
+{                      
+   Shot();
+   bool isFinished() const
+   {
+      if(true) //TODO: game.isEntityCollided(m_entity) 
+        return true;
+      else
+        return false;
+   }                 
+
+   GameDelta stepBehaviour(const Game &game)
+   {
+       GameDelta delta;// = GameDelta(m_entity, Coords {5,0});
+       //game.getCurrentGameState().getPositionManager().getPosition(m_entity);
+       return delta;
+   }
+
+   private:
+       Entity m_entity;
 };
 
 class GameState {
