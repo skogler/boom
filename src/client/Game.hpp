@@ -15,14 +15,14 @@
 #include <string>
 #include <queue>
 
-#include "CollisionSystem.hpp"
-#include "PositionManager.hpp"
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
 #include "time.h"
 #include "RenderObject.hpp"
 #include "GameDelta.hpp"
+#include "Health.hpp"
 
+class CollisionSystem;
 class PositionManager;
 class RenderObjectManager;
 class InputEvent;
@@ -34,9 +34,12 @@ static const double MOVE_STEP = 30;
 
 typedef std::vector<Entity> EntityGroup;
 
+class Game;
+
 class Wall
 {
 public:
+	static const double size() { return 5; }
 	const Entity m_baseWall;
 	const Entity m_decoration;
 };
@@ -44,8 +47,37 @@ public:
 class Bullet
 {
 public:
+	static const double size() { return 0.5; }
 	const Entity m_body;
 	const Entity m_smoke;
+};
+
+class Behaviour
+{
+public:
+	virtual bool isFinished() const = 0;
+	virtual GameDelta stepBehaviour(const Game &game, double dt) = 0;
+};
+
+class Pushback : Behaviour
+{
+	Pushback(Entity entity, double time) : m_entity(entity), m_timeLeft(time) {}
+	bool isFinished() const { if (m_timeLeft < 0) { return true; } else { return false; } }
+	GameDelta stepBehaviour(const Game &game, double dt)
+	{
+		if (m_timeLeft < dt) {
+			GameDelta delta = GameDelta(m_entity, Coords{-10*m_timeLeft, -10*m_timeLeft});
+			m_timeLeft = 0;
+			return delta;
+		} else {
+			m_timeLeft -= dt;
+			return GameDelta(m_entity, Coords{-10*dt, 10*dt});
+		}
+	}
+
+private:
+	double m_timeLeft;
+	Entity m_entity;
 };
 
 class GameState {
@@ -54,6 +86,10 @@ public:
 
 	PositionManager *getPositionManager() const { return positionManager; }
 	RenderObjectManager *getRenderObjectManager() const { return renderManager; }
+	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
+
+	bool isBullet(Entity entity) const;
+	bool isWall(Entity entity) const;
 
 private:
 	PositionManager *positionManager;
@@ -62,6 +98,8 @@ private:
 
 	std::vector<Bullet> m_bullets;
 	std::vector<Wall> m_walls;
+
+	std::map<Entity, Health> m_health;
 };
 
 
@@ -145,6 +183,8 @@ public:
 
     int getNumberOfPlayers() const;
     inline const GameState& getCurrentGameState() const;
+
+    bool isPlayer(Entity entity) const;
 
 private:
 	GameState m_currentState;

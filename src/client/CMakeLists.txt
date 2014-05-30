@@ -19,6 +19,8 @@ set(src
 set(headers
     Action.cpp
     Action.hpp
+    Health.hpp
+    Health.cpp
     CollisionSystem.cpp
     CollisionSystem.hpp
     Entity.cpp
