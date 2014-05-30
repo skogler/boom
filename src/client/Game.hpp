@@ -117,17 +117,6 @@ private:
 //
 //}
 
-typedef enum 
-{
-       IDLE,
-       MOVE_RIGHT,
-       MOVE_LEFT,
-       MOVE_TOP,
-       MOVE_DOWN,
-       SHOOT,
-       TURN
-}UserActionType;
-
 struct UserActions
 {                 
     
