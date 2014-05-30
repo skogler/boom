@@ -20,6 +20,16 @@ public:
 
     EntityId getId() const;
 
+	bool operator==(const Entity &rhs) const
+	{
+		if (entityId == rhs.entityId)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	bool operator<(const Entity& rhs) const
 	{
 		if (entityId < rhs.entityId)
