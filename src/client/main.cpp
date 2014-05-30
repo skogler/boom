@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
 
     while(!input.quit())
     {   
-        
         input.handleInput();   //TODO: move down 
         Uint32 newTime = SDL_GetTicks();
     	Uint32 frameTime = newTime - startTime + remaining;
@@ -80,6 +79,7 @@ int main(int argc, char *argv[])
         }
 
         renderer.startFrame();
+        renderer.updateCameras();
         renderer.renderScene();
         renderer.endFrame();
     }

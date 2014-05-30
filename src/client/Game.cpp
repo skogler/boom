@@ -84,46 +84,29 @@ GameDelta Game::runSystems(const GameDelta gd) const
 GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta)
 {
     const double BLOCK_SIZE = Wall::size();
+
+    double x_off = -world._size_x * Wall::size() * 0.5 - Wall::size() *0.5;
+    double y_off = -world._size_y * Wall::size() * 0.5 - Wall::size() *0.5;
 	for (int y = 0; y < world._size_y; y++) {
 		for (int x = 0; x < world._size_x; x++) {
             Block *block = world.getBlock(x, y);
-            Coords topLeft = {x * BLOCK_SIZE, y * BLOCK_SIZE};
+            Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = Entity::newEntity();
 
-            delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
-            delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
-            delta = delta.mergeDelta(GameDelta(new_entity, BoundingBox(topLeft, rightBottom)));
 
             if (block != NULL) {
                 std::vector<std::string> textures;
 				block->getTextures(textures);
 				if (block->getType() == Block::WALL){
 					modifyCurrentGameState().addWall(new_entity);
+                    delta = delta.mergeDelta(GameDelta(new_entity, Position(realm, topLeft.x, topLeft.y)));
+                    delta = delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+                    for (int i = 0; i < textures.size(); i++) {
+                        delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[i].c_str(), 1, 1)));
+                    }
 				}
-                for (int i = 0; i < textures.size(); i++) {
-                    delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, textures[i].c_str(), 1, 1)));
-                }
             }
-//            block->getTextures()
-//
-//            if (block->getType() == Block::WALL)
-//            {
-//
-//
-//            	delta = delta.merge
-//
-//            	for (int i = 0; i < 8; i++) {
-//            		Entity overlay = Entity::newEntity();
-//            		delta = delta.mergeDelta(GameDelta(overlay, Position(realm, x, y)));
-//            		delta = delta.mergeDelta(GameDelta(overlay, Orientation(0)));
-//            		delta = delta.mergeDelta(GameDelta(overlay, RenderObject("overlay", 2, 1)));
-//            	}
-//            }
-//            else
-//            {
-//            	delta = delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "floor/floor_steel", 1, 1)));
-//            }
 		}
 	}
 
