@@ -25,6 +25,11 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
 
 	for (auto &posDelta : delta.getPositionsDelta())
 	{
+		// new position
+		if (!pm.hasPosition(posDelta.first))
+		{
+			continue;
+		} 
         Position oldPos = pm.getPosition(posDelta.first);
         Position newPos = oldPos + posDelta.second;
 
@@ -39,6 +44,7 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
         	{
         		continue;
         	}
+		
         	else
         	{
         		Position entityPos = pm.getPosition(entity);

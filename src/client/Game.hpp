@@ -85,6 +85,11 @@ public:
 	const std::map<Entity, std::vector<CollisionEvent> >& getCollisionEvents() const { return m_collision_events; }
 
 	const std::vector<CollisionEvent>& entityCollided(Entity entity) const {
+		if (m_collision_events.find(entity) == m_collision_events.end())
+		{
+			return std::vector<CollisionEvent>();
+		}
+
 		return m_collision_events.at(entity);
 	}
 

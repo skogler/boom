@@ -232,6 +232,7 @@ GameDelta Game::spawnBullet() const
     Shot *beh = new Shot(bullet, Coords{0, 200});
 
     delta.mergeDelta(GameDelta(bullet, Position(0, 5, 5)));
+    delta.mergeDelta(GameDelta(bullet, Orientation(0)));
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/bullet", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
 
