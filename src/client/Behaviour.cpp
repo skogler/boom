@@ -37,9 +37,10 @@ public:
     BehaviourStep stepBehaviour(const Game &game, double dt)
     {
         Frame current_frame = m_frames[m_current_frame];
-        if (current_frame.maxTime > m_current_time + dt)
+		std::cout << m_current_frame << std::endl;
+        if (current_frame.maxTime < m_current_time + dt)
         {
-            double overflow = current_frame.maxTime - m_current_time - dt;
+            double overflow = m_current_time + dt - current_frame.maxTime;
             m_current_frame++;
             m_current_time = 0;
             if (m_current_frame >= m_frames.size())
@@ -63,7 +64,7 @@ public:
 
 BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
 {
-    double step = 2*1000/dt;
+    double step = 8*dt/1000;
     double x = 0.0;
     double y = 0.0;
     GameDelta delta;
@@ -71,12 +72,13 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
     double a = game.getCurrentGameState().getPositionManager().getOrientation(m_entity).getAngle(); 
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
+		std::cout << "Collision" << std::endl;
         Entity explosion = Entity::newEntity();
         delta.mergeDelta(GameDelta(explosion, Position(0, origin.x, origin.y)));
         delta.mergeDelta(GameDelta(explosion, Orientation(0)));
         delta.mergeDelta(GameDelta(explosion, new RenderObject(explosion, "explosions/wall/expl_wall_01", 1, 1)));
 
-        delta.mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
+//       delta.mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
 
         std::vector<Frame> explosions;
         explosions.push_back(Frame{"explosions/wall/expl_wall_01", 50});
@@ -95,14 +97,13 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
         explosions.push_back(Frame{"explosions/wall/expl_wall_14", 50});
         explosions.push_back(Frame{"explosions/wall/expl_wall_15", 50});
         explosions.push_back(Frame{"explosions/wall/expl_wall_16", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_17", 50});
         explosions.push_back(Frame{"explosions/wall/expl_wall_18", 50});
 
         return BehaviourStep{new Animation(explosion, explosions), delta};
     }
 
     Coords delt  = normalizeCoords({m_target.x - origin.x, m_target.y - origin.y});
-    delta = GameDelta(m_entity, Coords{ delt.x / step, delt.y / step} );
+    delta = GameDelta(m_entity, Coords{ delt.x * step, delt.y * step} );
 
     return BehaviourStep{this, delta};
 }

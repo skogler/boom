@@ -9,7 +9,7 @@
 #include "Entity.hpp"
 
 GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
-	for (std::map<Entity, Position>::const_iterator it = newDelta.deltaPositions.begin();
+	for (std::unordered_map<Entity, Position, hash_Entity>::const_iterator it = newDelta.deltaPositions.begin();
 			it != newDelta.deltaPositions.end();
 			it++)
 	{
@@ -21,7 +21,7 @@ GameDelta &GameDelta::mergeDelta(const GameDelta &newDelta) {
 		}
 	}
 
-	for (std::map<Entity, Orientation>::const_iterator it = newDelta.deltaOrientations.begin();
+	for (std::unordered_map<Entity, Orientation, hash_Entity>::const_iterator it = newDelta.deltaOrientations.begin();
 			it != newDelta.deltaOrientations.end();
             it++)
     {

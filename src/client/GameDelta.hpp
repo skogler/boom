@@ -67,63 +67,63 @@ public:
 
 	GameDelta &mergeDelta(const GameDelta &oldDelta);
 
-	const std::map<Entity, std::vector<Behaviour *> >& getBehaviourDelta() const
+	const std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity>& getBehaviourDelta() const
 	{
 		return deltaBehaviours;
 	}
 
-	const std::map<Entity, Position>& getPositionsDelta() const
+	const std::unordered_map<Entity, Position, hash_Entity>& getPositionsDelta() const
     {
 		return deltaPositions;
     }
-	const std::map<Entity, Orientation>& getOrientationsDelta() const
+	const std::unordered_map<Entity, Orientation, hash_Entity>& getOrientationsDelta() const
 	{
 		return deltaOrientations;
 	}
-	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
+	const std::unordered_map<Entity, BoundingBox, hash_Entity>& getBoundingBoxDelta() const
     {
         return deltaBoundingBoxes;
     }
 
-    std::map<Entity, shared_ptr<RenderObjectDelta>>& getRenderObjectsDelta()
+    std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity>& getRenderObjectsDelta()
     {
 		return deltaRenderObjects;
     }
 
-	const std::map<Entity, Health>& getHealthDelta() const
+	const std::unordered_map<Entity, Health, hash_Entity>& getHealthDelta() const
 	{
 		return deltaHealth;
 	}
 
-	const std::map<Entity, std::vector<CollisionEvent> >& getCollisionEvents()
+	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity >& getCollisionEvents()
 	{
 		return deltaCollisionEvents;
 	}
 
-	const std::map<Entity, ObjectDelta>& getRemoveEvents() const
+	const std::unordered_map<Entity, ObjectDelta, hash_Entity>& getRemoveEvents() const
 	{
 		return deltaRemoveEvents;
 	}
 
 private:
-	std::map<Entity, Position> deltaPositions;
-	std::map<Entity, Orientation> deltaOrientations;
-	std::map<Entity, BoundingBox> deltaBoundingBoxes;
-	std::map<Entity, Health> deltaHealth;
-	std::map<Entity, std::vector<Behaviour *> > deltaBehaviours;
-	std::map<Entity, shared_ptr<RenderObjectDelta> > deltaRenderObjects;
-	std::map<Entity, std::vector<CollisionEvent> > deltaCollisionEvents;
+	std::unordered_map<Entity, Position, hash_Entity> deltaPositions;
+	std::unordered_map<Entity, Orientation, hash_Entity> deltaOrientations;
+	std::unordered_map<Entity, BoundingBox, hash_Entity> deltaBoundingBoxes;
+	std::unordered_map<Entity, Health, hash_Entity> deltaHealth;
+	std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity> deltaBehaviours;
+	std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity> deltaRenderObjects;
+	std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity> deltaCollisionEvents;
 
-	std::map<Entity, ObjectDelta> deltaRemoveEvents;
+	std::unordered_map<Entity, ObjectDelta, hash_Entity> deltaRemoveEvents;
 };
 
 class CollisionEvent
 {
 public:
-	CollisionEvent(Entity active, Entity passive) : m_active(active), m_passive(passive) {};
+	CollisionEvent(const Entity &active, const Entity &passive) : m_active(active), m_passive(passive) {};
 private:
-	Entity m_active;
-	Entity m_passive;
+	const Entity &m_active;
+	const Entity &m_passive;
 };
 
 

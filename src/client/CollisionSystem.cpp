@@ -30,6 +30,7 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
 		{
 			continue;
 		} 
+
         Position oldPos = pm.getPosition(posDelta.first);
         Position newPos = oldPos + posDelta.second;
 

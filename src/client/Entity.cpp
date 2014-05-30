@@ -7,7 +7,7 @@
 
 #include "Entity.hpp"
 
-int Entity::nextId = 1;
+static EntityId nextId = 1;
 
 Entity Entity::newEntity() {
 	Entity entity;

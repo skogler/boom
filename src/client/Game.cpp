@@ -159,7 +159,7 @@ void Game::setup()
 
 void Game::applyGameDelta(GameDelta delta) {
 	modifyCurrentGameState().cleanBehaviours();
-	for (std::map<Entity, Position>::const_iterator it = delta.getPositionsDelta().begin();
+	for (std::unordered_map<Entity, Position, hash_Entity>::const_iterator it = delta.getPositionsDelta().begin();
 			it != delta.getPositionsDelta().end();
 			it++)
 	{
@@ -169,7 +169,7 @@ void Game::applyGameDelta(GameDelta delta) {
 			);
 	}
 
-	for (std::map<Entity, Orientation>::const_iterator it = delta.getOrientationsDelta().begin();
+	for (std::unordered_map<Entity, Orientation, hash_Entity>::const_iterator it = delta.getOrientationsDelta().begin();
 			it != delta.getOrientationsDelta().end();
 			it++)
 	{

@@ -12,6 +12,7 @@
 #include "Position.hpp"
 #include "Entity.hpp"
 #include <stdio.h>
+#include <unordered_map>
 
 class PositionManager {
 public:
@@ -104,9 +105,9 @@ public:
 	}
 
 private:
-	std::map<Entity, Position> m_positions;
-	std::map<Entity, Orientation> m_orientations;
-	std::map<Entity, BoundingBox> m_bounding_boxes;
+	std::unordered_map<Entity, Position, hash_Entity> m_positions;
+	std::unordered_map<Entity, Orientation, hash_Entity> m_orientations;
+	std::unordered_map<Entity, BoundingBox, hash_Entity> m_bounding_boxes;
 
 };
 

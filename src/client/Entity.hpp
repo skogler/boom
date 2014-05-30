@@ -12,11 +12,17 @@ typedef int EntityId;
 
 #include "common.hpp"
 
+
+#include <unordered_map>
+	
+//static EntityId nextId;
+
 class Entity {
+	DISABLECOPY(Entity);
 public:
 	static Entity newEntity();
 
-	Entity(const Entity &entity) : entityId(entity.entityId) {};
+//	Entity(const Entity &entity) : entityId(entity.entityId) {};
 
     EntityId getId() const;
 
@@ -43,7 +49,12 @@ private:
 	Entity();
 	EntityId entityId;
 
-	static EntityId nextId;
+};
+
+struct hash_Entity {
+	inline size_t operator()(const Entity &ent) const {
+		return ent.getId();
+	}
 };
 
 #endif /* ENTITY_H_ */

@@ -33,7 +33,7 @@ class HealthSystem;
 typedef int FrameEvents;   
 
 
-static const double MOVE_STEP = 2.0;
+static const double MOVE_STEP = 10.0;
 
 typedef std::vector<Entity> EntityGroup;
 
@@ -82,10 +82,10 @@ public:
 	const RenderObjectManager &getRenderObjectManager() const { return *renderManager; }
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
 	const HealthSystem &getHealthSystem() const { return *healthSystem; }
-	const std::map<Entity, std::vector<Behaviour* > >& getBehaviours() const { return m_behaviours; }
-	const std::map<Entity, std::vector<CollisionEvent> >& getCollisionEvents() const { return m_collision_events; }
+	const std::unordered_map<Entity, std::vector<Behaviour* >,hash_Entity>& getBehaviours() const { return m_behaviours; }
+	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity>& getCollisionEvents() const { return m_collision_events; }
 
-	const std::vector<CollisionEvent>& entityCollided(Entity entity) const {
+	std::vector<CollisionEvent> entityCollided(Entity entity) const {
 		if (m_collision_events.find(entity) == m_collision_events.end())
 		{
 			return std::vector<CollisionEvent>();
@@ -141,14 +141,14 @@ private:
 	CollisionSystem *collisionSystem;
 	HealthSystem *healthSystem;
 
-	std::map<Entity, Bullet> m_bullets;
-	std::map<Entity, Wall> m_walls;
+	std::unordered_map<Entity, Bullet, hash_Entity> m_bullets;
+	std::unordered_map<Entity, Wall, hash_Entity> m_walls;
 
-	std::map<Entity, Health> m_health;
-	std::map<Entity, BoundingBox> m_bounding_boxes;
-	std::map<Entity, std::vector<Behaviour *>> m_behaviours;
+	std::unordered_map<Entity, Health, hash_Entity> m_health;
+	std::unordered_map<Entity, BoundingBox, hash_Entity> m_bounding_boxes;
+	std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity> m_behaviours;
 
-	std::map<Entity, std::vector<CollisionEvent> > m_collision_events;
+	std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity> m_collision_events;
 };
 
 
