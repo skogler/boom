@@ -8,6 +8,7 @@
 #include "Game.hpp"
 #include "RenderObjectManager.hpp"
 #include "PositionManager.hpp"
+#include "InputEvent.hpp"
 
 GameDelta GameDelta::mergeDelta(const GameDelta &newDelta) const {
 	GameDelta delta(*this);
@@ -177,7 +178,7 @@ void Game::applyGameDelta(GameDelta delta) {
 
 	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
 }
-/*
+
 GameDelta Game::stepGame(const std::queue<InputEvent> *ie, const double timeDelta) const 
 {               
     GameDelta delta;
@@ -187,13 +188,28 @@ GameDelta Game::stepGame(const std::queue<InputEvent> *ie, const double timeDelt
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, 34, 0))); //TODO: get position
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1,  MOVE_STEP, 0)));
+                break;
+            case MOVE_LEFT:
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, MOVE_STEP, 0))); 
+                break;    
+            case MOVE_TOP:
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, 0, MOVE_STEP)));
+                break;
+            case MOVE_DOWN:
+            	delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, 0, -MOVE_STEP))); 
+                break;
+            case SHOOT:
+            	//delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, - MOVE_STEP, 0)));
+                break;
+            case TURN:
+            	//delta = delta.mergeDelta(GameDelta( getPlayerByID(input.getUID()), Position(-1, - MOVE_STEP, 0))); 
                 break;
         }
     }
     return delta;
 }
-*/
+
 int Game::getCurrentPlayer()
 {
     return m_currentPlayer;

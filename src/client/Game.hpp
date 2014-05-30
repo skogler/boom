@@ -8,24 +8,28 @@
 #ifndef GAME_HPP_
 #define GAME_HPP_
 
+
+
 #include <map>
 #include <vector>
 #include <string>
 #include <queue>
-//class Input;
-//class InputEvent;
 
-#include "RenderObject.hpp"
 #include "CollisionSystem.hpp"
 #include "PositionManager.hpp"
 #include "worldmap/Worldmap.hpp"
 #include "worldmap/Block.hpp"
 #include "time.h"
+#include "RenderObject.hpp"
 
 class PositionManager;
 class RenderObjectManager;
+class InputEvent;
 
-typedef int FrameEvents;
+typedef int FrameEvents;   
+
+
+static const int MOVE_STEP = 30;
 
 class GameState {
 public:
@@ -147,8 +151,9 @@ public:
 
 	std::vector<RenderData> getRenderData() const;
 
- //   GameDelta stepGame(const std::queue<InputEvent> *ie,
- //   					const double timeDelta) const;
+    GameDelta stepGame(const std::queue<InputEvent> *ie,
+    					const double timeDelta) const;
+
 	GameDelta runSystems(const GameDelta gd) const;
 
 //    GameDelta entitySetPosition(Entity entity, Position newPosition) const;
