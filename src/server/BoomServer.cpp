@@ -82,6 +82,10 @@ void BoomServer::listen_messages()
         client = _clients.begin();
         for (; client != _clients.end();) {
             if ((*client)->disconnected()) {
+                int uid = (*client)->getUId();
+                if (uid > 0) {
+                    _players[uid] = -1;
+                }
                 delete *client;
                 client = _clients.erase(client);
                 continue;

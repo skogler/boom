@@ -14,8 +14,12 @@
 
 int main(int argc, char *argv[])
 {
-    UNUSED(argc);
-    UNUSED(argv);
+
+    if (argc != 2) {
+        printf("usage: boom-client server\n");
+        printf("where server is a hostname or ip-address\n");
+        return 0;
+    }
 
     Window window(640, 480, true);
     IMG_Init(IMG_INIT_PNG);
@@ -31,8 +35,7 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-    BoomClient network("localhost", BOOM_PORT, "super duper client", &input, &game);
-
+    BoomClient network(argv[1], BOOM_PORT, "super duper client", &input, &game);
     network.start_handshake();
 
     input.setBoomClient(&network);

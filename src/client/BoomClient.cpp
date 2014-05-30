@@ -131,11 +131,14 @@ bool BoomClient::_connect()
 
     IPaddress ip;
 
+    printf("connecting to %s...\n",_hostname.c_str());
+
     if(SDLNet_ResolveHost(&ip, _hostname.c_str(), _port) == -1)
     {
         printf("SDLNet_ResolveHost: %s\n",SDLNet_GetError());
         return false;
     }
+
 
     TCPsocket socket;
     /* open the server socket */
