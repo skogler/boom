@@ -50,20 +50,24 @@ int main(int argc, char *argv[])
     Uint32 startTime = SDL_GetTicks();
     Uint32 heartBeat = startTime;
 
+	Uint32 remaining = 0;
+
     while(!input.quit())
     {   
         
         input.handleInput();   //TODO: move down 
         Uint32 newTime = SDL_GetTicks();
-    	Uint32 frameTime = newTime - startTime;
+    	Uint32 frameTime = newTime - startTime + remaining;
         std::cout << frameTime << std::endl;
-    	while (frameTime > 16)
+    	while (frameTime > 8)
         {
-            GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
-    		frameTime -= 16;
+            GameDelta delta = game.stepGame( &input.getServerInput(), 8.0);
+    		frameTime -= 8;
     		GameDelta newDelta = game.runSystems(delta);
     		game.applyGameDelta(newDelta);
     	}
+
+		remaining = frameTime;
     	startTime = newTime;
     	// receive server actions
         
