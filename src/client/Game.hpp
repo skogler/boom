@@ -21,6 +21,7 @@
 #include "worldmap/Block.hpp"
 #include "time.h"
 #include "RenderObject.hpp"
+#include "GameDelta.hpp"
 
 class PositionManager;
 class RenderObjectManager;
@@ -32,6 +33,20 @@ typedef int FrameEvents;
 static const double MOVE_STEP = 30;
 
 typedef std::vector<Entity> EntityGroup;
+
+class Wall
+{
+public:
+	const Entity m_baseWall;
+	const Entity m_decoration;
+};
+
+class Bullet
+{
+public:
+	const Entity m_body;
+	const Entity m_smoke;
+};
 
 class GameState {
 public:
@@ -45,68 +60,8 @@ private:
 	RenderObjectManager *renderManager;
 	CollisionSystem *collisionSystem;
 
-	std::vector<EntityGroup> m_bullets;
-	std::vector<EntityGroup> m_walls;
-};
-
-enum class ObjectDelta {
-	ADDED,
-	REMOVED,
-	UPDATED
-};
-
-class RenderObjectDelta{
-public:
-    RenderObjectDelta() : m_updateType(), m_renderObject() {}
-    RenderObjectDelta(ObjectDelta updateType, RenderObject renderObject) : 
-        m_updateType(updateType), 
-        m_renderObject(renderObject) 
-    {}
-
-	ObjectDelta m_updateType;
-	RenderObject m_renderObject;
-};
-
-class GameDelta {
-public:
-	GameDelta() :
-		deltaPositions(),
-		deltaOrientations(),
-		deltaBoundingBoxes(),
-		deltaRenderObjects()
-	{}
-	GameDelta(const GameDelta &src);
-	GameDelta(Entity entity, Position pos);
-	GameDelta(Entity entity, Coords coords);
-	GameDelta(Entity entity, Orientation orientation);
-	GameDelta(Entity entity, BoundingBox bb);
-	GameDelta(Entity, RenderObject ro);
-
-	GameDelta mergeDelta(const GameDelta &oldDelta) const;
-
-	const std::map<Entity, Position>& getPositionsDelta() const
-    {
-		return deltaPositions;
-    }
-	const std::map<Entity, Orientation>& getOrientationsDelta() const
-	{
-		return deltaOrientations;
-	}
-	const std::map<Entity, BoundingBox>& getBoundingBoxDelta() const
-		{
-		return deltaBoundingBoxes;
-		}
-
-	std::map<Entity, RenderObjectDelta>& getRenderObjectsDelta()
-		{
-		return deltaRenderObjects;
-		}
-
-private:
-	std::map<Entity, Position> deltaPositions;
-	std::map<Entity, Orientation> deltaOrientations;
-	std::map<Entity, BoundingBox> deltaBoundingBoxes;
-	std::map<Entity, RenderObjectDelta> deltaRenderObjects;
+	std::vector<Bullet> m_bullets;
+	std::vector<Wall> m_walls;
 };
 
 
@@ -151,6 +106,9 @@ typedef struct
 class Player
 {
 public:
+	GameDelta movePlayer(Coords direction) const;
+	GameDelta rotateTopBodyAndCannon(Orientation orientation) const;
+
 	Entity entity_main_body;
 	Entity entity_top_body;
 	Entity entity_cannon;
