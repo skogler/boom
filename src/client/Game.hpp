@@ -73,6 +73,7 @@ public:
 	const RenderObjectManager &getRenderObjectManager() const { return *renderManager; }
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
 	const HealthSystem &getHealthSystem() const { return *healthSystem; }
+	const std::map<Entity, std::vector<Behaviour* > >& getBehaviours() const { return m_behaviours; }
 
 	Health getHealth(Entity entity) const { return m_health.at(entity); }
 	void updateHealth(Entity entity, Health health) { m_health.at(entity) += health; }
@@ -84,14 +85,9 @@ public:
 	void updateOrientation(Entity entity, Orientation orientation);
     void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject ro);
 
-    void addBehaviour(Entity entity, const Behaviour *behaviour)
+    void addBehaviour(Entity entity, Behaviour *behaviour)
     {
-
-    }
-
-    GameDelta stepBehaviours() const
-    {
-    	return GameDelta();
+    	m_behaviours[entity].push_back(behaviour);
     }
 
 	void removeEntity(Entity entity)
@@ -115,7 +111,7 @@ private:
 
 	std::map<Entity, Health> m_health;
 	std::map<Entity, BoundingBox> m_bounding_boxes;
-	std::map<Entity, std::vector<const Behaviour *>> m_behaviours;
+	std::map<Entity, std::vector<Behaviour *>> m_behaviours;
 
 	std::vector<CollisionEvent> collision_events;
 };
@@ -191,6 +187,23 @@ public:
     GameDelta entityRotate(Entity entity, Orientation orientation) const;
     GameDelta entitySetBoundingBox(Entity entity, BoundingBox bb) const;
     GameDelta entitySetRenderObject(Entity entity, RenderObject ro) const;
+
+    GameDelta stepBehaviours(double dt) const //__attribute__ ((deprecated)) // DO NOT USE THIS
+    {
+    	GameDelta delta;
+    	for (const auto &entry : getCurrentGameState().getBehaviours())
+    	{
+    		for (auto &behaviour : entry.second)
+    		{
+    			BehaviourStep step = behaviour->stepBehaviour(*this, dt);
+    			delta.mergeDelta(step.generatedDelta);
+    			if (step.nextBehaviour != nullptr) {
+    				delta.mergeDelta(GameDelta(entry.first, step.nextBehaviour));
+    			}
+    		}
+        }
+    	return delta;
+    }
 
     // update game state
     void applyGameDelta(GameDelta gd);

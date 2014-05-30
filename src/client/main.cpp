@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
         {
             GameDelta delta = game.stepGame( &input.getServerInput(), 16.0);
     		frameTime -= 16;
-//    		game.applyGameDelta(delta);
+    		game.applyGameDelta(delta);
     	}
     	startTime = newTime;
     	// receive server actions
