@@ -102,10 +102,10 @@ void Renderer::renderScene()
             else
                 SDL_RenderSetViewport(m_renderer, nullptr);
             SDL_Rect target;
-            target.x = pos.getCoords().x + renderObject.m_offset.x;
-            target.y = pos.getCoords().y + renderObject.m_offset.y;
-            target.w = tex->m_width;
-            target.h = tex->m_height;
+            target.x = 32 * (pos.getCoords().x + renderObject.m_offset.x);
+            target.y = 32 * (pos.getCoords().y + renderObject.m_offset.y);
+            target.w = 32 * (renderObject.m_size.x);
+            target.h = 32 * (renderObject.m_size.y);
             SDL_RenderCopy(m_renderer, tex->m_texture, nullptr, &target);
         }
         catch (const std::runtime_error& ex)

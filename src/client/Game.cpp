@@ -90,9 +90,9 @@ GameDelta Game::runSystems(const GameDelta gd) const
 
 GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) const
 {
-    const double BLOCK_SIZE = 0.05;
-	for (int y = 0; y < 42; y++) {
-		for (int x = 0; x < 42; x++) {
+    const double BLOCK_SIZE = 1;
+	for (int y = 0; y < world._size_y; y++) {
+		for (int x = 0; x < world._size_x; x++) {
             const Block *block = world.getBlock(x, y);
             Coords topLeft = {x * BLOCK_SIZE, y * BLOCK_SIZE};
             Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
@@ -127,16 +127,16 @@ GameDelta& Game::loadMap(int realm, const Worldmap& world, GameDelta& delta) con
 void Game::setup()
 {
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(1, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(2, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(3, 60, 60, 5));
 
 	m_players.push_back(Player{Entity::newEntity(), Entity::newEntity(), Entity::newEntity()});
-	m_player_map.push_back(Worldmap(time(NULL), 60, 60, 5));
+	m_player_map.push_back(Worldmap(4, 60, 60, 5));
 
 
 	GameDelta delta;
