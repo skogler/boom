@@ -214,22 +214,23 @@ GameDelta Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) co
         switch(input.getType())
         {
             case MOVE_RIGHT:
-            	delta = player.movePlayer(Coords{ MOVE_STEP, 0});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{ MOVE_STEP, 0}));
                 break;
             case MOVE_LEFT:
-            	delta = player.movePlayer(Coords{-MOVE_STEP, 0});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{-MOVE_STEP, 0}));
                 break;    
             case MOVE_TOP:
-            	delta = player.movePlayer(Coords{0, MOVE_STEP});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0, MOVE_STEP}));
                 break;
             case MOVE_DOWN:
-            	delta = player.movePlayer(Coords{0,-MOVE_STEP});
+            	delta = delta.mergeDelta(player.movePlayer(Coords{0,-MOVE_STEP}));
                 break;
             case SHOOT:
                 //TODO: shoot logic
+                //delta = deeltaMerga(GameeDelta(entitz, new shot(entitz))
                 break;
             case TURN:
-                player.lookAt(Coords{ input.getX(), input.getY() } , *this, player);
+                delta = delta.mergeDelta(player.lookAt(Coords{ input.getX(), input.getY() } , *this, player));
                 break;
         }  
         ie->pop();
