@@ -51,6 +51,14 @@ public:
 		}
 		return false;
 	}
+	bool hasBoundingBox(Entity entity) const
+	{
+		if (m_bounding_boxes.find(entity) == m_bounding_boxes.end())
+		{
+			return true;
+		}
+		return false;
+	}
 
 	Position getPosition(Entity entity) const
 	{
@@ -60,6 +68,10 @@ public:
 	Orientation getOrientation(Entity entity) const
 	{
 		return m_orientations.at(entity);
+	}
+	BoundingBox getBoundingBox(Entity entity) const
+	{
+		return m_bounding_boxes.at(entity);
 	}
 
 	void updatePosition(Entity entity, int realm, Coords coord)
@@ -84,9 +96,16 @@ public:
 		}
 	}
 
+	void updateBoundingBox(Entity entity, BoundingBox bounding_box)
+	{
+        m_bounding_boxes[entity] = bounding_box;
+	}
+
 private:
 	std::map<Entity, Position> m_positions;
 	std::map<Entity, Orientation> m_orientations;
+	std::map<Entity, BoundingBox> m_bounding_boxes;
+
 };
 
 #endif /* POSITIONMANAGER_HPP_ */

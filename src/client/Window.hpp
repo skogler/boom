@@ -9,15 +9,15 @@ class Window
 {
     DISABLECOPY(Window);
 public:
-    Window (uint width, uint height, bool fullscreen);
+    Window (int width, int height, bool fullscreen);
     virtual ~Window ();
 
-    std::pair<uint, uint> getSize();
+    std::pair<int, int> getSize();
 
     SDL_Window* m_window;
 private:
-    uint m_width;
-    uint m_height;
+    int m_width;
+    int m_height;
 };
 
 #endif /* end of include guard: WINDOW_HPP_UGPBTZKY */
