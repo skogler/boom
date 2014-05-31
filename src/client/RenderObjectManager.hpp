@@ -22,6 +22,7 @@ public:
 //    std::vector<RenderObject*> getRenderObjectsFor(const Entity& entity)
 
 	void updateRenderObject(const ObjectDelta& deltaType, RenderObject* ro);
+    void removeEntity(Entity entity);
 
     std::vector<RenderObject*> m_zSortedRenderObjects;
 };

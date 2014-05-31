@@ -64,11 +64,15 @@ public:
 
 	Position getPosition(Entity entity) const
 	{
+        if (m_positions.find(entity) == m_positions.end())
+            return Position(-1, -9999, -9999);
 		return m_positions.at(entity);
 	}
 
 	Orientation getOrientation(Entity entity) const
 	{
+        if (m_orientations.find(entity) == m_orientations.end())
+            return Orientation(0);
 		return m_orientations.at(entity);
 	}
 	BoundingBox getBoundingBox(Entity entity) const
@@ -118,9 +122,9 @@ public:
 	}
 
 private:
-	std::unordered_map<Entity, Position, hash_Entity> m_positions;
-	std::unordered_map<Entity, Orientation, hash_Entity> m_orientations;
-	std::unordered_map<Entity, BoundingBox, hash_Entity> m_bounding_boxes;
+	std::unordered_map<Entity, Position, hash_Entity, key_Entity> m_positions;
+	std::unordered_map<Entity, Orientation, hash_Entity, key_Entity> m_orientations;
+	std::unordered_map<Entity, BoundingBox, hash_Entity, key_Entity> m_bounding_boxes;
 };
 
 #endif /* POSITIONMANAGER_HPP_ */

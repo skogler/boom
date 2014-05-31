@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <set>
 #include <unordered_map>
 
 #include "worldmap/Worldmap.hpp"
@@ -35,7 +36,7 @@ class BoomClient;
 typedef int FrameEvents;   
 
 
-static const double MOVE_STEP = 10.0;
+static const double MOVE_STEP = 20.0;
 
 typedef std::vector<Entity> EntityGroup;
 
@@ -86,8 +87,8 @@ public:
 	const RenderObjectManager &getRenderObjectManager() const { return *renderManager; }
 	const CollisionSystem &getCollisionSystem() const { return *collisionSystem; }
 	const HealthSystem &getHealthSystem() const { return *healthSystem; }
-	const std::unordered_map<Entity, std::vector<Behaviour* >,hash_Entity>& getBehaviours() const { return m_behaviours; }
-	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity>& getCollisionEvents() const { return m_collision_events; }
+	const std::unordered_map<Entity, std::vector<Behaviour* >,hash_Entity, key_Entity>& getBehaviours() const { return m_behaviours; }
+	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity, key_Entity>& getCollisionEvents() const { return m_collision_events; }
 
 	std::vector<CollisionEvent> entityCollided(Entity entity) const {
 		if (m_collision_events.find(entity) == m_collision_events.end())
@@ -130,15 +131,7 @@ public:
     	m_collision_events[entity].push_back(event);
     }
 
-	void removeEntity(Entity entity)
-	{
-//		positionManager->removeEntity(entity);
-//		renderManager->removeEntity(entity);
-
-		m_health.erase(entity);
-		m_bounding_boxes.erase(entity);
-		m_behaviours.erase(entity);
-	}
+	void removeEntity(Entity entity);
 
 private:
 	PositionManager *positionManager;
@@ -146,14 +139,14 @@ private:
 	CollisionSystem *collisionSystem;
 	HealthSystem *healthSystem;
 
-	std::unordered_map<Entity, Bullet, hash_Entity> m_bullets;
-	std::unordered_map<Entity, Wall, hash_Entity> m_walls;
+	std::unordered_map<Entity, Bullet, hash_Entity, key_Entity> m_bullets;
+	std::unordered_map<Entity, Wall, hash_Entity, key_Entity> m_walls;
 
-	std::unordered_map<Entity, Health, hash_Entity> m_health;
-	std::unordered_map<Entity, BoundingBox, hash_Entity> m_bounding_boxes;
-	std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity> m_behaviours;
+	std::unordered_map<Entity, Health, hash_Entity, key_Entity> m_health;
+	std::unordered_map<Entity, BoundingBox, hash_Entity, key_Entity> m_bounding_boxes;
+	std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity, key_Entity> m_behaviours;
 
-	std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity> m_collision_events;
+	std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity, key_Entity> m_collision_events;
 };
 
 

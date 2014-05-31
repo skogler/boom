@@ -32,6 +32,8 @@ enum class ObjectDelta {
 	UPDATED
 };
 
+#define HASHSIZE 30
+
 class GameDelta {
 	DISABLECOPY(GameDelta);
 public:
@@ -44,7 +46,16 @@ public:
 		deltaRenderObjects(),
 		deltaCollisionEvents(),
 		deltaRemoveEvents()
-	{}
+	{
+        deltaPositions.reserve(HASHSIZE);
+        deltaOrientations.reserve(HASHSIZE);
+        deltaBoundingBoxes.reserve(HASHSIZE);
+        deltaHealth.reserve(HASHSIZE);
+        deltaBehaviours.reserve(HASHSIZE);
+        deltaRenderObjects.reserve(HASHSIZE);
+        deltaCollisionEvents.reserve(HASHSIZE);
+        deltaRemoveEvents.reserve(HASHSIZE);
+    }
 
 //	GameDelta(const GameDelta &delta);
 	GameDelta(Entity entity, const Position& pos);
@@ -71,54 +82,54 @@ public:
 
 	GameDelta &mergeDelta(const GameDelta &oldDelta);
 
-	const std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity>& getBehaviourDelta() const
+	const std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity, key_Entity>& getBehaviourDelta() const
 	{
 		return deltaBehaviours;
 	}
 
-	const std::unordered_map<Entity, Position, hash_Entity>& getPositionsDelta() const
+	const std::unordered_map<Entity, Position, hash_Entity, key_Entity>& getPositionsDelta() const
     {
 		return deltaPositions;
     }
-	const std::unordered_map<Entity, Orientation, hash_Entity>& getOrientationsDelta() const
+	const std::unordered_map<Entity, Orientation, hash_Entity, key_Entity>& getOrientationsDelta() const
 	{
 		return deltaOrientations;
 	}
-	const std::unordered_map<Entity, BoundingBox, hash_Entity>& getBoundingBoxDelta() const
+	const std::unordered_map<Entity, BoundingBox, hash_Entity, key_Entity>& getBoundingBoxDelta() const
     {
         return deltaBoundingBoxes;
     }
 
-    const std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity>& getRenderObjectsDelta() const
+    const std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity, key_Entity>& getRenderObjectsDelta() const
     {
 		return deltaRenderObjects;
     }
 
-	const std::unordered_map<Entity, Health, hash_Entity>& getHealthDelta() const
+	const std::unordered_map<Entity, Health, hash_Entity, key_Entity>& getHealthDelta() const
 	{
 		return deltaHealth;
 	}
 
-	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity >& getCollisionEvents() const
+	const std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity, key_Entity>& getCollisionEvents() const
 	{
 		return deltaCollisionEvents;
 	}
 
-	const std::unordered_map<Entity, ObjectDelta, hash_Entity>& getRemoveEvents() const
+	const std::unordered_map<Entity, ObjectDelta, hash_Entity, key_Entity>& getRemoveEvents() const
 	{
 		return deltaRemoveEvents;
 	}
 
 private:
-	std::unordered_map<Entity, Position, hash_Entity> deltaPositions;
-	std::unordered_map<Entity, Orientation, hash_Entity> deltaOrientations;
-	std::unordered_map<Entity, BoundingBox, hash_Entity> deltaBoundingBoxes;
-	std::unordered_map<Entity, Health, hash_Entity> deltaHealth;
-	std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity> deltaBehaviours;
-	std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity> deltaRenderObjects;
-	std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity> deltaCollisionEvents;
+	std::unordered_map<Entity, Position, hash_Entity, key_Entity> deltaPositions;
+	std::unordered_map<Entity, Orientation, hash_Entity, key_Entity> deltaOrientations;
+	std::unordered_map<Entity, BoundingBox, hash_Entity, key_Entity> deltaBoundingBoxes;
+	std::unordered_map<Entity, Health, hash_Entity, key_Entity> deltaHealth;
+	std::unordered_map<Entity, std::vector<Behaviour *>, hash_Entity, key_Entity> deltaBehaviours;
+	std::unordered_map<Entity, shared_ptr<RenderObjectDelta>, hash_Entity, key_Entity> deltaRenderObjects;
+	std::unordered_map<Entity, std::vector<CollisionEvent>, hash_Entity, key_Entity> deltaCollisionEvents;
 
-	std::unordered_map<Entity, ObjectDelta, hash_Entity> deltaRemoveEvents;
+	std::unordered_map<Entity, ObjectDelta, hash_Entity, key_Entity> deltaRemoveEvents;
 };
 
 class CollisionEvent
