@@ -255,14 +255,24 @@ Coords Renderer::realmToScreen(double x, double y, int realm) const
 	return Coords{coord_x, coord_y};
 }
 
+Coords Renderer::screenToRealmDirection(int x, int y, int realm) const
+{
+    //FIXME ASSUMES PLAYER IN CENTER OF SCREEN
+    auto& viewport = m_viewports[realm + 1];
+    x = x - viewport.x - viewport.w/2;
+    y = y - viewport.y - viewport.h/2;
+    
+    Coords ret;
+    ret.x = (double)x / SCALE;
+    ret.y = (double)y / SCALE;
+    return ret;
+}
+
 Coords Renderer::screenToRealm(int x, int y, int realm) const
 {
     auto& viewport = m_viewports[realm + 1];
-    x = -x + viewport.x + viewport.w/2;
-    x *= -1;
-    y = -y + viewport.y + viewport.h/2;
-    y *= -1;
-    SDL_RenderDrawLine(m_renderer, viewport.w/2, viewport.h/2, viewport.w/2 + x,viewport.h/2 +  y);
+    x = x - viewport.x - viewport.w/2;
+    y = y - viewport.y - viewport.h/2;
     
     Coords ret;
     ret.x = (double)x / SCALE;

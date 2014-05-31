@@ -45,11 +45,18 @@ public:
 	Position();
 	Position(int realm, double x, double y) :
 		m_realm(realm),
-		m_coords(Coords{x, y})
+		m_coords(Coords{x, y}),
+		m_absolute(false)
 		{
 		}
 	virtual ~Position();
 
+	Position(int realm, double x, double y, bool absolute) :
+		m_realm(realm),
+		m_coords(Coords{x, y}),
+		m_absolute(absolute)
+		{
+		}
 	Coords getCoords() const { return m_coords; }
 	int getRealm() const { return m_realm; }
 
@@ -88,9 +95,14 @@ public:
         return *this;
 	}
 
+	bool isAbsolute() const {
+	    return m_absolute;
+	}
+
 private:
 	int m_realm;
 	Coords m_coords;
+	bool    m_absolute;
 };
 
 class Orientation {
