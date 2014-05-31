@@ -85,8 +85,8 @@ bool GameState::isWall(Entity entity) const
 
 const GameDelta *Game::runSystems(const GameDelta &gd) const
 {
-	//const CollisionSystem &system = m_currentState.getCollisionSystem();
-	//std::vector<Collision> collisions = system.checkCollisions(*this, gd);
+	const CollisionSystem &system = m_currentState.getCollisionSystem();
+	std::vector<Collision> collisions = system.checkCollisions(*this, gd);
 
 	GameDelta *afterCollision = new GameDelta();
 
