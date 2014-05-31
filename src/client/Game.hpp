@@ -187,7 +187,7 @@ public:
 	virtual ~Game();
 
 	void loadMap(int realm, const Worldmap* world, GameDelta& delta);
-	void setup();
+	void setup(long seed);
 
     const GameDelta *stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;

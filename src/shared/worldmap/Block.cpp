@@ -63,7 +63,7 @@ int Block::getTextures(std::vector<std::string>& textures)
     }
     int count = textures.size();;
     if (getType() == FLOOR || getType() == BROKEN_WALL) {
-        textures.push_back("floor/floor_steel");
+        textures.push_back("floor/wall_broken");
     }
     else if (getType() == WALL) {
         char name[20];

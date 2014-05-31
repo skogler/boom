@@ -2,6 +2,7 @@
 #include "common.hpp"
 #include "Messages.hpp"
 #include "BoomServer.hpp"
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
@@ -26,22 +27,27 @@ int main(int argc, char *argv[])
 
     Uint32 startTime = SDL_GetTicks();
 
+    const int TICKRATE = 8;
+
     do {
         Uint32 newTime = SDL_GetTicks();
         Uint32 frameTime = newTime - startTime;
 
-        if (frameTime > 16) {
+        if (frameTime > TICKRATE) {
             server.accept_connections();
+            server.listen_messages();
             do {
                 TickMessage tick;
-                tick.time = 16.0;
+                tick.time = static_cast<double>(TICKRATE);
                 Message msg(&tick);
                 server.sendToAll(&msg);
-                frameTime -= 16;
-            }while (frameTime >= 16);
+                frameTime -= TICKRATE;
+                //printf("frametime: %u\n", frameTime);
+            }while (frameTime >= TICKRATE);
             startTime = newTime - frameTime;
         }
-        server.listen_messages();
+      //  server.listen_messages();
+        SDL_Delay(1);
     }while(1);
 
     return 0;
