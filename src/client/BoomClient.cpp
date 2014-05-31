@@ -79,7 +79,6 @@ void BoomClient::sendInputEvent(InputEvent& event)
 
     // TODO: check return value?
     _send(&msg);
-    printf("Sent input Event\n");
 }
 
 void BoomClient::sendTextMessge(const std::string& text)

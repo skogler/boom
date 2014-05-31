@@ -83,7 +83,7 @@ void BoomServer::listen_messages()
         for (; client != _clients.end();) {
             if ((*client)->disconnected()) {
                 int uid = (*client)->getUId();
-                if (uid > 0) {
+                if (uid >= 0 && uid < 4) {
                     _players[uid] = -1;
                 }
                 delete *client;
@@ -117,7 +117,7 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
     }
     case MSG_TYPE_INPUT_EVENT:
     {
-        InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
+//        InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
 //        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
 //                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
         sendToAll(msg);

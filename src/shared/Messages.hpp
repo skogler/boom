@@ -204,9 +204,9 @@ private:
         return new_msg;
     }
 
+    std::vector<Message*> _messages;
     int _finishedMessages;
 
-    std::vector<Message*> _messages;
 };
 
 

@@ -15,6 +15,9 @@
 #include "Input.hpp"
 
 class BoomClient {
+
+    DISABLECOPY(BoomClient);
+
 public:
     BoomClient(const std::string& hostname, const int port, const std::string& name, Input* input, Game* game);
     ~BoomClient();

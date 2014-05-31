@@ -16,8 +16,10 @@ int main(int argc, char *argv[])
 {
 
     if (argc != 2) {
+        printf("\n-----------------------------\n");
         printf("usage: boom-client server\n");
         printf("where server is a hostname or ip-address\n");
+        printf("-----------------------------\n");
         return 0;
     }
 
@@ -35,7 +37,7 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
-    BoomClient network(argv[1], BOOM_PORT, "super duper client", &input, &game);
+    BoomClient network(argv[1], BOOM_PORT, "boomClient", &input, &game);
     network.start_handshake();
 
     input.setBoomClient(&network);

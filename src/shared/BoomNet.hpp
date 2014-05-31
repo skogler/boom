@@ -96,7 +96,6 @@ public:
             _error = true;
         }
         else if (numready) {
-            printf("There are %d sockets with activity!\n", numready);
             return true;
         }
         return false;

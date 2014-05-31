@@ -9,10 +9,14 @@
 #define BOOMSERVER_HPP_
 
 #include "BoomNet.hpp"
+#include "common.hpp"
 #include <string>
 
 
 class BoomClientData {
+
+    DISABLECOPY(BoomClientData);
+
 public:
     BoomClientData(const std::string& name, const int& uid, BoomSession* connection):
         _name(name),
@@ -69,7 +73,6 @@ public:
     }
 
 private:
-    BoomClientData(const BoomClientData& other);
     std::string     _name;
     int             _uid;
     BoomSession*    _connection;
@@ -79,6 +82,9 @@ private:
 
 
 class BoomServer {
+
+DISABLECOPY(BoomServer);
+
 public:
     BoomServer(const int port);
     ~BoomServer();
