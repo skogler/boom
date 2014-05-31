@@ -15,7 +15,8 @@ typedef enum
        MOVE_TOP,
        MOVE_DOWN,
        SHOOT,
-       TURN
+       TURN,
+       MOVE_TELEPORT
 }UserActionType;
 
 const string GAME_NAME = "Boom!";

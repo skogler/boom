@@ -18,6 +18,7 @@
 #include "Position.hpp"
 #include "Renderer.hpp"
 #include <iostream>
+#include "BoomClient.hpp"
 
 GameState::GameState() :
 		positionManager(new PositionManager()),
@@ -37,6 +38,11 @@ GameState::GameState() :
 void GameState::updatePosition(Entity entity, int realm, Coords coords)
 {
 	positionManager->updatePosition(entity, realm, coords);
+}
+
+void GameState::teleportPosition(Entity entity, int realm, Coords coords)
+{
+	positionManager->teleportPosition(entity, realm, coords);
 }
 
 void GameState::updateOrientation(Entity entity, Orientation orientation)
@@ -140,6 +146,14 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 	//return delta;
 }
 
+void Game::sendAbsolutePosition(BoomClient* net) const
+{
+    printf("send absolute position\n");
+    Position pos = m_currentState.getPositionManager().getPosition(m_players[m_currentPlayer].entity_main_body);
+    InputEvent ie(m_currentPlayer, MOVE_TELEPORT, pos.getCoords().x, pos.getCoords().y);
+    net->sendInputEvent(ie);
+}
+
 void Game::setup(long seed)
 {
 
@@ -201,10 +215,16 @@ void Game::applyGameDelta(const GameDelta *delta) {
 	modifyCurrentGameState().cleanBehaviours();
 	for (auto &entry : delta->getPositionsDelta())
 	{
-        printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
-		m_currentState.updatePosition(
-				entry.first, entry.second.getRealm(), entry.second.getCoords()
-			);
+	    if (entry.second.isAbsolute()) {
+	        m_currentState.teleportPosition(
+                            entry.first, entry.second.getRealm(), entry.second.getCoords());
+	    }
+	    else {
+	        printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
+	        m_currentState.updatePosition(
+	                entry.first, entry.second.getRealm(), entry.second.getCoords()
+	        );
+	    }
 	}
 
 	for (auto &entry : delta->getOrientationsDelta())
@@ -252,6 +272,14 @@ void Player::movePlayer(GameDelta &delta, Coords direction ) const
     delta.mergeDelta(GameDelta( this->entity_main_body, direction  ));
     delta.mergeDelta(GameDelta( this->entity_top_body, direction  ));
     delta.mergeDelta(GameDelta( this->entity_cannon, direction  ));   
+}
+
+void Player::teleportPlayer(GameDelta &delta, Coords pos ) const
+{
+    //TODO: add orientation
+    delta.mergeDelta(GameDelta( this->entity_main_body, pos, true  ));
+    delta.mergeDelta(GameDelta( this->entity_top_body, pos, true ));
+    delta.mergeDelta(GameDelta( this->entity_cannon, pos, true  ));
 }
 
 void Player::lookAt(GameDelta &delta, Coords cor, const Game &game, Player &player) const
@@ -309,6 +337,9 @@ const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDe
                 break;
             case MOVE_DOWN:
 				player.movePlayer(delta, Coords{0,MOVE_STEP * timeDelta/1000});
+                break;
+            case MOVE_TELEPORT:
+				player.teleportPlayer(delta, Coords{input.getX(), input.getY()});
                 break;
             case SHOOT:
                 //TODO: shoot logic

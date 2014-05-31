@@ -18,7 +18,8 @@ _port(port),
 _name(name),
 _uid(-1),
 _input(input),
-_game(game)
+_game(game),
+_ticks(0)
 {
     _connect();
 }
@@ -52,9 +53,14 @@ void BoomClient::checkMessages()
             }
             case MSG_TYPE_TICK:
             {
+                _ticks ++;
                 TickMessage *tick = (TickMessage*) msg->getRecvData();
                 const GameDelta *delta = _game->stepGame( &_input->getServerInput(), tick->time);
                 _game->applyGameDelta(delta);
+                if (_ticks > 100) {
+                    _ticks = 0;
+            //        _game->sendAbsolutePosition(this);
+                }
                 break;
             }
             case MSG_TYPE_TEXT:

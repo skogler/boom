@@ -61,6 +61,7 @@ private:
     long         _seed;
     Input*       _input;
     Game*        _game;
+    int          _ticks;
 };
 
 

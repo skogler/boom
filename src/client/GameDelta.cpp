@@ -80,6 +80,11 @@ GameDelta::GameDelta(Entity entity, const Coords& coords) : GameDelta()
 	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y);
 }
 
+GameDelta::GameDelta(Entity entity, const Coords& coords, bool absolute) : GameDelta()
+{
+	deltaPositions[entity] = Position(deltaPositions[entity].getRealm(), coords.x, coords.y, absolute);
+}
+
 GameDelta::GameDelta(Entity entity, const Orientation& orientation) : GameDelta() {
 	deltaOrientations[entity] = orientation;
 }

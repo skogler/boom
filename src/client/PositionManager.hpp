@@ -87,6 +87,12 @@ public:
 		}
 	}
 
+	void teleportPosition(Entity entity, int realm, Coords coord)
+	{
+	    printf("teleport to %f, %f\n", coord.x, coord.y);
+	    m_positions[entity] = Position(m_positions[entity].getRealm(), coord.x, coord.y, true);
+	}
+
 	void updateOrientation(Entity entity, Orientation orientation)
 	{
 		if (m_orientations.find(entity) != m_orientations.end())
