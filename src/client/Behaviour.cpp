@@ -24,9 +24,9 @@ class Animation : public Behaviour
 public:
     Animation(Entity entity, std::vector<Frame> frames) :
         m_entity(entity),
-        m_frames(frames),
         m_current_frame(0),
-        m_current_time(0)
+        m_current_time(0),
+        m_frames(frames)
     {
     };
 
@@ -57,7 +57,7 @@ public:
     }
 
     Entity m_entity;
-    int m_current_frame;
+    unsigned int m_current_frame;
     double m_current_time;
     std::vector<Frame> m_frames;
 };
@@ -66,12 +66,9 @@ public:
 BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
 {
     double step = 8*dt/1000;
-    double x = 0.0;
-    double y = 0.0;
     GameDelta *delta = new GameDelta();
     Position pos = game.getCurrentGameState().getPositionManager().getPosition(m_entity);
     Coords origin = pos.getCoords();
-    double a = game.getCurrentGameState().getPositionManager().getOrientation(m_entity).getAngle(); 
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
 		std::cout << "Collision" << std::endl;

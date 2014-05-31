@@ -22,7 +22,14 @@
 GameState::GameState() :
 		positionManager(new PositionManager()),
 		renderManager(new RenderObjectManager()),
-		collisionSystem(new CollisionSystem())
+		collisionSystem(new CollisionSystem()),
+        healthSystem(),
+        m_bullets(),
+        m_walls(),
+        m_health(),
+        m_bounding_boxes(),
+        m_behaviours(),
+        m_collision_events()
 {
 
 }
@@ -37,12 +44,12 @@ void GameState::updateOrientation(Entity entity, Orientation orientation)
 	positionManager->updateOrientation(entity, orientation);
 }
 
-void GameState::updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro)
+void GameState::updateRenderObject(Entity, const ObjectDelta deltaType, RenderObject* ro)
 {
 	renderManager->updateRenderObject(deltaType, ro);
 }
 
-void GameState::updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo)
+void GameState::updateBoundingBox(Entity entity, const ObjectDelta, BoundingBox bo)
 {
 	positionManager->updateBoundingBox(entity, bo);
 }
@@ -113,7 +120,7 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 		for (int x = 0; x < world->_size_x; x++) {
             Block *block = world->getBlock(x, y);
             Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
-            Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
+            //Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = newEntity();
 
 
@@ -228,7 +235,7 @@ void Player::movePlayer(GameDelta &delta, Coords direction ) const
 
 void Player::lookAt(GameDelta &delta, Coords cor, const Game &game, Player &player) const
 {
-   Coords pl = game.getPlayerPosition(player );
+   //Coords pl = game.getPlayerPosition(player );
    Orientation plo = game.getPlayerPartOrientation(player.entity_top_body );
    double m2h = atan2(cor.y, cor.x); // * 180 / M_PI;
    double diff = m2h - plo.getAngle();
@@ -281,6 +288,8 @@ const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDe
                 player.lookAt(delta, m_renderer->screenToRealm(input.getX(), input.getY(), 
                                 m_currentState.getPositionManager().getPosition(player.entity_main_body).getRealm()), *this, player);
                 break;
+            case IDLE:
+                break;
         }  
         ie->pop();
     }
@@ -325,7 +334,8 @@ Game::Game() :
 	m_currentState(),
     m_currentPlayer(0),
     m_players(),
-    m_player_map()
+    m_player_map(),
+    m_renderer(nullptr)
 {
 }
 

@@ -58,7 +58,7 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
 			}
 
         } else { // Player
-        	int realm = oldPos.getRealm();
+        	//int realm = oldPos.getRealm();
             std::vector<Entity> bullets = pm.getEntitiesOfRealm(-1);
             for (auto &bullet : bullets)
             {

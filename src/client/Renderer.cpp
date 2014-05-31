@@ -21,7 +21,10 @@ Renderer::Renderer(Window* window)
     : m_renderer(nullptr),
       m_window(window),
       m_textures(),
-      m_texture_dir(fs::path("resources")/"textures")
+      m_texture_dir(fs::path("resources")/"textures"),
+      m_game(nullptr),
+      m_viewports(),
+      m_cameras()
 {
     m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     loadAllTextures();
@@ -61,7 +64,7 @@ void Renderer::createWallTextures()
                                                 32,
                                                 0, 0, 0, 0);
         SDL_BlitSurface(tex->m_surface, NULL, surf, NULL);
-        for (int j = 1; j < textures.size(); j++) {
+        for (unsigned int j = 1; j < textures.size(); j++) {
             auto& texture = m_textures[textures[j]];
             SDL_BlitSurface(texture->m_surface, NULL, surf, NULL);
         }
@@ -183,6 +186,8 @@ int Renderer::screenCoordsIsRealm(int x, int y) const {
 
 Coords Renderer::realmToScreen(double x, double y, int realm) const
 {
+    // TODO: fixme
+    // FIXME: todo
 	int offset_x = 0;
 	int offset_y = 0;
 
@@ -196,14 +201,16 @@ Coords Renderer::realmToScreen(double x, double y, int realm) const
 		offset_y = m_viewports[0].h;
 	}
 
-	double coord_x = offset_x + m_cameras[realm].first.x;
-	double coord_y = offset_y + m_cameras[realm].first.y;
+	double coord_x = offset_x + m_cameras[realm].first.x - x;
+	double coord_y = offset_y + m_cameras[realm].first.y - y;
 
 	return Coords{coord_x, coord_y};
 }
 
 Coords Renderer::screenToRealm(int x, int y, int realm) const
 {
+    // TODO: fixme
+    // FIXME: todo
     auto& viewport = m_viewports[realm + 1];
     auto& cam = m_cameras[realm + 1];
     x = -x + viewport.x + viewport.w/2;

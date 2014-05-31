@@ -12,12 +12,11 @@
 
 Block::Block(const BlockType& type, Worldmap* map, const int& x, const int& y) :
 _type(type),
+_worldmap(map),
 _x(x),
 _y(y),
 _neighbors(-1)
 {
-    _worldmap = map;
-    _neighbors = -1; // TODO
     // TODO Auto-generated constructor stub
 
 }
