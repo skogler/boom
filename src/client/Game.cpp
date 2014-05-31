@@ -90,8 +90,6 @@ const GameDelta *Game::runSystems(const GameDelta &gd) const
         afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
         afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
 	}
-
-
 	return afterCollision;
 }
 
@@ -112,17 +110,20 @@ bool Game::isWall(int realm, double x, double y) const {
 
 void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 {
-    const double BLOCK_SIZE = Wall::size();
-
-    double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
-    double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+    //double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
+    //double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+    Entity new_entity = newEntity();
+    delta.mergeDelta(GameDelta(new_entity, Position(realm, 0, 0)));
+    delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+    delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "BACKGROUND", 1, 1, {-30,-30}, {60,60}, {0,0})));
+    double x_off = -world->_size_x * Wall::size() * 0.5;
+    double y_off = -world->_size_y * Wall::size() * 0.5; 
 	for (int y = 0; y < world->_size_y; y++) {
 		for (int x = 0; x < world->_size_x; x++) {
             Block *block = world->getBlock(x, y);
-            Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
+            Coords topLeft = {x_off + x * Wall::size(), y_off + y * Wall::size()};
             //Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = newEntity();
-
 
             if (block != NULL && block->getType() == Block::WALL) {
                 std::vector<std::string> textures;
@@ -142,6 +143,7 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 
 void Game::setup()
 {
+    m_renderer->createBackground(60,60);
 	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
 	m_player_map.push_back(new Worldmap(1, 60, 60, 5));
 
@@ -162,9 +164,13 @@ void Game::setup()
 		delta->mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta->mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
 
-		delta->mergeDelta(GameDelta(m_players[i].entity_main_body, new RenderObject(m_players[i].entity_main_body, "character/blue/blue_bottom", 1, 1)));
-		delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/blue/blue_mid", 2, 1)));
-		delta->mergeDelta(GameDelta(m_players[i].entity_cannon, new RenderObject(m_players[i].entity_cannon,"character/blue/blue_top_standard_gun", 3, 1)));
+		delta->mergeDelta(GameDelta(m_players[i].entity_main_body, new RenderObject(m_players[i].entity_main_body, 
+                        "character/blue/blue_bottom", 1, 1)));
+		delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,
+                        "character/blue/blue_mid", 2, 1,
+                        Coords{0,0}, Coords{1,1}, Coords{0.5,0.4062})));
+		delta->mergeDelta(GameDelta(m_players[i].entity_cannon, new RenderObject(m_players[i].entity_cannon,
+                        "character/blue/blue_top_standard_gun", 3, 1)));
 
 		delta->mergeDelta(GameDelta(m_players[i].entity_main_body, BoundingBox()));
 

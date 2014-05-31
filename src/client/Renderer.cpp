@@ -29,13 +29,15 @@ Renderer::Renderer(Window* window)
     m_renderer = SDL_CreateRenderer(window->m_window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     loadAllTextures();
     createWallTextures();
+    SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255); 
 }
 
 Renderer::~Renderer()
 {
-    if(m_renderer)
+    if(m_renderer) {
         SDL_DestroyRenderer(m_renderer);
-    m_renderer = nullptr;
+        m_renderer = nullptr;
+    }
 }
 
 void Renderer::loadAllTextures()
@@ -77,6 +79,36 @@ void Renderer::createWallTextures()
     }
 }
 
+void Renderer::createBackground(int x_size, int y_size)
+{
+    SDL_Surface* bg = SDL_CreateRGBSurface(0,
+                                        (int)x_size * SCALE,
+                                        (int)y_size * SCALE,
+                                        32,
+                                        0, 0, 0, 0);
+    assert(bg);
+    auto& tileTex = m_textures.at("floor/floor_steel");
+    SDL_Surface* tile = tileTex->m_surface;
+    SDL_SetSurfaceBlendMode(tile, SDL_BLENDMODE_NONE);
+    SDL_Rect target_rect;
+    target_rect.x = 0;
+    target_rect.y = 0;
+    target_rect.w = tileTex->m_width;
+    target_rect.h = tileTex->m_height;
+
+    for (int x = 0; x < x_size; ++x)
+    {
+         target_rect.x = x * SCALE;
+         for (int y = 0; y < y_size; ++y)
+         {
+             target_rect.y = y * SCALE;
+             SDL_BlitSurface(tile, NULL, bg, &target_rect);
+         }
+    }
+    Texture* tex = new Texture(m_renderer, bg);
+    m_textures["BACKGROUND"] = std::unique_ptr<Texture>(tex);
+}
+
 void Renderer::loadTexture(const fs::path& path)
 {
     string basepath = m_texture_dir.string().c_str();
@@ -113,22 +145,34 @@ void Renderer::updateViewports()
         m_viewports.push_back(SDL_Rect{0,h,w,h});
         m_viewports.push_back(SDL_Rect{w,h,w,h});
     }
+
     m_cameras.clear();
     m_cameras.resize(players + 1);
     m_cameras[0] = std::make_pair<Coords,Coords>(Coords{0,0},Coords{0,0});
-    for (int i = 1; i < players; ++i) {
+    for (int i = 0; i < players; ++i) {
         const auto& player = m_game->getPlayerByID(i);
-        m_cameras[i] = std::make_pair<Coords, Coords>(m_game->getPlayerPosition(player), Coords{w/32., h/32.});
+        m_cameras[i+1] = std::make_pair<Coords, Coords>(m_game->getPlayerPosition(player), Coords{w/32., h/32.});
     }
 }
 
 void Renderer::updateCameras()
 {
+    static const double LIMIT = 30;
     for (uint i = 1; i < m_cameras.size(); ++i) {
         const auto& player = m_game->getPlayerByID(i-1);
         m_cameras[i].first = m_game->getPlayerPosition(player);
         m_cameras[i].first.x -= m_cameras[i].second.x/2;
         m_cameras[i].first.y -= m_cameras[i].second.y/2;
+        if ((m_cameras[i].first.x + m_cameras[i].second.x) > LIMIT) {
+            m_cameras[i].first.x = LIMIT - m_cameras[i].second.x;
+        } else if (m_cameras[i].first.x < -LIMIT) {
+            m_cameras[i].first.x = -LIMIT;
+        }
+        if ((m_cameras[i].first.y + m_cameras[i].second.y) > LIMIT) {
+            m_cameras[i].first.y = LIMIT - m_cameras[i].second.y;
+        } else if (m_cameras[i].first.y < -LIMIT) {
+            m_cameras[i].first.y = -LIMIT;
+        }
     }
 }
 
@@ -163,6 +207,10 @@ void Renderer::renderScene()
             std::cout << "Invalid texture name: " << renderObject->m_fileName << std::endl;
         }
     }
+    //SDL_RenderDrawLine(m_renderer, 0, m_viewports[1].y, m_viewports[2].x + m_viewports[2].w, m_viewports[1].y);
+    //if (m_viewports.size() > 3) {
+    //    SDL_RenderDrawLine(m_renderer, m_viewports[2].x, 0, m_viewports[2].x, m_viewports[3].y + m_viewports[3].h);
+    //}
 }
 
 void Renderer::setGame(Game* game)
@@ -209,10 +257,7 @@ Coords Renderer::realmToScreen(double x, double y, int realm) const
 
 Coords Renderer::screenToRealm(int x, int y, int realm) const
 {
-    // TODO: fixme
-    // FIXME: todo
     auto& viewport = m_viewports[realm + 1];
-    auto& cam = m_cameras[realm + 1];
     x = -x + viewport.x + viewport.w/2;
     x *= -1;
     y = -y + viewport.y + viewport.h/2;
@@ -223,14 +268,4 @@ Coords Renderer::screenToRealm(int x, int y, int realm) const
     ret.x = (double)x / SCALE;
     ret.y = (double)y / SCALE;
     return ret;
-    //auto& viewport = m_viewports[realm];
-    //auto& cam = m_cameras[realm];
-    //x = x - viewport.x;
-    //y = y - viewport.y;
-    //Coords ret;
-    //ret.x = (double)x / SCALE;
-    //ret.y = (double)y / SCALE;
-    //ret.x += cam.first.x;
-    //ret.y += cam.first.y;
-    //return ret;
 }

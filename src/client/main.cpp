@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    Window window(640, 480, true);
+    Window window(1680, 900, true);
     IMG_Init(IMG_INIT_PNG);
     Renderer renderer(&window);
     Game game;

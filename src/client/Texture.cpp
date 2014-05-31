@@ -6,6 +6,7 @@
 
 Texture::Texture(SDL_Renderer* renderer, const string& absPath) : 
     m_texture(nullptr),
+    m_surface(nullptr),
     m_width(0),
     m_height(0)
 {
@@ -48,6 +49,12 @@ Texture::Texture(SDL_Renderer* renderer, SDL_Surface* surf) :
 
 Texture::~Texture()
 {
-    SDL_DestroyTexture(m_texture);
-    m_texture = nullptr;
+    if (m_texture) {
+        SDL_DestroyTexture(m_texture);
+        m_texture = nullptr;
+    }
+    if(m_surface) {
+        SDL_FreeSurface(m_surface);
+        m_surface = nullptr;
+    }
 }

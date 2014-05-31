@@ -7,6 +7,7 @@
 
 #include "RenderObjectManager.hpp"
 #include "Game.hpp"
+#include <algorithm>
 
 RenderObjectManager::RenderObjectManager() :
     m_zSortedRenderObjects()

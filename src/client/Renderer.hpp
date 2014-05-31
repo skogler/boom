@@ -32,6 +32,7 @@ public:
     Coords screenToRealm(int x, int y, int realm) const;
     Coords realmToScreen(double x, double y, int realm) const;
     int screenCoordsIsRealm(int x, int y) const;
+    void createBackground(int x_size, int y_size);
 
     static const int SCALE = 32;
 
