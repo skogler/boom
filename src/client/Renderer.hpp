@@ -33,6 +33,12 @@ public:
     Coords realmToScreen(double x, double y, int realm) const;
     int screenCoordsIsRealm(int x, int y) const;
 
+    inline Coords getViewportCenter(int index) {
+        SDL_Rect r = m_viewports[index];
+        return Coords{r.x + r.w/2,r.y + r.h/2 };
+        
+    }
+
     static const int SCALE = 32;
 
 private:
@@ -40,7 +46,7 @@ private:
     void loadTexture(const boost::filesystem::path& path);
     void createWallTextures();
 
-    SDL_Renderer* m_renderer;
+    SDL_Renderer* m_renderer;       
     Window* m_window;
     std::unordered_map<string, unique_ptr<Texture>> m_textures;
     boost::filesystem::path m_texture_dir;

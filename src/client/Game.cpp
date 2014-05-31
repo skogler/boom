@@ -91,7 +91,7 @@ const GameDelta *Game::runSystems(const GameDelta &gd) const
 		}
 		else
 		{
-			afterCollision->purgePosition(collision.active);
+		    afterCollision->purgePosition(collision.active);
 		}
         afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
         afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
@@ -291,27 +291,37 @@ void Player::lookAt(GameDelta &delta, Coords cor, const Game &game, Player &play
    player.rotateTopBodyAndCannon(delta, Orientation(diff));
 }
 
-void Game::spawnBullet(GameDelta &delta) const
+void Game::spawnBullet(GameDelta &delta, double x, double y, int id ) const
 {
-    Entity bullet = newEntity();
-
+    Entity bullet = newEntity();      /*     
+    printf(" mouse %f %f \n \n", x, y);
+    Shot *beh = new Shot(bullet, Coords{x,y});
         
+    Coords play = Coords{ 480/32,270/32} ;//m_renderer->getViewportCenter(id+1);
+    //Coords play = getPlayerPosition(getPlayerByID(id));
+    Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
+    Orientation ori = m_currentState.getPositionManager().getOrientation( getPlayerByID(id).entity_top_body );
+    delta.mergeDelta(GameDelta(bullet, pos));//Position(-1, play.x, play.y)));
+    delta.mergeDelta(GameDelta(bullet, ori));
+
+*/
 //    Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
-//
-    double x = static_cast<double>(rand() % 1920/32);
-    double y = static_cast<double>(rand() % 1080/32);
+    //x = static_cast<double>(rand() % 1920/32);
+    //y = static_cast<double>(rand() % 1080/32);
+    x = x/32;
+    y = y/32;
+    
+    Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
+    Coords play = m_renderer->getViewportCenter(id+1);  getPlayerPosition(getPlayerByID(id));   
+    play.x = play.x/32;
+    play.y = play.y/32;
 
+    double a = atan2(y - play.y, x - play.x) + 3.1415926/2.0;
+    Shot *beh = new Shot(bullet, Coords{x, y});
 
-    double x2 = static_cast<double>(rand() % 1920/32);
-    double y2 = static_cast<double>(rand() % 1080/32);
-
-    double a = atan2(y2 - y, x2 - x) + 3.1415926/2.0;
-
-
-    Shot *beh = new Shot(bullet, Coords{x2, y2});
-
-    delta.mergeDelta(GameDelta(bullet, Position(-1, x, y)));
+    delta.mergeDelta(GameDelta(bullet, Position(-1, play.x, play.y)));
     delta.mergeDelta(GameDelta(bullet, Orientation(a)));
+    
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/rocket_1", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
 }
@@ -344,7 +354,7 @@ const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDe
             case SHOOT:
                 //TODO: shoot logic
                 //delta = deeltaMerga(GameeDelta(entitz, new shot(entitz))
-				spawnBullet(delta);
+				spawnBullet(delta, input.getX(), input.getY(), input.getUID());
             	
                 break;
             case TURN:

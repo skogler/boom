@@ -195,7 +195,7 @@ public:
     const GameDelta *stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;
 
-    void spawnBullet(GameDelta &delta) const;
+    void spawnBullet(GameDelta &delt, double x, double y, int id) const;
     bool isWall(int realm, double x, double y) const;
 
     void sendAbsolutePosition(BoomClient* net) const;

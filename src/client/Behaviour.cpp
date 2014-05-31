@@ -21,51 +21,51 @@ typedef struct
 
 class Animation : public Behaviour
 {
-public:
-    Animation(Entity entity, std::vector<Frame> frames) :
-        m_entity(entity),
-        m_current_frame(0),
-        m_current_time(0),
-        m_frames(frames)
+    public:
+        Animation(Entity entity, std::vector<Frame> frames) :
+            m_entity(entity),
+            m_current_frame(0),
+            m_current_time(0),
+            m_frames(frames)
     {
     };
 
-    bool isFinished() const
-    {
-        return false;
-    }
-
-    BehaviourStep stepBehaviour(const Game &game, double dt)
-    {
-        Frame current_frame = m_frames[m_current_frame];
-		std::cout << m_current_frame << std::endl;
-        if (current_frame.maxTime < m_current_time + dt)
+        bool isFinished() const
         {
-            double overflow = m_current_time + dt - current_frame.maxTime;
-            m_current_frame++;
-            m_current_time = 0;
-            if (m_current_frame >= m_frames.size())
-            {
-                GameDelta *delta = new GameDelta();
-                delta->mergeDelta(GameDelta(m_entity, Position(-1, 99999, 99999)));
-                //delta->mergeDelta(GameDelta(explosion, Orientation(0)));
-                delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "explosions/wall/expl_wall_01", 1, 1)));
-
-                delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
-                return BehaviourStep{nullptr, delta};
-            }
-
-            return stepBehaviour(game, overflow);
-        } else {
-            m_current_time += dt;
-            return BehaviourStep{this, new GameDelta(m_entity, new RenderObject(m_entity, m_frames[m_current_frame].name, 1, 1))};
+            return false;
         }
-    }
 
-    Entity m_entity;
-    unsigned int m_current_frame;
-    double m_current_time;
-    std::vector<Frame> m_frames;
+        BehaviourStep stepBehaviour(const Game &game, double dt)
+        {
+            Frame current_frame = m_frames[m_current_frame];
+            std::cout << m_current_frame << std::endl;
+            if (current_frame.maxTime < m_current_time + dt)
+            {
+                double overflow = m_current_time + dt - current_frame.maxTime;
+                m_current_frame++;
+                m_current_time = 0;
+                if (m_current_frame >= m_frames.size())
+                {
+                    GameDelta *delta = new GameDelta();
+                    delta->mergeDelta(GameDelta(m_entity, Position(-1, 99999, 99999)));
+                    //delta->mergeDelta(GameDelta(explosion, Orientation(0)));
+                    delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "explosions/wall/expl_wall_01", 1, 1)));
+
+                    delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
+                    return BehaviourStep{nullptr, delta};
+                }
+
+                return stepBehaviour(game, overflow);
+            } else {
+                m_current_time += dt;
+                return BehaviourStep{this, new GameDelta(m_entity, new RenderObject(m_entity, m_frames[m_current_frame].name, 1, 1))};
+            }                                       
+        }
+
+        Entity m_entity;
+        unsigned int m_current_frame;
+        double m_current_time;
+        std::vector<Frame> m_frames;    
 };
 
 
@@ -74,12 +74,17 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
     double step = 8*dt/1000;
     GameDelta *delta = new GameDelta();
     Position pos = game.getCurrentGameState().getPositionManager().getPosition(m_entity);
+
+    const Renderer *ren = game.getRenderer();
     Coords origin = pos.getCoords();
+    //m_target = ren->screenToRealm(m_target.x, m_target.y, -1);
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
-		std::cout << "Collision" << std::endl;
         //Entity explosion = newEntity();
+        //
+
         Coords screen = origin;//game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
+
         //delta->mergeDelta(GameDelta(explosion, Position(-1, screen.x, screen.y)));
         delta->mergeDelta(GameDelta(m_entity, Orientation(3.14)));
         delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "explosions/wall/expl_wall_01", 1, 1)));
@@ -108,7 +113,7 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
         return BehaviourStep{new Animation(m_entity, explosions), delta};
     }
 
-    Coords delt  = normalizeCoords({m_target.x - origin.x, m_target.y - origin.y});
+    Coords delt  = normalizeCoords({m_target.x, m_target.y});
     delta->mergeDelta(GameDelta(m_entity, Coords{ delt.x * step, delt.y * step} ));
 
     if (m_current == 0)
