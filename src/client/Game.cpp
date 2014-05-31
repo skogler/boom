@@ -85,10 +85,10 @@ const GameDelta *Game::runSystems(const GameDelta &gd) const
 		}
 		else
 		{
-			afterCollision->purgePosition(collision.active);
+		  //  afterCollision->purgePosition(collision.active);
 		}
-        afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
-        afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
+       // afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
+       // afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
 	}
 
 
@@ -180,7 +180,6 @@ void Game::applyGameDelta(const GameDelta *delta) {
 	modifyCurrentGameState().cleanBehaviours();
 	for (auto &entry : delta->getPositionsDelta())
 	{
-        printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
 		m_currentState.updatePosition(
 				entry.first, entry.second.getRealm(), entry.second.getCoords()
 			);
@@ -242,16 +241,18 @@ void Player::lookAt(GameDelta &delta, Coords cor, const Game &game, Player &play
    player.rotateTopBodyAndCannon(delta, Orientation(diff));
 }
 
-void Game::spawnBullet(GameDelta &delta) const
+void Game::spawnBullet(GameDelta &delta, double x, double y, int id ) const
 {
-    Entity bullet = newEntity();
-
-    Shot *beh = new Shot(bullet, Coords{0, 200});
+    Entity bullet = newEntity();           
+    printf(" mouse %f %f \n \n", x, y);
+    Shot *beh = new Shot(bullet, Coords{x,y});
         
-//    Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
-
-    delta.mergeDelta(GameDelta(bullet, Position(-1, 5, 0)));
-    delta.mergeDelta(GameDelta(bullet, Orientation(0)));
+    Coords play = Coords{ 480/32,270/32} ;//m_renderer->getViewportCenter(id+1);
+    //Coords play = getPlayerPosition(getPlayerByID(id));
+    Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
+    Orientation ori = m_currentState.getPositionManager().getOrientation( getPlayerByID(id).entity_top_body );
+    delta.mergeDelta(GameDelta(bullet, pos));//Position(-1, play.x, play.y)));
+    delta.mergeDelta(GameDelta(bullet, ori));
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/rocket_1", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
 }
@@ -281,7 +282,7 @@ const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDe
             case SHOOT:
                 //TODO: shoot logic
                 //delta = deeltaMerga(GameeDelta(entitz, new shot(entitz))
-				spawnBullet(delta);
+				spawnBullet(delta, input.getX(), input.getY(), input.getUID());
             	
                 break;
             case TURN:
