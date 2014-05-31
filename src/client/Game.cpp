@@ -131,7 +131,7 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
             //Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = newEntity();
 
-            if (block != NULL && block->getType() == Block::WALL) {
+            if (block != NULL && block->getType() != Block::FLOOR) {
                 std::vector<std::string> textures;
                 block->getTextures(textures);
 				if (block->getType() == Block::WALL) {

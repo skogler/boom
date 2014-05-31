@@ -90,7 +90,13 @@ void Worldmap::_createWall(const int& start_x, const int& start_y, const int& wi
             if (isCenter(x_coord, y_coord)) {
                 continue;
             }
-            getBlock(x_coord, y_coord)->setType(Block::WALL);
+            int broken = rand() % 100;
+            if (broken > 80) {
+               getBlock(x_coord, y_coord)->setType(Block::BROKEN_WALL);
+            }
+            else {
+               getBlock(x_coord, y_coord)->setType(Block::WALL);
+            }
         }
     }
 }
