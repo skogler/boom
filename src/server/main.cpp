@@ -24,13 +24,23 @@ int main(int argc, char *argv[])
 
     BoomServer server(BOOM_PORT);
 
-    int loop_count = 0;
+    Uint32 startTime = SDL_GetTicks();
+
     do {
-        if (loop_count > 100) {
-            loop_count = 0;
+        Uint32 newTime = SDL_GetTicks();
+        Uint32 frameTime = newTime - startTime;
+
+        if (frameTime > 16) {
             server.accept_connections();
+            do {
+                TickMessage tick;
+                tick.time = 16.0;
+                Message msg(&tick);
+                server.sendToAll(&msg);
+                frameTime -= 16;
+            }while (frameTime >= 16);
+            startTime = newTime - frameTime;
         }
-        loop_count ++;
         server.listen_messages();
     }while(1);
 

@@ -9,6 +9,7 @@
 #define MESSAGES_HPP_
 
 #include <vector>
+#include <algorithm>    // std::copy
 #include "common.hpp"
 
 #define BOOM_PORT                       9997
@@ -18,6 +19,7 @@
 #define MSG_TYPE_INPUT_EVENT            0x02
 #define MSG_TYPE_HANDSHAKE_INIT         0x03
 #define MSG_TYPE_HANDSHAKE_ACCEPT       0x04
+#define MSG_TYPE_TICK                   0x05
 
 #define MSG_HEADER_1 0xFF
 #define MSG_HEADER_2 0x00
@@ -40,6 +42,10 @@ typedef struct InputEventMessage_ {
     double m_y;
 }InputEventMessage;
 
+typedef struct TickMessage_ {
+    double time;
+}TickMessage;
+
 class Message {
 public:
     Message(const int Type, const size_t& size, unsigned char* data): _type(0), _data(), _msg_data()
@@ -60,6 +66,11 @@ public:
     Message(InputEventMessage* data): _type(0), _data(), _msg_data()
     {
         init(MSG_TYPE_INPUT_EVENT, sizeof(InputEventMessage), (unsigned char*) data);
+    }
+
+    Message(TickMessage* data): _type(0), _data(), _msg_data()
+    {
+        init(MSG_TYPE_TICK, sizeof(TickMessage), (unsigned char*) data);
     }
 
     Message():_type(0), _data(), _msg_data()
@@ -89,11 +100,18 @@ public:
 
     void prepareSendData()
     {
+        if (!_msg_data.empty()) {
+            return;
+        }
+
         _msg_data.clear();
         _msg_data.push_back(MSG_HEADER_1);
         _msg_data.push_back(MSG_HEADER_2);
         _msg_data.push_back(MSG_HEADER_3);
         _msg_data.push_back(_type);
+
+//        std::copy(_data.begin(), _data.end()-1, _msg_data.begin()+4);
+
         for (unsigned int i = 0; i < _data.size(); i++) {
             _msg_data.push_back(_data[i]);
         }
@@ -105,6 +123,8 @@ public:
 
     unsigned char *getRecvData()
     {
+//        std::copy(_msg_data.begin()+4, _msg_data.end()-4, _data.begin());
+
         for (unsigned int i = 4; i < _msg_data.size() - 3; i++) {
             _data.push_back(_msg_data[i]);
         }
@@ -126,9 +146,10 @@ public:
 
     bool isValid()
     {
-        if (_msg_data.size() < 7) {
+        if (_msg_data.size() < 8) {
             return false;
         }
+
         if (_msg_data[0] == MSG_HEADER_1 &&
             _msg_data[1] == MSG_HEADER_2 &&
             _msg_data[2] == MSG_HEADER_3 &&

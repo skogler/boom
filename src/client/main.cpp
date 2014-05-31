@@ -52,33 +52,28 @@ int main(int argc, char *argv[])
     renderer.updateViewports();
 
     Uint32 startTime = SDL_GetTicks();
-    Uint32 heartBeat = startTime;
 
 	Uint32 remaining = 0;
 
     while(!input.quit())
     {   
-        Uint32 newTime = SDL_GetTicks();
-    	Uint32 frameTime = newTime - startTime + remaining;
-        std::cout << frameTime << std::endl;
-    	while (frameTime > 16)
-        {
-            const GameDelta *delta = game.stepGame( &input.getServerInput(), 16.0);
-    		frameTime -= 16;
-    		game.applyGameDelta(delta);
-    	}
+        if (!network.connected()) {
 
-		remaining = frameTime;
-    	startTime = newTime;
-    	// receive server actions
-        
-        
-        network.checkMessages();
+            Uint32 newTime = SDL_GetTicks();
+            Uint32 frameTime = newTime - startTime + remaining;
+            while (frameTime > 16)
+            {
+                const GameDelta *delta = game.stepGame( &input.getServerInput(), 16.0);
+                frameTime -= 16;
+                game.applyGameDelta(delta);
+            }
 
-        if ((newTime - heartBeat) > 1000) {
-            network.sendTextMessge("heartbeat");
-            heartBeat = newTime;
+            remaining = frameTime;
+            startTime = newTime;
+            // receive server actions
         }
+
+        network.checkMessages();
 
         input.handleInput();   //TODO: move down 
         renderer.startFrame();
