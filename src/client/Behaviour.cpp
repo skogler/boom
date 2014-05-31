@@ -81,7 +81,7 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
         //Entity explosion = newEntity();
         Coords screen = origin;//game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
         //delta->mergeDelta(GameDelta(explosion, Position(-1, screen.x, screen.y)));
-        //delta->mergeDelta(GameDelta(explosion, Orientation(0)));
+        delta->mergeDelta(GameDelta(m_entity, Orientation(3.14)));
         delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "explosions/wall/expl_wall_01", 1, 1)));
 
         //delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
