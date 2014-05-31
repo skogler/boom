@@ -110,8 +110,8 @@ const GameDelta *Game::runSystems(const GameDelta &gd) const
 
 bool Game::isWall(int realm, double x, double y) const {
 	const Worldmap *world = m_player_map[realm];
-    double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
-    double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+    double x_off = -world->_size_x * Wall::size() * 0.5; //- Wall::size() *0.5;
+    double y_off = -world->_size_y * Wall::size() * 0.5; //- Wall::size() *0.5;
 
 	double map_x = (x - x_off) / Wall::size();
 	double map_y = (y - y_off) / Wall::size();

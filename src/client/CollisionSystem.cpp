@@ -43,7 +43,7 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
         	int realm = game.getRenderer()->screenCoordsIsRealm(
         			static_cast<int>(round(oldPos.getCoords().x)),
         			static_cast<int>(round(oldPos.getCoords().y)));
-            game.getRenderer()->screenToRealm(oldPos.getCoords(), realm);
+            Coords screenPos = game.getRenderer()->screenToRealm(oldPos.getCoords(), realm);
 
             Player player = game.getPlayerByID(realm);
 
@@ -52,7 +52,7 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
 			//	collisions.push_back(Collision{posDelta.first, player.entity_main_body});
 			//}
 
-			if (game.isWall(realm, newPos.getCoords().x, newPos.getCoords().y))
+			if (game.isWall(realm, screenPos.x, screenPos.y))
 			{
 				collisions.push_back(Collision{posDelta.first, posDelta.first}); // FIXME get wall entity
 			}

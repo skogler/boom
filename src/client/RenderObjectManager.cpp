@@ -30,6 +30,7 @@ void RenderObjectManager::removeEntity(Entity entity)
          if ((*iter)->m_entity == entity)
          {
              m_zSortedRenderObjects.erase(iter);
+             m_render_objects.erase(entity);
              return;
          }
     }
