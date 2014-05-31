@@ -13,7 +13,6 @@
 #include "Position.hpp"
 
 class RenderObject {
-    DISABLECOPY(RenderObject);
 public:
 	RenderObject(const Entity& entity);
 	RenderObject(const Entity& entity, std::string filename);

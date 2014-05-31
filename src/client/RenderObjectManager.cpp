@@ -10,7 +10,8 @@
 #include <algorithm>
 
 RenderObjectManager::RenderObjectManager() :
-    m_zSortedRenderObjects()
+    m_zSortedRenderObjects(),
+    m_render_objects()
 {
 }
 
@@ -21,10 +22,6 @@ RenderObjectManager::~RenderObjectManager() {
     }
 }
 
-//std::vector<RenderObject*> RenderObjectManager::getRenderObjectsFor(const Entity& entity)
-//{
-//}
-//
 
 void RenderObjectManager::removeEntity(Entity entity)
 {
@@ -41,21 +38,27 @@ void RenderObjectManager::removeEntity(Entity entity)
 void RenderObjectManager::updateRenderObject(const ObjectDelta& deltaType, RenderObject* ro)
 {
 	if (deltaType == ObjectDelta::REMOVED) {
-        auto iter = std::lower_bound(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
-        if (iter != m_zSortedRenderObjects.end() && **iter == *ro) {
+        auto iter = std::find(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
+        if (iter != m_zSortedRenderObjects.end()) {
             m_zSortedRenderObjects.erase(iter);
         }
 	} else {
-        auto iter = std::lower_bound(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
-        if (iter != m_zSortedRenderObjects.end()) {
-            if(**iter == *ro) {
-                *iter = (ro);
-            } else {
-                m_zSortedRenderObjects.insert(iter, ro);
+        RenderObject* existing = m_render_objects[ro->m_entity];
+        if (existing) {
+            *existing = *ro;
+            delete ro;
+        } else {
+            auto iter = std::lower_bound(m_zSortedRenderObjects.begin(), m_zSortedRenderObjects.end(), ro);
+            if (iter != m_zSortedRenderObjects.end()) {
+                if(**iter == *ro) {
+                    *iter = (ro);
+                } else {
+                    m_zSortedRenderObjects.insert(iter, ro);
+                }
             }
-        }
-        else {
-            m_zSortedRenderObjects.push_back(ro);
+            else {
+                m_zSortedRenderObjects.push_back(ro);
+            }
         }
     }
 }

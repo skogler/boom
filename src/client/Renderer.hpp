@@ -29,7 +29,7 @@ public:
     inline void endFrame();
     void setGame(Game* game);
     void updateViewports();
-    Coords screenToRealm(int x, int y, int realm) const;
+    Coords screenToRealm(const Coords& in, int realm) const;
     Coords screenToRealmDirection(int x, int y, int realm) const;
     Coords realmToScreen(double x, double y, int realm) const;
     int screenCoordsIsRealm(int x, int y) const;

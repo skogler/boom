@@ -77,7 +77,7 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
 
     const Renderer *ren = game.getRenderer();
     Coords origin = pos.getCoords();
-    //m_target = ren->screenToRealmDirection(m_target.x, m_target.y, -1);
+    //m_direction = ren->screenToRealmDirection(m_direction.x, m_direction.y, -1);
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
         //Entity explosion = newEntity();
@@ -92,29 +92,43 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
         //delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
 
         std::vector<Frame> explosions;
-        explosions.push_back(Frame{"explosions/wall/expl_wall_01", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_02", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_03", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_04", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_05", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_06", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_07", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_08", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_09", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_10", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_11", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_12", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_13", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_14", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_15", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_16", 50});
-        explosions.push_back(Frame{"explosions/wall/expl_wall_18", 50});
+        if (rand() % 2 == 1) {
+            explosions.push_back(Frame{"explosions/wall/expl_wall_01", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_02", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_03", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_04", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_05", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_06", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_07", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_08", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_09", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_10", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_11", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_12", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_13", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_14", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_15", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_16", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_18", 50});
+        } else {
+            explosions.push_back(Frame{"explosions/round/exp01", 50});
+            explosions.push_back(Frame{"explosions/round/exp02", 50});
+            explosions.push_back(Frame{"explosions/round/exp03", 50});
+            explosions.push_back(Frame{"explosions/round/exp04", 50});
+            explosions.push_back(Frame{"explosions/round/exp05", 50});
+            explosions.push_back(Frame{"explosions/round/exp06", 50});
+            explosions.push_back(Frame{"explosions/round/exp07", 50});
+            explosions.push_back(Frame{"explosions/round/exp08", 50});
+            explosions.push_back(Frame{"explosions/round/exp09", 50});
+            explosions.push_back(Frame{"explosions/round/exp10", 50});
+            explosions.push_back(Frame{"explosions/round/exp11", 50});
+            explosions.push_back(Frame{"explosions/round/exp12", 50});
+        }
 
         return BehaviourStep{new Animation(m_entity, explosions), delta};
     }
 
-    Coords delt  = normalizeCoords({m_target.x, m_target.y});
-    delta->mergeDelta(GameDelta(m_entity, Coords{ delt.x * step, delt.y * step} ));
+    delta->mergeDelta(GameDelta(m_entity, Coords{ m_direction.x * step, m_direction.y * step} ));
 
     if (m_current == 0)
     {

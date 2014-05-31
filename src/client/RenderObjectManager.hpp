@@ -19,12 +19,11 @@ public:
 	RenderObjectManager();
 	virtual ~RenderObjectManager();
 
-//    std::vector<RenderObject*> getRenderObjectsFor(const Entity& entity)
-
 	void updateRenderObject(const ObjectDelta& deltaType, RenderObject* ro);
     void removeEntity(Entity entity);
 
     std::vector<RenderObject*> m_zSortedRenderObjects;
+    std::unordered_map<Entity, RenderObject*, hash_Entity> m_render_objects;
 };
 
 #endif /* RENDEROBJECTMANAGER_HPP_ */

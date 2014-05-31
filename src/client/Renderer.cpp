@@ -268,14 +268,13 @@ Coords Renderer::screenToRealmDirection(int x, int y, int realm) const
     return ret;
 }
 
-Coords Renderer::screenToRealm(int x, int y, int realm) const
-{
+Coords Renderer::screenToRealm(const Coords& in, int realm) const {
     auto& viewport = m_viewports[realm + 1];
-    x = x - viewport.x - viewport.w/2;
-    y = y - viewport.y - viewport.h/2;
-    
-    Coords ret;
-    ret.x = (double)x / SCALE;
-    ret.y = (double)y / SCALE;
+    auto& cam = m_cameras[realm+1];
+    Coords ret = in;
+    ret.x -= viewport.x / SCALE;
+    ret.y -= viewport.y / SCALE;
+    ret.x += cam.first.x;
+    ret.y += cam.first.y;
     return ret;
 }

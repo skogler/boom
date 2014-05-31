@@ -321,7 +321,6 @@ void Game::spawnBullet(GameDelta &delta, double x, double y, int id ) const
     Coords play = Coords{ 480/32,270/32} ;//m_renderer->getViewportCenter(id+1);
     //Coords play = getPlayerPosition(getPlayerByID(id));
     Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
-    Orientation ori = m_currentState.getPositionManager().getOrientation( getPlayerByID(id).entity_top_body );
     delta.mergeDelta(GameDelta(bullet, pos));//Position(-1, play.x, play.y)));
     delta.mergeDelta(GameDelta(bullet, ori));
 
@@ -329,20 +328,24 @@ void Game::spawnBullet(GameDelta &delta, double x, double y, int id ) const
 //    Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
     //x = static_cast<double>(rand() % 1920/32);
     //y = static_cast<double>(rand() % 1080/32);
-    x = x/32;
-    y = y/32;
+    //
+
+    Coords start = m_renderer->screenToRealm(Coords{x/32,y/32}, id);
     
     Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
-    Coords play = m_renderer->getViewportCenter(id+1);  getPlayerPosition(getPlayerByID(id));   
-    play.x = play.x/32;
-    play.y = play.y/32;
+    Coords play = m_renderer->getViewportCenter(id+1);  
 
-    double a = atan2(y - play.y, x - play.x) + 3.1415926/2.0;
-    Shot *beh = new Shot(bullet, Coords{x, y});
+    Orientation ori = m_currentState.getPositionManager().getOrientation( getPlayerByID(id).entity_top_body );
 
-    delta.mergeDelta(GameDelta(bullet, Position(-1, play.x, play.y)));
-    delta.mergeDelta(GameDelta(bullet, Orientation(a)));
+    Coords shot_direction= {cos(ori.getAngle()), sin(ori.getAngle())};
+    shot_direction = normalizeCoords(shot_direction);
     
+    Shot *beh = new Shot(bullet, shot_direction);
+    ori += Orientation(3.1415926/2.0);
+
+    std::cout << start.x << "  " << start.y << std::endl;
+    delta.mergeDelta(GameDelta(bullet, Position(-1, play.x/32, play.y/32)));
+    delta.mergeDelta(GameDelta(bullet, ori));
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/rocket_1", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
 }
