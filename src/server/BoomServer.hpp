@@ -99,6 +99,7 @@ private:
     TCPsocket _listen_socket;
     std::vector<BoomClientData*> _clients;
     int     _players[4];
+    long    _seed;
 };
 
 

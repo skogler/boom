@@ -23,11 +23,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    Window window(640, 480, true);
-    IMG_Init(IMG_INIT_PNG);
-    Renderer renderer(&window);
-    Game game;
-    Input input(game);
 
     /* initialize SDL_net */
     if(SDLNet_Init()==-1)
@@ -37,18 +32,33 @@ int main(int argc, char *argv[])
         exit(3);
     }
 
+    Game game;
+    Input input(game);
+
     BoomClient network(argv[1], BOOM_PORT, "boomClient", &input, &game);
-    network.start_handshake();
 
     input.setBoomClient(&network);
 
-    renderer.setGame(&game);
+    printf("connecting");
+    do {
+        network.checkMessages();
+        printf(".");
+        SDL_Delay(5);
+    }while(network.getUId() < 0);
+
+    printf("done.\n");
+
+    Window window(640, 480, true);
+    IMG_Init(IMG_INIT_PNG);
+    Renderer renderer(&window);
+
+    game.setup(network.getSeed());
+
+
     game.setRenderer(&renderer);
+    renderer.setGame(&game);
 
-    // receive server seeds
-//    game.loadMap(seeds)
 
-    game.setup();
     renderer.updateViewports();
 
     Uint32 startTime = SDL_GetTicks();

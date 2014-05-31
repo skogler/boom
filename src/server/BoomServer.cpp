@@ -6,6 +6,7 @@
  */
 
 #include "BoomServer.hpp"
+#include <ctime>
 
 BoomServer::~BoomServer()
 {
@@ -17,6 +18,8 @@ BoomServer::BoomServer(const int port): _port(port), _listen_socket(), _clients(
     _players[1] = -1;
     _players[2] = -1;
     _players[3] = -1;
+
+    _seed = time(NULL);
 
     // create a listening TCP socket on (server)
     IPaddress ip;
@@ -50,6 +53,9 @@ void BoomServer::listen_messages()
 
     std::vector<BoomClientData*>::iterator client = _clients.begin();
 
+    if (_clients.size() == 0) {
+        return;
+    }
     for (int i = 0; i < 100; i++) {
 
         if (found == false) {
@@ -85,6 +91,7 @@ void BoomServer::listen_messages()
                 int uid = (*client)->getUId();
                 if (uid >= 0 && uid < 4) {
                     _players[uid] = -1;
+                    printf("unregister player %d\n", uid);
                 }
                 delete *client;
                 client = _clients.erase(client);
@@ -105,11 +112,13 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
         printf("\tHandshake init\n");
         HandshakeInitMessage *hsi_msg = (HandshakeInitMessage*)msg->getRecvData();
         client->setName(hsi_msg->name);
-        client->setUid(getFreeUId());
+        if (client->getUId() < 0) {
+            client->setUid(getFreeUId());
+        }
 
         // reply with UID
         HandshakeAcceptMessage hsa_msg;
-        hsa_msg.error = 0;
+        hsa_msg.seed = _seed;
         hsa_msg.uid = client->getUId();
         Message reply(&hsa_msg);
         client->getConnection()->send(&reply);
@@ -117,9 +126,9 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
     }
     case MSG_TYPE_INPUT_EVENT:
     {
-//        InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
-//        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
-//                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
+        InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
+        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
+                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
         sendToAll(msg);
         break;
     }
@@ -145,7 +154,7 @@ void BoomServer::sendToAll(Message* msg)
     std::vector<BoomClientData*>::iterator client = _clients.begin();
 
     for (; client != _clients.end(); client++) {
-        if ((*client)->disconnected()) {
+        if ((*client)->disconnected() || (*client)->getUId() < 0) {
             continue;
         }
         (*client)->getConnection()->send(msg);
@@ -170,12 +179,16 @@ void BoomServer::sendToOthers(Message* msg, int myUId)
 
 int BoomServer::getFreeUId()
 {
+    int id = -1;
     for (int i = 0; i < 4; i++) {
-        if (_players[i] < 0) {
-            _players[i] = 1;
-            return i;
+        printf("Player %d: %d\n", i, _players[i]);
+        if (id < 0) {
+            if (_players[i] < 0) {
+                _players[i] = 1;
+                id = i;
+            }
         }
     }
-    return -1;
+    return id;
 }
 
