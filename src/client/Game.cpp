@@ -18,6 +18,7 @@
 #include "Position.hpp"
 #include "Renderer.hpp"
 #include <iostream>
+#include "BoomClient.hpp"
 
 #define GS_HASHSIZE 1033
 
@@ -44,6 +45,11 @@ GameState::GameState() :
 void GameState::updatePosition(Entity entity, int realm, Coords coords)
 {
 	positionManager->updatePosition(entity, realm, coords);
+}
+
+void GameState::teleportPosition(Entity entity, int realm, Coords coords)
+{
+	positionManager->teleportPosition(entity, realm, coords);
 }
 
 void GameState::updateOrientation(Entity entity, Orientation orientation)
@@ -83,23 +89,21 @@ const GameDelta *Game::runSystems(const GameDelta &gd) const
 	//std::vector<Collision> collisions = system.checkCollisions(*this, gd);
 
 	GameDelta *afterCollision = new GameDelta();
-    afterCollision->mergeDelta(gd);
-	//afterCollision->mergeDelta(gd);
 
-	//for (auto &collision : collisions) {
-	//	if (m_currentState.isBullet(collision.active) && isPlayer(collision.passive))
-	//	{
-	//		afterCollision->mergeDelta(GameDelta(collision.passive, Health(-10)));
-	//	}
-	//	else
-	//	{
-	//		afterCollision->purgePosition(collision.active);
-	//	}
-    //    afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
-    //    afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
-	//}
+	afterCollision->mergeDelta(gd);
 
-
+	for (auto &collision : collisions) {
+		if (m_currentState.isBullet(collision.active) && isPlayer(collision.passive))
+		{
+			afterCollision->mergeDelta(GameDelta(collision.passive, Health(-10)));
+		}
+		else
+		{
+		    afterCollision->purgePosition(collision.active);
+		}
+        afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
+        afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
+	}
 	return afterCollision;
 }
 
@@ -120,17 +124,20 @@ bool Game::isWall(int realm, double x, double y) const {
 
 void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 {
-    const double BLOCK_SIZE = Wall::size();
-
-    double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
-    double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+    //double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
+    //double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+    Entity new_entity = newEntity();
+    delta.mergeDelta(GameDelta(new_entity, Position(realm, 0, 0)));
+    delta.mergeDelta(GameDelta(new_entity, Orientation(0)));
+    delta.mergeDelta(GameDelta(new_entity, new RenderObject(new_entity, "BACKGROUND", 1, 1, {-30,-30}, {60,60}, {0,0})));
+    double x_off = -world->_size_x * Wall::size() * 0.5;
+    double y_off = -world->_size_y * Wall::size() * 0.5; 
 	for (int y = 0; y < world->_size_y; y++) {
 		for (int x = 0; x < world->_size_x; x++) {
             Block *block = world->getBlock(x, y);
-            Coords topLeft = {x_off + x * BLOCK_SIZE, y_off + y * BLOCK_SIZE};
+            Coords topLeft = {x_off + x * Wall::size(), y_off + y * Wall::size()};
             //Coords rightBottom = {topLeft.x + BLOCK_SIZE, topLeft.y + BLOCK_SIZE};
             Entity new_entity = newEntity();
-
 
             if (block != NULL && block->getType() == Block::WALL) {
                 std::vector<std::string> textures;
@@ -148,19 +155,36 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 	//return delta;
 }
 
-void Game::setup()
+void Game::sendAbsolutePosition(BoomClient* net) const
 {
-	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
-	m_player_map.push_back(new Worldmap(1, 60, 60, 5));
+    printf("send absolute position\n");
+    Position pos = m_currentState.getPositionManager().getPosition(m_players[m_currentPlayer].entity_main_body);
+    InputEvent ie(m_currentPlayer, MOVE_TELEPORT, pos.getCoords().x, pos.getCoords().y);
+    net->sendInputEvent(ie);
+}
+
+void Game::setup(long seed)
+{
+    m_renderer->createBackground(60,60);
+
+    srand(seed);
+
+    long seed_1 = rand();
+    long seed_2 = rand();
+    long seed_3 = rand();
+    long seed_4 = rand();
 
 	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
-	m_player_map.push_back(new Worldmap(2, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(seed_1, 60, 60, 2));
 
 	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
-	m_player_map.push_back(new Worldmap(3, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(seed_2, 60, 60, 2));
 
 	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
-	m_player_map.push_back(new Worldmap(4, 60, 60, 5));
+	m_player_map.push_back(new Worldmap(seed_3, 60, 60, 2));
+
+	m_players.push_back(Player{newEntity(), newEntity(), newEntity()});
+	m_player_map.push_back(new Worldmap(seed_4, 60, 60, 2));
 
 	GameDelta *delta = new GameDelta();
 	for (int i = 0; i < m_currentState.getPositionManager().getNumRealms(); i++)
@@ -170,9 +194,22 @@ void Game::setup()
 		delta->mergeDelta(GameDelta(m_players[i].entity_top_body, Position(i, 0, 0)));
 		delta->mergeDelta(GameDelta(m_players[i].entity_cannon, Position(i, 0, 0)));
 
-		delta->mergeDelta(GameDelta(m_players[i].entity_main_body, new RenderObject(m_players[i].entity_main_body, "character/blue/blue_bottom", 1, 1)));
-		delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/blue/blue_mid", 2, 1)));
-		delta->mergeDelta(GameDelta(m_players[i].entity_cannon, new RenderObject(m_players[i].entity_cannon,"character/blue/blue_top_standard_gun", 3, 1)));
+		delta->mergeDelta(GameDelta(m_players[i].entity_main_body, new RenderObject(m_players[i].entity_main_body, "character/blue_bottom_1", 1, 1)));
+		switch (i) {
+		case 0:
+		    delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/mid_red", 2, 1)));
+		    break;
+		case 1:
+		    delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/mid_blue", 2, 1)));
+		    break;
+		case 2:
+		    delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/mid_brown", 2, 1)));
+		    break;
+		case 3:
+		    delta->mergeDelta(GameDelta(m_players[i].entity_top_body, new RenderObject(m_players[i].entity_top_body,"character/mid_green", 2, 1)));
+		    break;
+		}
+		delta->mergeDelta(GameDelta(m_players[i].entity_cannon, new RenderObject(m_players[i].entity_cannon,"weapons/weapon_default", 3, 1)));
 
 		delta->mergeDelta(GameDelta(m_players[i].entity_main_body, BoundingBox()));
 
@@ -188,10 +225,16 @@ void Game::applyGameDelta(const GameDelta *delta) {
 	modifyCurrentGameState().cleanBehaviours();
 	for (auto &entry : delta->getPositionsDelta())
 	{
-        printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
-		m_currentState.updatePosition(
-				entry.first, entry.second.getRealm(), entry.second.getCoords()
-			);
+	    if (entry.second.isAbsolute()) {
+	        m_currentState.teleportPosition(
+                            entry.first, entry.second.getRealm(), entry.second.getCoords());
+	    }
+	    else {
+	        printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
+	        m_currentState.updatePosition(
+	                entry.first, entry.second.getRealm(), entry.second.getCoords()
+	        );
+	    }
 	}
 
 	for (auto &entry : delta->getOrientationsDelta())
@@ -252,6 +295,14 @@ void Player::movePlayer(GameDelta &delta, Coords direction ) const
     delta.mergeDelta(GameDelta( this->entity_cannon, direction  ));   
 }
 
+void Player::teleportPlayer(GameDelta &delta, Coords pos ) const
+{
+    //TODO: add orientation
+    delta.mergeDelta(GameDelta( this->entity_main_body, pos, true  ));
+    delta.mergeDelta(GameDelta( this->entity_top_body, pos, true ));
+    delta.mergeDelta(GameDelta( this->entity_cannon, pos, true  ));
+}
+
 void Player::lookAt(GameDelta &delta, Coords cor, const Game &game, Player &player) const
 {
    //Coords pl = game.getPlayerPosition(player );
@@ -261,27 +312,37 @@ void Player::lookAt(GameDelta &delta, Coords cor, const Game &game, Player &play
    player.rotateTopBodyAndCannon(delta, Orientation(diff));
 }
 
-void Game::spawnBullet(GameDelta &delta) const
+void Game::spawnBullet(GameDelta &delta, double x, double y, int id ) const
 {
-    Entity bullet = newEntity();
-
+    Entity bullet = newEntity();      /*     
+    printf(" mouse %f %f \n \n", x, y);
+    Shot *beh = new Shot(bullet, Coords{x,y});
         
+    Coords play = Coords{ 480/32,270/32} ;//m_renderer->getViewportCenter(id+1);
+    //Coords play = getPlayerPosition(getPlayerByID(id));
+    Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
+    Orientation ori = m_currentState.getPositionManager().getOrientation( getPlayerByID(id).entity_top_body );
+    delta.mergeDelta(GameDelta(bullet, pos));//Position(-1, play.x, play.y)));
+    delta.mergeDelta(GameDelta(bullet, ori));
+
+*/
 //    Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
-//
-    double x = static_cast<double>(rand() % 1920/32);
-    double y = static_cast<double>(rand() % 1080/32);
+    //x = static_cast<double>(rand() % 1920/32);
+    //y = static_cast<double>(rand() % 1080/32);
+    x = x/32;
+    y = y/32;
+    
+    Position pos = m_currentState.getPositionManager().getPosition(getPlayerByID(id).entity_top_body);
+    Coords play = m_renderer->getViewportCenter(id+1);  getPlayerPosition(getPlayerByID(id));   
+    play.x = play.x/32;
+    play.y = play.y/32;
 
+    double a = atan2(y - play.y, x - play.x) + 3.1415926/2.0;
+    Shot *beh = new Shot(bullet, Coords{x, y});
 
-    double x2 = static_cast<double>(rand() % 1920/32);
-    double y2 = static_cast<double>(rand() % 1080/32);
-
-    double a = atan2(y2 - y, x2 - x) + 3.1415926/2.0;
-
-
-    Shot *beh = new Shot(bullet, Coords{x2, y2});
-
-    delta.mergeDelta(GameDelta(bullet, Position(-1, x, y)));
+    delta.mergeDelta(GameDelta(bullet, Position(-1, play.x, play.y)));
     delta.mergeDelta(GameDelta(bullet, Orientation(a)));
+    
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/rocket_1", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
 }
@@ -308,14 +369,17 @@ const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDe
             case MOVE_DOWN:
 				player.movePlayer(delta, Coords{0,MOVE_STEP * timeDelta/1000});
                 break;
+            case MOVE_TELEPORT:
+				player.teleportPlayer(delta, Coords{input.getX(), input.getY()});
+                break;
             case SHOOT:
                 //TODO: shoot logic
                 //delta = deeltaMerga(GameeDelta(entitz, new shot(entitz))
-				spawnBullet(delta);
+				spawnBullet(delta, input.getX(), input.getY(), input.getUID());
             	
                 break;
             case TURN:
-                player.lookAt(delta, m_renderer->screenToRealm(input.getX(), input.getY(), 
+                player.lookAt(delta, m_renderer->screenToRealmDirection(input.getX(), input.getY(), 
                                 m_currentState.getPositionManager().getPosition(player.entity_main_body).getRealm()), *this, player);
                 break;
             case IDLE:

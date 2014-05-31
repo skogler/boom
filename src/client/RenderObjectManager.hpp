@@ -13,7 +13,6 @@
 #include "Entity.hpp"
 #include "Game.hpp"
 
-
 class RenderObjectManager {
     DISABLECOPY(RenderObjectManager);
 public:

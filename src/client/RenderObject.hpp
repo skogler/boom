@@ -18,7 +18,8 @@ public:
 	RenderObject(const Entity& entity);
 	RenderObject(const Entity& entity, std::string filename);
     RenderObject(const Entity& entity, std::string fileName, int zLevel, double alpha);
-    RenderObject(const Entity& entity, std::string fileName, int zLevel, double alpha, Coords offset, Coords size);
+    RenderObject(const Entity& entity, std::string fileName, int zLevel, double alpha, 
+            Coords offset, Coords size, Coords rotation_center);
 	virtual ~RenderObject();
 
     bool operator==(const RenderObject& other) {
@@ -37,6 +38,7 @@ public:
 	double m_alpha;
     Coords m_offset;
     Coords m_size;
+    Coords m_rotation_center;
 };
 
 #endif /* RENDEROBJECT_HPP_ */

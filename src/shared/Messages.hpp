@@ -31,7 +31,7 @@ typedef struct HandshakeInitMessage_ {
 
 typedef struct HandshakeAcceptMessage_ {
     int     uid;
-    int     error;
+    long    seed;
 }HandshakeAcceptMessage;
 
 

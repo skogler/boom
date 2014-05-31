@@ -18,7 +18,8 @@ _port(port),
 _name(name),
 _uid(-1),
 _input(input),
-_game(game)
+_game(game),
+_ticks(0)
 {
     _connect();
 }
@@ -52,10 +53,14 @@ void BoomClient::checkMessages()
             }
             case MSG_TYPE_TICK:
             {
+                _ticks ++;
                 TickMessage *tick = (TickMessage*) msg->getRecvData();
-                std::cout << "Tick" << tick->time << std::endl;
                 const GameDelta *delta = _game->stepGame( &_input->getServerInput(), tick->time);
                 _game->applyGameDelta(delta);
+                if (_ticks > 100) {
+                    _ticks = 0;
+            //        _game->sendAbsolutePosition(this);
+                }
                 break;
             }
             case MSG_TYPE_TEXT:
@@ -110,6 +115,7 @@ bool BoomClient::start_handshake()
             return false;
         }
     }
+    _uid = -1;
     HandshakeInitMessage hi_msg;
     sprintf(hi_msg.name, "%s", _name.c_str());
 
@@ -123,6 +129,7 @@ bool BoomClient::_end_handshake(HandshakeAcceptMessage* ha_msg)
 {
     if (_uid < 0) {
         _uid = ha_msg->uid;
+        _seed = ha_msg->seed;
         _game->setCurrentPlayer(_uid);
         return true;
     }
@@ -135,8 +142,6 @@ bool BoomClient::_connect()
         delete _session;
         _session = NULL;
     }
-
-    _uid = -1;
 
     IPaddress ip;
 
@@ -154,7 +159,7 @@ bool BoomClient::_connect()
     socket = SDLNet_TCP_Open(&ip);
     if(!socket)
     {
-        //printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
+        printf("SDLNet_TCP_Open: %s\n",SDLNet_GetError());
         return false;
     }
     _session = new BoomSession(socket);

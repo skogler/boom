@@ -31,6 +31,7 @@ class PositionManager;
 class RenderObjectManager;
 class InputEvent;
 class HealthSystem;
+class BoomClient;
 
 typedef int FrameEvents;   
 
@@ -105,6 +106,7 @@ public:
 	bool isWall(Entity entity) const;
 
 	void updatePosition(Entity entity, int realm, Coords coords);
+	void teleportPosition(Entity entity, int realm, Coords coords);
 	void updateOrientation(Entity entity, Orientation orientation);
     void updateRenderObject(Entity entity, const ObjectDelta deltaType, RenderObject* ro);
     void updateBoundingBox(Entity entity, const ObjectDelta deltaType, BoundingBox bo);
@@ -165,6 +167,7 @@ class Player
 {
 public:
 	void movePlayer(GameDelta &delta, Coords direction) const;
+	void teleportPlayer(GameDelta &delta, Coords pos ) const;
 	void rotateTopBodyAndCannon(GameDelta &delta, Orientation orientation) const;
     void lookAt(GameDelta &delta, Coords cor, const Game &game, Player &player) const;
 
@@ -180,13 +183,15 @@ public:
 	virtual ~Game();
 
 	void loadMap(int realm, const Worldmap* world, GameDelta& delta);
-	void setup();
+	void setup(long seed);
 
     const GameDelta *stepGame(std::queue<InputEvent> *ie,
     					const double timeDelta) const;
 
-    void spawnBullet(GameDelta &delta) const;
+    void spawnBullet(GameDelta &delt, double x, double y, int id) const;
     bool isWall(int realm, double x, double y) const;
+
+    void sendAbsolutePosition(BoomClient* net) const;
 
 	const GameDelta *runSystems(const GameDelta &gd) const;
 

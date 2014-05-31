@@ -60,6 +60,7 @@ public:
 //	GameDelta(const GameDelta &delta);
 	GameDelta(Entity entity, const Position& pos);
 	GameDelta(Entity entity, const Coords& coords);
+	GameDelta(Entity entity, const Coords& coords, bool absolute);
 	GameDelta(Entity entity, const Orientation& orientation);
 	GameDelta(Entity entity, const BoundingBox& bb);
 	GameDelta(Entity entity, const Health& health);

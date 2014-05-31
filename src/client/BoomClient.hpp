@@ -43,6 +43,11 @@ public:
     {
         return _uid;
     }
+
+    long getSeed()
+    {
+        return _seed;
+    }
 private:
     Message* _recv();
     bool _connect();
@@ -53,8 +58,10 @@ private:
     int          _port;
     std::string  _name;
     int          _uid;
+    long         _seed;
     Input*       _input;
     Game*        _game;
+    int          _ticks;
 };
 
 
