@@ -23,6 +23,19 @@ RenderObjectManager::~RenderObjectManager() {
 //std::vector<RenderObject*> RenderObjectManager::getRenderObjectsFor(const Entity& entity)
 //{
 //}
+//
+
+void RenderObjectManager::removeEntity(Entity entity)
+{
+    for (std::vector<RenderObject*>::iterator iter = m_zSortedRenderObjects.begin();
+            iter != m_zSortedRenderObjects.end(); ++iter) {
+         if ((*iter)->m_entity == entity)
+         {
+             m_zSortedRenderObjects.erase(iter);
+             return;
+         }
+    }
+}
 
 void RenderObjectManager::updateRenderObject(const ObjectDelta& deltaType, RenderObject* ro)
 {

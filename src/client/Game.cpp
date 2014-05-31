@@ -19,6 +19,8 @@
 #include "Renderer.hpp"
 #include <iostream>
 
+#define GS_HASHSIZE 1033
+
 GameState::GameState() :
 		positionManager(new PositionManager()),
 		renderManager(new RenderObjectManager()),
@@ -31,7 +33,12 @@ GameState::GameState() :
         m_behaviours(),
         m_collision_events()
 {
-
+    m_bullets.reserve(GS_HASHSIZE);
+    m_walls.reserve(GS_HASHSIZE);
+    m_health.reserve(GS_HASHSIZE);
+    m_bounding_boxes.reserve(GS_HASHSIZE);
+    m_behaviours.reserve(GS_HASHSIZE);
+    m_collision_events.reserve(GS_HASHSIZE);
 }
 
 void GameState::updatePosition(Entity entity, int realm, Coords coords)
@@ -72,24 +79,25 @@ bool GameState::isWall(Entity entity) const
 
 const GameDelta *Game::runSystems(const GameDelta &gd) const
 {
-	const CollisionSystem &system = m_currentState.getCollisionSystem();
-	std::vector<Collision> collisions = system.checkCollisions(*this, gd);
+	//const CollisionSystem &system = m_currentState.getCollisionSystem();
+	//std::vector<Collision> collisions = system.checkCollisions(*this, gd);
 
 	GameDelta *afterCollision = new GameDelta();
-	afterCollision->mergeDelta(gd);
+    afterCollision->mergeDelta(gd);
+	//afterCollision->mergeDelta(gd);
 
-	for (auto &collision : collisions) {
-		if (m_currentState.isBullet(collision.active) && isPlayer(collision.passive))
-		{
-			afterCollision->mergeDelta(GameDelta(collision.passive, Health(-10)));
-		}
-		else
-		{
-			afterCollision->purgePosition(collision.active);
-		}
-        afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
-        afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
-	}
+	//for (auto &collision : collisions) {
+	//	if (m_currentState.isBullet(collision.active) && isPlayer(collision.passive))
+	//	{
+	//		afterCollision->mergeDelta(GameDelta(collision.passive, Health(-10)));
+	//	}
+	//	else
+	//	{
+	//		afterCollision->purgePosition(collision.active);
+	//	}
+    //    afterCollision->mergeDelta(GameDelta(collision.active, CollisionEvent(collision.active, collision.passive)));
+    //    afterCollision->mergeDelta(GameDelta(collision.passive, CollisionEvent(collision.active, collision.passive)));
+	//}
 
 
 	return afterCollision;
@@ -224,6 +232,17 @@ void Game::applyGameDelta(const GameDelta *delta) {
 
 	delete delta;
 }
+
+void GameState::removeEntity(Entity entity)
+{
+    positionManager->removeEntity(entity);
+
+    renderManager->removeEntity(entity);
+
+    m_health.erase(entity);
+    m_bounding_boxes.erase(entity);
+    m_behaviours.erase(entity);
+} 
 
 void Player::movePlayer(GameDelta &delta, Coords direction ) const
 {

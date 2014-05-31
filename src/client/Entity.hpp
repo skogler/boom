@@ -61,4 +61,10 @@ struct hash_Entity {
 	}
 };
 
+struct key_Entity {
+    inline bool operator()(const Entity lhs, const Entity rhs) const {
+        return lhs == rhs;
+    }
+};
+
 #endif /* ENTITY_H_ */
