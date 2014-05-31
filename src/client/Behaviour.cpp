@@ -46,7 +46,13 @@ public:
             m_current_time = 0;
             if (m_current_frame >= m_frames.size())
             {
-                return BehaviourStep{nullptr, new GameDelta()};
+                GameDelta *delta = new GameDelta();
+                delta->mergeDelta(GameDelta(m_entity, Position(-1, 99999, 99999)));
+                //delta->mergeDelta(GameDelta(explosion, Orientation(0)));
+                delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "explosions/wall/expl_wall_01", 1, 1)));
+
+                delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
+                return BehaviourStep{nullptr, delta};
             }
 
             return stepBehaviour(game, overflow);
@@ -72,13 +78,13 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
 		std::cout << "Collision" << std::endl;
-        Entity explosion = newEntity();
+        //Entity explosion = newEntity();
         Coords screen = origin;//game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
-        delta->mergeDelta(GameDelta(explosion, Position(-1, screen.x, screen.y)));
-        delta->mergeDelta(GameDelta(explosion, Orientation(0)));
-        delta->mergeDelta(GameDelta(explosion, new RenderObject(explosion, "explosions/wall/expl_wall_01", 1, 1)));
+        //delta->mergeDelta(GameDelta(explosion, Position(-1, screen.x, screen.y)));
+        //delta->mergeDelta(GameDelta(explosion, Orientation(0)));
+        delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "explosions/wall/expl_wall_01", 1, 1)));
 
-        delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
+        //delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
 
         std::vector<Frame> explosions;
         explosions.push_back(Frame{"explosions/wall/expl_wall_01", 50});
@@ -99,11 +105,22 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
         explosions.push_back(Frame{"explosions/wall/expl_wall_16", 50});
         explosions.push_back(Frame{"explosions/wall/expl_wall_18", 50});
 
-        return BehaviourStep{new Animation(explosion, explosions), delta};
+        return BehaviourStep{new Animation(m_entity, explosions), delta};
     }
 
     Coords delt  = normalizeCoords({m_target.x - origin.x, m_target.y - origin.y});
     delta->mergeDelta(GameDelta(m_entity, Coords{ delt.x * step, delt.y * step} ));
+
+    if (m_current == 0)
+    {
+        m_current = 1;
+        delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "shots/rocket_1", 1, 1)));
+    }
+    else
+    {
+        m_current = 0;
+        delta->mergeDelta(GameDelta(m_entity, new RenderObject(m_entity, "shots/rocket_2", 1, 1)));
+    }
 
     return BehaviourStep{this, delta};
 }

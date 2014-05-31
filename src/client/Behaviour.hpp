@@ -28,13 +28,14 @@ public:
 class Shot : public Behaviour
 {                      
 public:
-   Shot(Entity entity, Coords target) : m_entity(entity), m_target(target) {};
+   Shot(Entity entity, Coords target) : m_entity(entity), m_target(target), m_current(0) {};
    bool isFinished() const;
    BehaviourStep stepBehaviour(const Game &game, double dt);
 
    private:
        Entity m_entity;
        Coords m_target;
+       int m_current;
 };         
 
 

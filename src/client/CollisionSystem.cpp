@@ -54,18 +54,23 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
 
 			if (game.isWall(realm, newPos.getCoords().x, newPos.getCoords().y))
 			{
-				collisions.push_back(Collision{posDelta.first, posDelta.first});
+				collisions.push_back(Collision{posDelta.first, posDelta.first}); // FIXME get wall entity
 			}
 
         } else { // Player
-        	//int realm = oldPos.getRealm();
+        	int realm = oldPos.getRealm();
             std::vector<Entity> bullets = pm.getEntitiesOfRealm(-1);
             for (auto &bullet : bullets)
             {
             	Position bulletPos = pm.getPosition(bullet);
-    			if (newPos.distance(bulletPos) < bullet_size) {
+    			if (newPos.distance(bulletPos) < bullet_size)
     				collisions.push_back(Collision{posDelta.first, bullet});
 
+            }
+
+            if (game.isWall(realm, newPos.getCoords().x, newPos.getCoords().y))
+            {
+                collisions.push_back(Collision{posDelta.first, posDelta.first}); //FIXME
             }
 
         }
@@ -102,8 +107,6 @@ std::vector<Collision> CollisionSystem::checkCollisions(const Game &game, const 
 //        			}
 //        		}
 //
-//        	}
-        }
 	}
 
 	return collisions;
