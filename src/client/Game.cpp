@@ -19,6 +19,7 @@
 #include "Renderer.hpp"
 #include <iostream>
 #include "BoomClient.hpp"
+#include "Behaviour.hpp"
 
 #define GS_HASHSIZE 1033
 
@@ -157,7 +158,7 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 
 void Game::sendAbsolutePosition(BoomClient* net) const
 {
-    printf("send absolute position\n");
+    //printf("send absolute position\n");
     Position pos = m_currentState.getPositionManager().getPosition(m_players[m_currentPlayer].entity_main_body);
     InputEvent ie(m_currentPlayer, MOVE_TELEPORT, pos.getCoords().x, pos.getCoords().y);
     net->sendInputEvent(ie);
@@ -230,7 +231,7 @@ void Game::applyGameDelta(const GameDelta *delta) {
                             entry.first, entry.second.getRealm(), entry.second.getCoords());
 	    }
 	    else {
-	        printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
+	        //printf("pos delta %f %f  \n ",  entry.second.getCoords().x, entry.second.getCoords().y);
 	        m_currentState.updatePosition(
 	                entry.first, entry.second.getRealm(), entry.second.getCoords()
 	        );
@@ -343,11 +344,59 @@ void Game::spawnBullet(GameDelta &delta, double x, double y, int id ) const
     Shot *beh = new Shot(bullet, shot_direction);
     ori += Orientation(3.1415926/2.0);
 
-    std::cout << start.x << "  " << start.y << std::endl;
     delta.mergeDelta(GameDelta(bullet, Position(-1, play.x/32, play.y/32)));
     delta.mergeDelta(GameDelta(bullet, ori));
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/rocket_1", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
+
+}
+
+void spawnExplosion(GameDelta& delta)
+{
+    //RANDOM EXPLOSION
+    if (rand() % 5 == 1) {
+        std::vector<Frame> explosions;
+        if (rand() % 2 == 1) {
+            explosions.push_back(Frame{"explosions/wall/expl_wall_01", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_02", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_03", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_04", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_05", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_06", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_07", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_08", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_09", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_10", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_11", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_12", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_13", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_14", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_15", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_16", 50});
+            explosions.push_back(Frame{"explosions/wall/expl_wall_18", 50});
+        } else {
+            explosions.push_back(Frame{"explosions/round/exp01", 50});
+            explosions.push_back(Frame{"explosions/round/exp02", 50});
+            explosions.push_back(Frame{"explosions/round/exp03", 50});
+            explosions.push_back(Frame{"explosions/round/exp04", 50});
+            explosions.push_back(Frame{"explosions/round/exp05", 50});
+            explosions.push_back(Frame{"explosions/round/exp06", 50});
+            explosions.push_back(Frame{"explosions/round/exp07", 50});
+            explosions.push_back(Frame{"explosions/round/exp08", 50});
+            explosions.push_back(Frame{"explosions/round/exp09", 50});
+            explosions.push_back(Frame{"explosions/round/exp10", 50});
+            explosions.push_back(Frame{"explosions/round/exp11", 50});
+            explosions.push_back(Frame{"explosions/round/exp12", 50});
+        }
+
+        Entity boom = newEntity();
+        double x_rand = rand() % 2000/32.;
+        double y_rand = rand() % 1080/32.;
+        delta.mergeDelta(GameDelta(boom, new Animation(boom, explosions, 3)));
+        delta.mergeDelta(GameDelta(boom, Position(-1, x_rand, y_rand)));
+        delta.mergeDelta(GameDelta(boom, Orientation(0)));
+        delta.mergeDelta(GameDelta(boom, new RenderObject(boom, "explosions/round/exp01", 1, 1)));
+    }
 }
 
 const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDelta) const 
@@ -390,6 +439,8 @@ const GameDelta *Game::stepGame( std::queue<InputEvent> *ie, const double timeDe
         }  
         ie->pop();
     }
+    
+    spawnExplosion(delta);
 
 	const GameDelta *behaviourStep = stepBehaviours(timeDelta);
 
