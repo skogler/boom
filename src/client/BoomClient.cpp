@@ -53,6 +53,7 @@ void BoomClient::checkMessages()
             case MSG_TYPE_TICK:
             {
                 TickMessage *tick = (TickMessage*) msg->getRecvData();
+                std::cout << "Tick" << tick->time << std::endl;
                 const GameDelta *delta = _game->stepGame( &_input->getServerInput(), tick->time);
                 _game->applyGameDelta(delta);
                 break;

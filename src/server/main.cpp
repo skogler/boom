@@ -30,16 +30,17 @@ int main(int argc, char *argv[])
         Uint32 newTime = SDL_GetTicks();
         Uint32 frameTime = newTime - startTime;
 
-        if (frameTime > 16) {
+        const int TICKRATE = 8;
+        if (frameTime > TICKRATE) {
             server.accept_connections();
             do {
                 TickMessage tick;
-                tick.time = 16.0;
+                tick.time = static_cast<double>(TICKRATE);
                 Message msg(&tick);
                 server.sendToAll(&msg);
-                frameTime -= 16;
-            }while (frameTime >= 16);
-            startTime = newTime - frameTime;
+                frameTime -= TICKRATE;
+            }while (frameTime >= TICKRATE);
+            startTime = newTime + frameTime;
         }
         server.listen_messages();
     }while(1);
