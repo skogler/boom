@@ -246,12 +246,23 @@ void Game::spawnBullet(GameDelta &delta) const
 {
     Entity bullet = newEntity();
 
-    Shot *beh = new Shot(bullet, Coords{0, 200});
         
 //    Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
+//
+    double x = static_cast<double>(rand() % 1920/32);
+    double y = static_cast<double>(rand() % 1080/32);
 
-    delta.mergeDelta(GameDelta(bullet, Position(-1, 5, 0)));
-    delta.mergeDelta(GameDelta(bullet, Orientation(3.14)));
+
+    double x2 = static_cast<double>(rand() % 1920/32);
+    double y2 = static_cast<double>(rand() % 1080/32);
+
+    double a = atan2(y2 - y, x2 - x) + 3.1415926/2.0;
+
+
+    Shot *beh = new Shot(bullet, Coords{x2, y2});
+
+    delta.mergeDelta(GameDelta(bullet, Position(-1, x, y)));
+    delta.mergeDelta(GameDelta(bullet, Orientation(a)));
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/rocket_1", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
 }
