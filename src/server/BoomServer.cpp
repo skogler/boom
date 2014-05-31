@@ -126,9 +126,9 @@ void BoomServer::handleMessage(BoomClientData* client, Message* msg) {
     }
     case MSG_TYPE_INPUT_EVENT:
     {
-        InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
-        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
-                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
+//        InputEventMessage *ie_msg = (InputEventMessage*) msg->getRecvData();
+//        printf("\tInput event: Type %u, UID %d, m_x: %f, m_y: %f\n",
+//                ie_msg->m_type, ie_msg->m_uid, ie_msg->m_x, ie_msg->m_y);
         sendToAll(msg);
         break;
     }
