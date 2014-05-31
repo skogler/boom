@@ -240,8 +240,10 @@ void Game::spawnBullet(GameDelta &delta) const
     Entity bullet = newEntity();
 
     Shot *beh = new Shot(bullet, Coords{0, 200});
+        
+//    Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
 
-    delta.mergeDelta(GameDelta(bullet, Position(0, 5, 5)));
+    delta.mergeDelta(GameDelta(bullet, Position(-1, 5, 5)));
     delta.mergeDelta(GameDelta(bullet, Orientation(0)));
     delta.mergeDelta(GameDelta(bullet, new RenderObject(bullet, "shots/bullet", 1, 1)));
     delta.mergeDelta(GameDelta(bullet, beh));
