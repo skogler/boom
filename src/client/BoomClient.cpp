@@ -37,7 +37,7 @@ void BoomClient::checkMessages()
             case MSG_TYPE_HANDSHAKE_ACCEPT:
             {
                 HandshakeAcceptMessage* ha_msg = (HandshakeAcceptMessage *)msg->getRecvData();
-                printf("\tHandshake Accept: UID = %d", ha_msg->uid);
+                printf("\tHandshake Accept: UID = %d\n", ha_msg->uid);
                 _end_handshake(ha_msg);
                 break;
             }
@@ -48,6 +48,13 @@ void BoomClient::checkMessages()
                 if (_input != NULL) {
                     _input->receiveInputEvent(ie);
                 }
+                break;
+            }
+            case MSG_TYPE_TICK:
+            {
+                TickMessage *tick = (TickMessage*) msg->getRecvData();
+                const GameDelta *delta = _game->stepGame( &_input->getServerInput(), tick->time);
+                _game->applyGameDelta(delta);
                 break;
             }
             case MSG_TYPE_TEXT:
@@ -128,6 +135,8 @@ bool BoomClient::_connect()
         _session = NULL;
     }
 
+    _uid = -1;
+
     IPaddress ip;
 
     printf("connecting to %s...\n",_hostname.c_str());
@@ -149,6 +158,8 @@ bool BoomClient::_connect()
     }
     _session = new BoomSession(socket);
 
+    start_handshake();
+
     return true;
 }
 
@@ -158,10 +169,6 @@ bool BoomClient::_send(Message* msg)
         if (_connect() == false) {
             return false;
         }
-    }
-    if (_uid < 0) {
-        start_handshake();
-        return false;
     }
 
     msg->prepareSendData();
