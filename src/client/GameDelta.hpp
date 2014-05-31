@@ -39,10 +39,11 @@ public:
 		deltaPositions(),
 		deltaOrientations(),
 		deltaBoundingBoxes(),
-		deltaRenderObjects(),
 		deltaHealth(),
 		deltaBehaviours(),
-		deltaCollisionEvents()
+		deltaRenderObjects(),
+		deltaCollisionEvents(),
+		deltaRemoveEvents()
 	{}
 
 //	GameDelta(const GameDelta &delta);

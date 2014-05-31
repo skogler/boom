@@ -8,6 +8,7 @@
 #include "Block.hpp"
 #include "Worldmap.hpp"
 #include <string.h>
+#include <stdio.h>
 
 Block::Block(const BlockType& type, Worldmap* map, const int& x, const int& y) :
 _type(type),

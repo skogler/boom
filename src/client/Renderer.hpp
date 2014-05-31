@@ -30,6 +30,8 @@ public:
     void setGame(Game* game);
     void updateViewports();
     Coords screenToRealm(int x, int y, int realm) const;
+    Coords realmToScreen(double x, double y, int realm) const;
+    int screenCoordsIsRealm(int x, int y) const;
 
     static const int SCALE = 32;
 

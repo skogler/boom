@@ -104,11 +104,17 @@ public:
         m_bounding_boxes[entity] = bounding_box;
 	}
 
+	void removeEntity(Entity entity)
+	{
+		m_positions.erase(entity);
+		m_orientations.erase(entity);
+		m_bounding_boxes.erase(entity);
+	}
+
 private:
 	std::unordered_map<Entity, Position, hash_Entity> m_positions;
 	std::unordered_map<Entity, Orientation, hash_Entity> m_orientations;
 	std::unordered_map<Entity, BoundingBox, hash_Entity> m_bounding_boxes;
-
 };
 
 #endif /* POSITIONMANAGER_HPP_ */

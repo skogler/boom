@@ -25,34 +25,6 @@ public:
 	virtual BehaviourStep stepBehaviour(const Game &game, double dt) = 0;
 };
 
-
-class Pushback : public Behaviour
-{
-	Pushback(const Pushback& other) : m_timeLeft(other.getTimeLeft()), m_entity(other.getEntity()) {}
-	Pushback(Entity entity, double time) : m_entity(entity), m_timeLeft(time) {}
-	bool isFinished() const { if (m_timeLeft < 0) { return true; } else { return false; } }
-	BehaviourStep stepBehaviour(const Game &game, double dt)
-	{
-		if (m_timeLeft < dt) {
-			GameDelta delta(m_entity, Coords{-10*m_timeLeft, -10*m_timeLeft});
-			m_timeLeft = 0;
-			GameDelta *gd = new GameDelta();
-			gd->mergeDelta(delta);
-            return BehaviourStep{nullptr, gd};
-		} else {
-			m_timeLeft -= dt;
-            return BehaviourStep{this, new GameDelta(m_entity, Coords{-10*dt, 10*dt})};
-		}
-	}
-
-	double getTimeLeft() const { return m_timeLeft; }
-	Entity getEntity() const { return m_entity; }
-
-private:
-	double m_timeLeft;
-	Entity m_entity;
-};
-    
 class Shot : public Behaviour
 {                      
 public:

@@ -3,6 +3,7 @@
 
 #include "PositionManager.hpp"
 #include <iostream>
+#include "Renderer.hpp"
 
 bool Shot::isFinished() const
 {
@@ -68,17 +69,19 @@ BehaviourStep Shot::stepBehaviour(const Game &game, double dt)
     double x = 0.0;
     double y = 0.0;
     GameDelta *delta = new GameDelta();
-    Coords origin = game.getCurrentGameState().getPositionManager().getPosition(m_entity).getCoords();
+    Position pos = game.getCurrentGameState().getPositionManager().getPosition(m_entity);
+    Coords origin = pos.getCoords();
     double a = game.getCurrentGameState().getPositionManager().getOrientation(m_entity).getAngle(); 
 
     if (game.getCurrentGameState().entityCollided(m_entity).size() != 0) {
 		std::cout << "Collision" << std::endl;
         Entity explosion = newEntity();
-        delta->mergeDelta(GameDelta(explosion, Position(0, origin.x, origin.y)));
+        Coords screen = game.getRenderer()->realmToScreen(origin.x, origin.y, pos.getRealm());
+        delta->mergeDelta(GameDelta(explosion, Position(-1, screen.x, screen.y)));
         delta->mergeDelta(GameDelta(explosion, Orientation(0)));
         delta->mergeDelta(GameDelta(explosion, new RenderObject(explosion, "explosions/wall/expl_wall_01", 1, 1)));
 
-//       delta.mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
+        delta->mergeDelta(GameDelta(m_entity, ObjectDelta::REMOVED));
 
         std::vector<Frame> explosions;
         explosions.push_back(Frame{"explosions/wall/expl_wall_01", 50});

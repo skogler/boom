@@ -167,6 +167,41 @@ void Renderer::setGame(Game* game)
     m_game = game;
 }
 
+int Renderer::screenCoordsIsRealm(int x, int y) const {
+	if (x < m_viewports[4].x && y < m_viewports[4].y)
+		return 0;
+	else if (x > m_viewports[4].x && y < m_viewports[4].y)
+		return 1;
+	else if (x < m_viewports[4].x && y < m_viewports[4].y)
+		return 2;
+	else if (x > m_viewports[4].x && y > m_viewports[4].y)
+		return 3;
+
+	return -1;
+}
+
+
+Coords Renderer::realmToScreen(double x, double y, int realm) const
+{
+	int offset_x = 0;
+	int offset_y = 0;
+
+	if (realm == 1 || realm == 3)
+	{
+		offset_x = m_viewports[0].w;
+	}
+
+	if (realm == 2 || realm == 3)
+	{
+		offset_y = m_viewports[0].h;
+	}
+
+	double coord_x = offset_x + m_cameras[realm].first.x;
+	double coord_y = offset_y + m_cameras[realm].first.y;
+
+	return Coords{coord_x, coord_y};
+}
+
 Coords Renderer::screenToRealm(int x, int y, int realm) const
 {
     auto& viewport = m_viewports[realm + 1];

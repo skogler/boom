@@ -23,6 +23,7 @@
 #include "GameDelta.hpp"
 #include "Health.hpp"
 #include "Behaviour.hpp"
+#include "common.hpp"
 
 class CollisionSystem;
 class PositionManager;
@@ -59,7 +60,8 @@ class Bullet
 {
 public:
 	Bullet() : m_body(newEntity()),
-		m_smoke(newEntity()) {}
+		m_smoke(newEntity()),
+		m_travel_speed(0) {}
 	Bullet(const Bullet &other) : m_body(other.m_body), m_smoke(other.m_smoke), m_travel_speed(other.m_travel_speed) {}
 	Bullet(Entity body, Entity smoke, double travel_speed) :
 		m_body(body),
@@ -75,6 +77,7 @@ public:
 
 
 class GameState {
+	DISABLECOPY(GameState);
 public:
 	GameState();
 
@@ -178,6 +181,7 @@ public:
 };
 
 class Game {
+	DISABLECOPY(Game);
 public:
 	Game();
 	virtual ~Game();
@@ -189,6 +193,7 @@ public:
     					const double timeDelta) const;
 
     void spawnBullet(GameDelta &delta) const;
+    bool isWall(int realm, double x, double y) const;
 
 	const GameDelta *runSystems(const GameDelta &gd) const;
 
@@ -247,6 +252,8 @@ public:
     {
         m_renderer = renderer;
     }
+
+    const Renderer *getRenderer() const { return m_renderer; }
     void setCurrentPlayer(int currentPlayer)
     {
         m_currentPlayer = currentPlayer;

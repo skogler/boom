@@ -88,6 +88,21 @@ const GameDelta *Game::runSystems(const GameDelta &gd) const
 	return afterCollision;
 }
 
+
+bool Game::isWall(int realm, double x, double y) const {
+	const Worldmap *world = m_player_map[realm];
+    double x_off = -world->_size_x * Wall::size() * 0.5 - Wall::size() *0.5;
+    double y_off = -world->_size_y * Wall::size() * 0.5 - Wall::size() *0.5;
+
+	double map_x = (x - x_off) / Wall::size();
+	double map_y = (y - y_off) / Wall::size();
+
+	int map_x2 = round(map_x);
+	int map_y2 = round(map_y);
+
+	return world->getBlock(map_x2, map_y2)->getType() == Block::WALL;
+}
+
 void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 {
     const double BLOCK_SIZE = Wall::size();
@@ -117,7 +132,6 @@ void Game::loadMap(int realm, const Worldmap* world, GameDelta& delta)
 
 	//return delta;
 }
-
 
 void Game::setup()
 {
@@ -306,7 +320,7 @@ Player Game::getPlayerByID(int id) const
 }
 
 Game::Game() :
-	m_currentState(GameState()), 
+	m_currentState(),
     m_currentPlayer(0),
     m_players(),
     m_player_map()
