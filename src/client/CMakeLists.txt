@@ -67,20 +67,6 @@ include_directories(${SDL2_MIXER_INCLUDE_DIRS})
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
 include_directories(${SDL2_NET_INCLUDE_DIRS})
 
-# OpenGL
-find_package(OpenGL REQUIRED)
-if (OPENGL_FOUND)
-    include_directories(${OPENGL_INCLUDE_DIR})
-    target_link_libraries(${CLIENT_NAME} ${OPENGL_LIBRARIES})
-endif()
-
-# GLEW
-find_package(GLEW REQUIRED)
-if (GLEW_FOUND)
-    include_directories(${GLEW_INCLUDE_PATH})
-    target_link_libraries(${CLIENT_NAME} ${GLEW_LIBRARY})
-endif()
-
 find_package(Boost 1.49.0 COMPONENTS system filesystem REQUIRED)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
